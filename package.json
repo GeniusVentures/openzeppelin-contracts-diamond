@@ -29,8 +29,12 @@
     "release": "scripts/release/release.sh",
     "version": "scripts/release/version.sh",
     "test": "hardhat test",
+<<<<<<< HEAD
     "test:inheritance": "scripts/checks/inheritance-ordering.js artifacts/build-info/*",
     "test:generation": "scripts/checks/generation.sh",
+=======
+    "test:inheritance": "node scripts/inheritanceOrdering artifacts/build-info/*",
+>>>>>>> b3b83b55... Add Slither reentrancy check in CI (#3047)
     "gas-report": "env ENABLE_GAS_REPORT=true npm run test",
     "slither": "npm run clean && slither . --detect reentrancy-eth,reentrancy-no-eth,reentrancy-unlimited-gas"
   },
