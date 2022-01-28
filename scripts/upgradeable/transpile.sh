@@ -17,8 +17,7 @@ fi
 # -i: use included Initializable
 # -x: exclude all proxy contracts except Clones library
 # -p: emit public initializer
-npx @openzeppelin/upgrade-safe-transpiler@latest -D \
-  -b "$build_info" \
+npx @gnus.ai/upgrade-safe-transpiler-diamond@latest -D \
   -i contracts/proxy/utils/Initializable.sol \
   -x 'contracts/proxy/**/*' \
   -x '!contracts/proxy/Clones.sol' \
