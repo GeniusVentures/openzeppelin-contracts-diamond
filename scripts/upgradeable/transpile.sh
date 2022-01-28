@@ -8,7 +8,8 @@ npm run compile
 # -i: use included Initializable
 # -x: exclude all proxy contracts except Clones library
 # -p: emit public initializer
-npx @gnus.ai/upgrade-safe-transpiler-diamond@latest -D \
+# -E: extract storage for Diamond Pattern
+npx @gnus.ai/upgrade-safe-transpiler-diamond@latest -D -E \
   -i contracts/proxy/utils/Initializable.sol \
   -x 'contracts/proxy/**/*' \
   -x '!contracts/proxy/Clones.sol' \
