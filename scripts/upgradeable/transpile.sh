@@ -27,7 +27,7 @@ npx @gnus.ai/upgrade-safe-transpiler-diamond@latest -D -E \
   -x '!contracts/proxy/utils/UUPSUpgradeable.sol' \
   -x '!contracts/proxy/beacon/IBeacon.sol' \
   -p 'contracts/**/presets/**/*' \
-  -p 'contracts/utils/Escrow.sol'
+  -p 'contracts/utils/escrow/Escrow.sol'
 
 # this is currently no longer used but could be useful again in the future
 # for p in scripts/upgradeable/patch/*.patch; do
