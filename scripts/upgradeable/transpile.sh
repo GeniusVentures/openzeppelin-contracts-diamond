@@ -19,6 +19,7 @@ npx @gnus.ai/upgrade-safe-transpiler-diamond@latest -D -E \
   -p 'contracts/**/presets/**/*' \
   -p 'contracts/utils/escrow/Escrow.sol'
 
+# this is currently no longer used but could be useful in the future
 for p in scripts/upgradeable/patch/*.patch; do
   git apply "$p"
 done
