@@ -1,5 +1,5 @@
 diff --git a/contracts/token/common/ERC2981Upgradeable.sol b/contracts/token/common/ERC2981Upgradeable.sol
-index 7df7f40d..bf1438e0 100644
+index f62ce8dd..27a79add 100644
 --- a/contracts/token/common/ERC2981Upgradeable.sol
 +++ b/contracts/token/common/ERC2981Upgradeable.sol
 @@ -45,7 +45,7 @@ abstract contract ERC2981Upgradeable is Initializable, IERC2981Upgradeable, ERC1
@@ -9,5 +9,5 @@ index 7df7f40d..bf1438e0 100644
 -     * @inheritdoc IERC29810
 +     * @inheritdoc IERC2981Upgradeable
       */
-     function royaltyInfo(uint256 _tokenId, uint256 _salePrice) external view override returns (address, uint256) {
-         RoyaltyInfo memory royalty = ERC2981Storage.layout()._tokenRoyaltyInfo[_tokenId];
+     function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
+         external
