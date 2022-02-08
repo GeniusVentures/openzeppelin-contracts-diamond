@@ -10,7 +10,7 @@
 [![NPM Package](https://img.shields.io/npm/v/@openzeppelin/contracts-upgradeable.svg)](https://www.npmjs.org/package/@gnus.ai/contracts-upgradeable-diamond)
 >>>>>>> 0ae36c2c... Updating patching and added new Diamond proxy contract
 
-This repository hosts the Upgradeable variant of [OpenZeppelin Contracts], meant for use in upgradeable contracts. This variant is available as separate package called `@openzeppelin/contracts-upgradeable`.
+This repository hosts the Upgradeable variant of [OpenZeppelin Contracts], meant for use in upgradeable contracts. This variant is available as separate package called `@gnus.ai/contracts-upgradeable-diamond`.
 
 [OpenZeppelin Contracts]: https://github.com/OpenZeppelin/openzeppelin-contracts
 
@@ -42,7 +42,7 @@ The package replicates the structure of the main OpenZeppelin Contracts package,
 
 ```diff
 -import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
++import "@gnus.ai/contracts-upgradeable-diamond/token/ERC721/ERC721Upgradeable.sol";
  
 -contract MyCollectible is ERC721 {
 +contract MyCollectible is ERC721Upgradeable {
@@ -140,6 +140,9 @@ Finally, you may want to take a look at the [guides on our blog](https://blog.op
 * [The Hitchhiker’s Guide to Smart Contracts in Ethereum](https://blog.openzeppelin.com/the-hitchhikers-guide-to-smart-contracts-in-ethereum-848f08001f05) will help you get an overview of the various tools available for smart contract development, and help you set up your environment.
 * [A Gentle Introduction to Ethereum Programming, Part 1](https://blog.openzeppelin.com/a-gentle-introduction-to-ethereum-programming-part-1-783cc7796094) provides very useful information on an introductory level, including many basic concepts from the Ethereum platform.
 * For a more in-depth dive, you may read the guide [Designing the Architecture for Your Ethereum Application](https://blog.openzeppelin.com/designing-the-architecture-for-your-ethereum-application-9cec086f8317), which discusses how to better structure your application and its relationship to the real world.
+
+## EIP-2535 Support
+There are additional files under the contracts/proxy/diamond directory for creating a Diamond that acts as a proxy for the Diamond Facets.  To read about the diamond standard, you can visit the [Introduction to the Diamond Standard](https://eip2535diamonds.substack.com/p/introduction-to-the-diamond-standard)
 
 ## Security
 
