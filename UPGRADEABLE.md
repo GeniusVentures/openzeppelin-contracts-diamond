@@ -1,6 +1,6 @@
 # Technical notes about the Upgradeable repository
 
-## [Branches](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/branches)
+## [Branches](https://github.com/GeniusVentures/openzeppelin-contracts-diamond/branches)
 
 ### `patches`
 
@@ -20,7 +20,7 @@ These branches are the merge between `patches` and the corresponding branch from
 
 Contains the transpiled code corresponding to the branch from vanilla Contracts of the same name. These are generated automatically based on their `patched/*` branch. These branches should never be manually updated, because they will be overwritten automatically with the transpiled version of `patched/*`. Instead, changes should be made in `patches`.
 
-## [Actions Workflows](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/actions)
+## [Actions Workflows](https://github.com/GeniusVentures/openzeppelin-contracts-diamond/actions)
 
 ### [Merge upstream](/.github/workflows/merge-upstream.yml)
 

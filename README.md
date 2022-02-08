@@ -1,15 +1,20 @@
-# <img src="icon.svg" alt="OpenZeppelin" height="40px" align="left"> OpenZeppelin Contracts Upgradeable
+# <img src="icon.svg" alt="OpenZeppelin" height="40px" align="left"> OpenZeppelin Contracts Upgradeable Diamond
 
+<<<<<<< HEAD
 [![Docs](https://img.shields.io/badge/docs-%F0%9F%93%84-blue)](https://docs.openzeppelin.com/contracts)
 [![NPM Package](https://img.shields.io/npm/v/@openzeppelin/contracts.svg)](https://www.npmjs.org/package/@openzeppelin/contracts)
 [![Coverage Status](https://codecov.io/gh/OpenZeppelin/openzeppelin-contracts/graph/badge.svg)](https://codecov.io/gh/OpenZeppelin/openzeppelin-contracts)
 [![gitpoap badge](https://public-api.gitpoap.io/v1/repo/OpenZeppelin/openzeppelin-contracts/badge)](https://www.gitpoap.io/gh/OpenZeppelin/openzeppelin-contracts)
+=======
+[![Docs](https://img.shields.io/badge/docs-%F0%9F%93%84-blue)](https://docs.openzeppelin.com/contracts/upgradeable)
+[![NPM Package](https://img.shields.io/npm/v/@openzeppelin/contracts-upgradeable.svg)](https://www.npmjs.org/package/@gnus.ai/contracts-upgradeable-diamond)
+>>>>>>> 0ae36c2c... Updating patching and added new Diamond proxy contract
 
 This repository hosts the Upgradeable variant of [OpenZeppelin Contracts], meant for use in upgradeable contracts. This variant is available as separate package called `@openzeppelin/contracts-upgradeable`.
 
 [OpenZeppelin Contracts]: https://github.com/OpenZeppelin/openzeppelin-contracts
 
-It follows all of the rules for [Writing Upgradeable Contracts]: constructors are replaced by initializer functions, state variables are initialized in initializer functions, and we additionally check for storage incompatibilities across minor versions.
+It follows all of the rules for [Writing Upgradeable Contracts]: constructors are replaced by initializer functions, state variables are initialized in initializer functions, storage moved to libraries with slot addresses, and we additionally check for storage incompatibilities across minor versions.
 
 [Writing Upgradeable Contracts]: https://docs.openzeppelin.com/upgrades-plugins/writing-upgradeable
 
@@ -28,7 +33,7 @@ It follows all of the rules for [Writing Upgradeable Contracts]: constructors ar
 ### Installation
 
 ```console
-$ npm install @openzeppelin/contracts-upgradeable
+$ npm install @gnus.ai/contracts-upgradeable-diamond
 ```
 
 ### Usage
@@ -57,10 +62,67 @@ Constructors are replaced by internal initializer functions following the naming
 > Use with multiple inheritance requires special care. Initializer functions are not linearized by the compiler like constructors. Because of this, each `__{ContractName}_init` function embeds the linearized calls to all parent initializers. As a consequence, calling two of these `init` functions can potentially initialize the same contract twice.
 >
 > The function `__{ContractName}_init_unchained` found in every contract is the initializer function minus the calls to parent initializers, and can be used to avoid the double initialization problem, but doing this manually is not recommended. We hope to be able to implement safety checks for this in future versions of the Upgrades Plugins.
+ 
+Storage variables are moved to their own library and access via library call is added.
+
+```solidity
+AccessControl.sol
+     struct RoleData {
+         mapping(address => bool) members;
+         bytes32 adminRole;
+     }
+ 
+-    mapping(bytes32 => RoleData) private _roles;
+
+
+-        _roles[role].adminRole = adminRole;
++        AccessControlStorage.layout()._roles[role].adminRole = adminRole;
+         emit RoleAdminChanged(role, previousAdminRole, adminRole);
+     }
+ 
+-            _roles[role].members[account] = true;
++            AccessControlStorage.layout()._roles[role].members[account] = true;
+-
+```
+
+Then library is used to store the data
+```solidity
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
+
+import { AccessControlUpgradeable } from "contracts/access/AccessControlUpgradeable.sol";
+
+library AccessControlStorage {
+
+  struct Layout {
+
+    mapping(bytes32 => AccessControlUpgradeable.RoleData) _roles;
+  
+  }
+  
+  bytes32 internal constant STORAGE_SLOT = keccak256('openzepplin.contracts.storage.AccessControl');
+
+  function layout() internal pure returns (Layout storage l) {
+    bytes32 slot = STORAGE_SLOT;
+    assembly {
+      l.slot := slot
+    }
+  }
+}
+
+```
 
 _If you're new to smart contract development, head to [Developing Smart Contracts](https://docs.openzeppelin.com/learn/developing-smart-contracts) to learn about creating a new project and compiling your contracts._
 
+<<<<<<< HEAD
 To keep your system secure, you should **always** use the installed code as-is, and neither copy-paste it from online sources nor modify it yourself. The library is designed so that only the contracts and functions you use are deployed, so you don't need to worry about it needlessly increasing gas costs.
+=======
+ Also, checkout how to deploy these contracts using a diamond [Diamond Implementations](https://github.com/mudgen/diamond) and the [EIP-2535 Specification](https://eips.ethereum.org/EIPS/eip-2535)
+
+To keep your system secure, you should **always** use the installed code as-is, and neither copy-paste it from online sources, nor modify it yourself. The library is designed so that only the contracts and functions you use are deployed, so you don't need to worry about it needlessly increasing gas costs.
+>>>>>>> 0ae36c2c... Updating patching and added new Diamond proxy contract
 
 ## Learn More
 
