@@ -13,10 +13,7 @@ build_info_num=${#build_info[@]}
 
 if [ $build_info_num -ne 1 ]; then
   echo "found $build_info_num relevant build info files but expected just 1"
-<<<<<<< HEAD
   exit 1
-=======
->>>>>>> b5f0d99e... filter out unreachable build-info files
 fi
 
 # -D: delete original and excluded files
