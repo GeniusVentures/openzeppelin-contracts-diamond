@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/ERC20FlashMint.sol)
+// OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/extensions/ERC20FlashMint.sol)
 
 pragma solidity ^0.8.0;
 
@@ -56,6 +56,9 @@ abstract contract ERC20FlashMint is ERC20, IERC3156FlashLender {
      * @param data An arbitrary datafield that is passed to the receiver.
      * @return `true` is the flash loan was successful.
      */
+    // This function can reenter, but it doesn't pose a risk because it always preserves the property that the amount
+    // minted at the beginning is always recovered and burned at the end, or else the entire function will revert.
+    // slither-disable-next-line reentrancy-no-eth
     function flashLoan(
         IERC3156FlashBorrower receiver,
         address token,
