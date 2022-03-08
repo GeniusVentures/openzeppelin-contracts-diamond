@@ -25,6 +25,8 @@ It follows all of the rules for [Writing Upgradeable Contracts]: constructors ar
 
 :building_construction: **Want to scale your decentralized application?** Check out [OpenZeppelin Defender](https://openzeppelin.com/defender) — a secure platform for automating and monitoring your operations.
 
+:building_construction: **Want to scale your decentralized application?** Check out [OpenZeppelin Defender](https://openzeppelin.com/defender) — a secure platform for automating and monitoring your operations.
+
 ## Overview
 
 ### Installation
