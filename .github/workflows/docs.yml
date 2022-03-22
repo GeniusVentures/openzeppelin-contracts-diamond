@@ -9,6 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+      - name: Set up environment
+        uses: ./.github/actions/setup
+=======
+>>>>>>> 6d85f602... Update actions/cache action to v3 (#3277)
       - uses: actions/setup-node@v3
         with:
           node-version: 12.x
@@ -20,6 +27,10 @@ jobs:
           restore-keys: npm-v2-
       - run: npm ci
         if: steps.cache.outputs.cache-hit != 'true'
+<<<<<<< HEAD
+=======
+>>>>>>> 763cb6bb... Update actions/cache action to v3 (#3277)
+>>>>>>> 6d85f602... Update actions/cache action to v3 (#3277)
       - run: bash scripts/git-user-config.sh
       - run: node scripts/update-docs-branch.js
       - run: git push --all origin 
