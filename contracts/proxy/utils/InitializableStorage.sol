@@ -17,7 +17,11 @@ library InitializableStorage {
      * @dev Indicates that the contract is in the process of being initialized.
      */
     bool _initializing;
-  
+      
+    /*
+    * @dev mapping of top level contracts (facets) to initialized 
+    */
+    mapping(bytes32 => bool) _topLevelInitialized;  
   }
   
   bytes32 internal constant STORAGE_SLOT = keccak256('openzepplin.contracts.storage.Initializable');

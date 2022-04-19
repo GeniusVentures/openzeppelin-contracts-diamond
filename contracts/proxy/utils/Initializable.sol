@@ -58,6 +58,29 @@ abstract contract Initializable {
     }
 
     /**
+     * @dev Modifier to protect an initializer function from being invoked twice.
+     */
+    modifier initializer(bytes32 topLevelContractName) {
+        // If the contract is initializing we ignore whether _initialized is set in order to support multiple
+        // inheritance patterns, but we only do this in the context of a constructor, because in other contexts the
+        // contract may have been reentered.
+        require(InitializableStorage.layout()._topLevelInitialized[topLevelContractName] ? _isConstructor() : 
+            !InitializableStorage.layout()._topLevelInitialized[topLevelContractName], "Initializable: contract is already initialized");
+
+        bool isTopLevelCall = !InitializableStorage.layout()._initializing;
+        if (isTopLevelCall) {
+            InitializableStorage.layout()._initializing = true;
+            InitializableStorage.layout()._topLevelInitialized[topLevelContractName] = true;
+        }
+
+        _;
+
+        if (isTopLevelCall) {
+            InitializableStorage.layout()._initializing = false;
+        }
+    }
+
+    /**
      * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the
      * {initializer} modifier, directly or indirectly.
      */
