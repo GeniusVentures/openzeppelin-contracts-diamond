@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
+<<<<<<< HEAD
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/structs/EnumerableSet.sol)
 // This file was procedurally generated from scripts/generate/templates/EnumerableSet.js.
+=======
+// OpenZeppelin Contracts (last updated v4.6.0) (utils/structs/EnumerableSet.sol)
+>>>>>>> 60c54c6a... Release v4.6 (#3358)
 
 pragma solidity ^0.8.0;
 

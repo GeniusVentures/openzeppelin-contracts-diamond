@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
+<<<<<<< HEAD
 // OpenZeppelin Contracts (last updated v4.7.0) (crosschain/polygon/CrossChainEnabledPolygonChild.sol)
+=======
+// OpenZeppelin Contracts (last updated v4.6.0) (crosschain/polygon/CrossChainEnabledPolygonChild.sol)
+>>>>>>> 60c54c6a... Release v4.6 (#3358)
 
 pragma solidity ^0.8.4;
 

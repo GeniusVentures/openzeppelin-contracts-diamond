@@ -1,7 +1,11 @@
 {
   "name": "@gnus.ai/contracts-upgradeable-diamond",
   "description": "Secure Smart Contract library for Solidity",
+<<<<<<< HEAD
   "version": "4.8.0",
+=======
+  "version": "4.6.0",
+>>>>>>> 60c54c6a... Release v4.6 (#3358)
   "files": [
     "**/*.sol",
     "/build/contracts/*.json",

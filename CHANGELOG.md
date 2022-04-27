@@ -154,11 +154,15 @@ function migrateToV48() public reinitializer(2) {
  * `TimelockController`: Add a separate canceller role for the ability to cancel. ([#3165](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3165))
  * `Initializable`: add a reinitializer modifier that enables the initialization of new modules, added to already initialized contracts through upgradeability. ([#3232](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3232))
  * `Initializable`: add an Initialized event that tracks initialized version numbers. ([#3294](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3294))
+<<<<<<< HEAD
  * `ERC2981`: make `royaltyInfo` public to allow super call in overrides. ([#3305](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3305))
 
 ### Upgradeability notice
 
 * `TimelockController`: **(Action needed)** The upgrade from <4.6 to >=4.6 introduces a new `CANCELLER_ROLE` that requires set up to be assignable. After the upgrade, only addresses with this role will have the ability to cancel. Proposers will no longer be able to cancel. Assigning cancellers can be done by an admin (including the timelock itself) once the role admin is set up. To do this, we recommend upgrading to the `TimelockControllerWith46MigrationUpgradeable` contract and then calling the `migrateTo46` function.
+=======
+ * `ERC2981`: make `royaltiInfo` public to allow super call in overrides. ([#3305](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3305))
+>>>>>>> 60c54c6a... Release v4.6 (#3358)
 
 ### Breaking changes
 

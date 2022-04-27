@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 // Copyright 2021-2022, Offchain Labs, Inc.
 // For license information, see https://github.com/OffchainLabs/nitro/blob/master/LICENSE
 // SPDX-License-Identifier: BUSL-1.1
 // OpenZeppelin Contracts (last updated v4.8.0) (vendor/arbitrum/IArbSys.sol)
 
+=======
+// SPDX-License-Identifier: MIT
+// OpenZeppelin Contracts (last updated v4.6.0) (vendor/arbitrum/IArbSys.sol)
+>>>>>>> 60c54c6a... Release v4.6 (#3358)
 pragma solidity >=0.4.21 <0.9.0;
 
 /**
