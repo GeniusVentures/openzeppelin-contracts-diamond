@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.7.0 (2022-06-29)
 
  * `ERC165Checker`: add `supportsERC165InterfaceUnchecked` for consulting individual interfaces without the full ERC165 protocol. ([#3339](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3339))
  * `Address`: optimize `functionCall` by calling `functionCallWithValue` directly. ([#3468](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3468))
