@@ -37,6 +37,10 @@ $ npm install @gnus.ai/contracts-upgradeable-diamond
 
 The package replicates the structure of the main OpenZeppelin Contracts package, but every file and contract has the suffix `Upgradeable`.
 
+OpenZeppelin Contracts features a [stable API](https://docs.openzeppelin.com/contracts/releases-stability#api-stability), which means that your contracts won't break unexpectedly when upgrading to a newer minor version.
+
+An alternative to npm is to use the GitHub repository (`gnus-ai/openzeppelin-contracts-diamond`) to retrieve the contracts. When doing this, make sure to specify the tag for a release such as `v4.5.0`, instead of using the `master` branch.
+
 ```diff
 -import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 +import "@gnus.ai/contracts-upgradeable-diamond/token/ERC721/ERC721Upgradeable.sol";
