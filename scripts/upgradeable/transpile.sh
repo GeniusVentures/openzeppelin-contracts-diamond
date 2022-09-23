@@ -4,12 +4,19 @@ set -euo pipefail -x
 
 npm run compile
 
+<<<<<<< HEAD
 build_info=($(jq -r '.input.sources | keys | if any(test("^contracts/mocks/.*\\bunreachable\\b")) then empty else input_filename end' artifacts/build-info/*))
+=======
+build_info=($(jq -r '.input.sources | keys | if any(test("^contracts/mocks/.*\\\\bunreachable\\\\b")) then empty else input_filename end' artifacts/build-info/*))
+>>>>>>> b5f0d99e... filter out unreachable build-info files
 build_info_num=${#build_info[@]}
 
 if [ $build_info_num -ne 1 ]; then
   echo "found $build_info_num relevant build info files but expected just 1"
+<<<<<<< HEAD
   exit 1
+=======
+>>>>>>> b5f0d99e... filter out unreachable build-info files
 fi
 
 # -D: delete original and excluded files
@@ -19,6 +26,7 @@ fi
 # -p: emit public initializer
 # -E: extract storage for Diamond Pattern
 npx @gnus.ai/upgrade-safe-transpiler-diamond@latest -D -E \
+  -b "$build_info" \
   -i contracts/proxy/utils/Initializable.sol \
   -x 'contracts/proxy/**/*' \
   -x '!contracts/proxy/Clones.sol' \
