@@ -2,11 +2,7 @@
   "private": true,
   "name": "openzeppelin-solidity",
   "description": "Secure Smart Contract library for Solidity",
-<<<<<<< HEAD
   "version": "4.8.0",
-=======
-  "version": "4.6.0",
->>>>>>> 60c54c6a... Release v4.6 (#3358)
   "files": [
     "/contracts/**/*.sol",
     "/build/contracts/*.json",
@@ -34,12 +30,8 @@
     "release": "scripts/release/release.sh",
     "version": "scripts/release/version.sh",
     "test": "hardhat test",
-<<<<<<< HEAD
     "test:inheritance": "scripts/checks/inheritance-ordering.js artifacts/build-info/*",
     "test:generation": "scripts/checks/generation.sh",
-=======
-    "test:inheritance": "node scripts/inheritanceOrdering artifacts/build-info/*",
->>>>>>> b3b83b55... Add Slither reentrancy check in CI (#3047)
     "gas-report": "env ENABLE_GAS_REPORT=true npm run test",
     "slither": "npm run clean && slither . --detect reentrancy-eth,reentrancy-no-eth,reentrancy-unlimited-gas"
   },
