@@ -42,6 +42,7 @@
 
 ### Breaking changes
 
+ * `StorageSlots` : If you used the openzeppelins-upgradeable-diamonds version < 4.8, you should continue to use that library, as the storage slots names have changed and you won't be able to access your initialized data.  This was a result of misspelling openzeppelin as openzepplin, which produces a different keccack256 slot value.
  * `ERC721`: In order to add support for batch minting via `ERC721Consecutive` it was necessary to make a minor breaking change in the internal interface of `ERC721`. Namely, the hooks `_beforeTokenTransfer` and `_afterTokenTransfer` have one additional argument that may need to be added to overrides:
 
 ```diff
