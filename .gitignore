@@ -62,5 +62,3 @@ artifacts
 .certora*
 .last_confs
 certora_*
-
-package-lock.json
