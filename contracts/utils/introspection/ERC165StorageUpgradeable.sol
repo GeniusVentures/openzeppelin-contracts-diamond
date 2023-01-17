@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "./ERC165Upgradeable.sol";
-import { ERC165StorageStorage } from "./ERC165StorageStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -14,18 +13,21 @@ import "../../proxy/utils/Initializable.sol";
  * their support of an interface.
  */
 abstract contract ERC165StorageUpgradeable is Initializable, ERC165Upgradeable {
-    using ERC165StorageStorage for ERC165StorageStorage.Layout;
     function __ERC165Storage_init() internal onlyInitializing {
     }
 
     function __ERC165Storage_init_unchained() internal onlyInitializing {
     }
+    /**
+     * @dev Mapping of interface ids to whether or not it's supported.
+     */
+    mapping(bytes4 => bool) private _supportedInterfaces;
 
     /**
      * @dev See {IERC165-supportsInterface}.
      */
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return super.supportsInterface(interfaceId) || ERC165StorageStorage.layout()._supportedInterfaces[interfaceId];
+        return super.supportsInterface(interfaceId) || _supportedInterfaces[interfaceId];
     }
 
     /**
@@ -41,6 +43,13 @@ abstract contract ERC165StorageUpgradeable is Initializable, ERC165Upgradeable {
      */
     function _registerInterface(bytes4 interfaceId) internal virtual {
         require(interfaceId != 0xffffffff, "ERC165: invalid interface id");
-        ERC165StorageStorage.layout()._supportedInterfaces[interfaceId] = true;
+        _supportedInterfaces[interfaceId] = true;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

@@ -14,7 +14,6 @@ import "../utils/AddressUpgradeable.sol";
 import "../utils/ContextUpgradeable.sol";
 import "../utils/TimersUpgradeable.sol";
 import "./IGovernorUpgradeable.sol";
-import { GovernorStorage } from "./GovernorStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -29,7 +28,6 @@ import "../proxy/utils/Initializable.sol";
  * _Available since v4.3._
  */
 abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC165Upgradeable, EIP712Upgradeable, IGovernorUpgradeable, IERC721ReceiverUpgradeable, IERC1155ReceiverUpgradeable {
-    using GovernorStorage for GovernorStorage.Layout;
     using DoubleEndedQueueUpgradeable for DoubleEndedQueueUpgradeable.Bytes32Deque;
     using SafeCastUpgradeable for uint256;
     using TimersUpgradeable for TimersUpgradeable.BlockNumber;
@@ -44,6 +42,16 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
         bool executed;
         bool canceled;
     }
+
+    string private _name;
+
+    mapping(uint256 => ProposalCore) private _proposals;
+
+    // This queue keeps track of the governor operating on itself. Calls to functions protected by the
+    // {onlyGovernance} modifier needs to be whitelisted in this queue. Whitelisting is set in {_beforeExecute},
+    // consumed by the {onlyGovernance} modifier and eventually reset in {_afterExecute}. This ensures that the
+    // execution of {onlyGovernance} protected calls can only be achieved through successful proposals.
+    DoubleEndedQueueUpgradeable.Bytes32Deque private _governanceCall;
 
     /**
      * @dev Restricts a function so it can only be executed through governance proposals. For example, governance
@@ -60,7 +68,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
         if (_executor() != address(this)) {
             bytes32 msgDataHash = keccak256(_msgData());
             // loop until popping the expected operation - throw if deque is empty (operation not authorized)
-            while (GovernorStorage.layout()._governanceCall.popFront() != msgDataHash) {}
+            while (_governanceCall.popFront() != msgDataHash) {}
         }
         _;
     }
@@ -74,7 +82,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
     }
 
     function __Governor_init_unchained(string memory name_) internal onlyInitializing {
-        GovernorStorage.layout()._name = name_;
+        _name = name_;
     }
 
     /**
@@ -105,7 +113,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
      * @dev See {IGovernor-name}.
      */
     function name() public view virtual override returns (string memory) {
-        return GovernorStorage.layout()._name;
+        return _name;
     }
 
     /**
@@ -141,7 +149,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
      * @dev See {IGovernor-state}.
      */
     function state(uint256 proposalId) public view virtual override returns (ProposalState) {
-        ProposalCore storage proposal = GovernorStorage.layout()._proposals[proposalId];
+        ProposalCore storage proposal = _proposals[proposalId];
 
         if (proposal.executed) {
             return ProposalState.Executed;
@@ -178,14 +186,14 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
      * @dev See {IGovernor-proposalSnapshot}.
      */
     function proposalSnapshot(uint256 proposalId) public view virtual override returns (uint256) {
-        return GovernorStorage.layout()._proposals[proposalId].voteStart.getDeadline();
+        return _proposals[proposalId].voteStart.getDeadline();
     }
 
     /**
      * @dev See {IGovernor-proposalDeadline}.
      */
     function proposalDeadline(uint256 proposalId) public view virtual override returns (uint256) {
-        return GovernorStorage.layout()._proposals[proposalId].voteEnd.getDeadline();
+        return _proposals[proposalId].voteEnd.getDeadline();
     }
 
     /**
@@ -257,7 +265,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
         require(targets.length == calldatas.length, "Governor: invalid proposal length");
         require(targets.length > 0, "Governor: empty proposal");
 
-        ProposalCore storage proposal = GovernorStorage.layout()._proposals[proposalId];
+        ProposalCore storage proposal = _proposals[proposalId];
         require(proposal.voteStart.isUnset(), "Governor: proposal already exists");
 
         uint64 snapshot = block.number.toUint64() + votingDelay().toUint64();
@@ -297,7 +305,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
             status == ProposalState.Succeeded || status == ProposalState.Queued,
             "Governor: proposal not successful"
         );
-        GovernorStorage.layout()._proposals[proposalId].executed = true;
+        _proposals[proposalId].executed = true;
 
         emit ProposalExecuted(proposalId);
 
@@ -338,7 +346,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
         if (_executor() != address(this)) {
             for (uint256 i = 0; i < targets.length; ++i) {
                 if (targets[i] == address(this)) {
-                    GovernorStorage.layout()._governanceCall.pushBack(keccak256(calldatas[i]));
+                    _governanceCall.pushBack(keccak256(calldatas[i]));
                 }
             }
         }
@@ -355,8 +363,8 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
         bytes32 /*descriptionHash*/
     ) internal virtual {
         if (_executor() != address(this)) {
-            if (!GovernorStorage.layout()._governanceCall.empty()) {
-                GovernorStorage.layout()._governanceCall.clear();
+            if (!_governanceCall.empty()) {
+                _governanceCall.clear();
             }
         }
     }
@@ -380,7 +388,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
             status != ProposalState.Canceled && status != ProposalState.Expired && status != ProposalState.Executed,
             "Governor: proposal not active"
         );
-        GovernorStorage.layout()._proposals[proposalId].canceled = true;
+        _proposals[proposalId].canceled = true;
 
         emit ProposalCanceled(proposalId);
 
@@ -517,7 +525,7 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
         string memory reason,
         bytes memory params
     ) internal virtual returns (uint256) {
-        ProposalCore storage proposal = GovernorStorage.layout()._proposals[proposalId];
+        ProposalCore storage proposal = _proposals[proposalId];
         require(state(proposalId) == ProposalState.Active, "Governor: vote not currently active");
 
         uint256 weight = _getVotes(account, proposal.voteStart.getDeadline(), params);
@@ -592,4 +600,11 @@ abstract contract GovernorUpgradeable is Initializable, ContextUpgradeable, ERC1
     ) public virtual override returns (bytes4) {
         return this.onERC1155BatchReceived.selector;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[46] private __gap;
 }

@@ -7,7 +7,6 @@ import "../ERC721Upgradeable.sol";
 import "../../../interfaces/IERC2309Upgradeable.sol";
 import "../../../utils/CheckpointsUpgradeable.sol";
 import "../../../utils/structs/BitMapsUpgradeable.sol";
-import { ERC721ConsecutiveStorage } from "./ERC721ConsecutiveStorage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -32,7 +31,6 @@ import "../../../proxy/utils/Initializable.sol";
  * _Available since v4.8._
  */
 abstract contract ERC721ConsecutiveUpgradeable is Initializable, IERC2309Upgradeable, ERC721Upgradeable {
-    using ERC721ConsecutiveStorage for ERC721ConsecutiveStorage.Layout;
     function __ERC721Consecutive_init() internal onlyInitializing {
     }
 
@@ -40,6 +38,9 @@ abstract contract ERC721ConsecutiveUpgradeable is Initializable, IERC2309Upgrade
     }
     using BitMapsUpgradeable for BitMapsUpgradeable.BitMap;
     using CheckpointsUpgradeable for CheckpointsUpgradeable.Trace160;
+
+    CheckpointsUpgradeable.Trace160 private _sequentialOwnership;
+    BitMapsUpgradeable.BitMap private _sequentialBurn;
 
     /**
      * @dev Maximum size of a batch of consecutive tokens. This is designed to limit stress on off-chain indexing
@@ -67,7 +68,7 @@ abstract contract ERC721ConsecutiveUpgradeable is Initializable, IERC2309Upgrade
 
         // Otherwise, check the token was not burned, and fetch ownership from the anchors
         // Note: no need for safe cast, we know that tokenId <= type(uint96).max
-        return ERC721ConsecutiveStorage.layout()._sequentialBurn.get(tokenId) ? address(0) : address(ERC721ConsecutiveStorage.layout()._sequentialOwnership.lowerLookup(uint96(tokenId)));
+        return _sequentialBurn.get(tokenId) ? address(0) : address(_sequentialOwnership.lowerLookup(uint96(tokenId)));
     }
 
     /**
@@ -100,7 +101,7 @@ abstract contract ERC721ConsecutiveUpgradeable is Initializable, IERC2309Upgrade
 
             // push an ownership checkpoint & emit event
             uint96 last = first + batchSize - 1;
-            ERC721ConsecutiveStorage.layout()._sequentialOwnership.push(last, uint160(to));
+            _sequentialOwnership.push(last, uint160(to));
             emit ConsecutiveTransfer(first, last, address(0), to);
 
             // hook after
@@ -133,16 +134,23 @@ abstract contract ERC721ConsecutiveUpgradeable is Initializable, IERC2309Upgrade
         if (
             to == address(0) && // if we burn
             firstTokenId < _totalConsecutiveSupply() && // and the tokenId was minted in a batch
-            !ERC721ConsecutiveStorage.layout()._sequentialBurn.get(firstTokenId) // and the token was never marked as burnt
+            !_sequentialBurn.get(firstTokenId) // and the token was never marked as burnt
         ) {
             require(batchSize == 1, "ERC721Consecutive: batch burn not supported");
-            ERC721ConsecutiveStorage.layout()._sequentialBurn.set(firstTokenId);
+            _sequentialBurn.set(firstTokenId);
         }
         super._afterTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
     function _totalConsecutiveSupply() private view returns (uint96) {
-        (bool exists, uint96 latestId, ) = ERC721ConsecutiveStorage.layout()._sequentialOwnership.latestCheckpoint();
+        (bool exists, uint96 latestId, ) = _sequentialOwnership.latestCheckpoint();
         return exists ? latestId + 1 : 0;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[48] private __gap;
 }

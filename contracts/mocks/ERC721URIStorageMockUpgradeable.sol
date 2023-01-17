@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "../token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
-import { ERC721URIStorageMockStorage } from "./ERC721URIStorageMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -11,7 +10,7 @@ import "../proxy/utils/Initializable.sol";
  * This mock just provides a public safeMint, mint, and burn functions for testing purposes
  */
 contract ERC721URIStorageMockUpgradeable is Initializable, ERC721URIStorageUpgradeable {
-    using ERC721URIStorageMockStorage for ERC721URIStorageMockStorage.Layout;
+    string private _baseTokenURI;
 
     function __ERC721URIStorageMock_init(string memory name, string memory symbol) internal onlyInitializing {
         __ERC721_init_unchained(name, symbol);
@@ -20,11 +19,11 @@ contract ERC721URIStorageMockUpgradeable is Initializable, ERC721URIStorageUpgra
     function __ERC721URIStorageMock_init_unchained(string memory, string memory) internal onlyInitializing {}
 
     function _baseURI() internal view override returns (string memory) {
-        return ERC721URIStorageMockStorage.layout()._baseTokenURI;
+        return _baseTokenURI;
     }
 
     function setBaseURI(string calldata newBaseTokenURI) public {
-        ERC721URIStorageMockStorage.layout()._baseTokenURI = newBaseTokenURI;
+        _baseTokenURI = newBaseTokenURI;
     }
 
     function baseURI() public view returns (string memory) {
@@ -58,4 +57,11 @@ contract ERC721URIStorageMockUpgradeable is Initializable, ERC721URIStorageUpgra
     function burn(uint256 tokenId) public {
         _burn(tokenId);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

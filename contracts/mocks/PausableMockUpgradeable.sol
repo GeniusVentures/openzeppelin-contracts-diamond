@@ -3,11 +3,11 @@
 pragma solidity ^0.8.0;
 
 import "../security/PausableUpgradeable.sol";
-import { PausableMockStorage } from "./PausableMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract PausableMockUpgradeable is Initializable, PausableUpgradeable {
-    using PausableMockStorage for PausableMockStorage.Layout;
+    bool public drasticMeasureTaken;
+    uint256 public count;
 
     function __PausableMock_init() internal onlyInitializing {
         __Pausable_init_unchained();
@@ -15,16 +15,16 @@ contract PausableMockUpgradeable is Initializable, PausableUpgradeable {
     }
 
     function __PausableMock_init_unchained() internal onlyInitializing {
-        PausableMockStorage.layout().drasticMeasureTaken = false;
-        PausableMockStorage.layout().count = 0;
+        drasticMeasureTaken = false;
+        count = 0;
     }
 
     function normalProcess() external whenNotPaused {
-        PausableMockStorage.layout().count++;
+        count++;
     }
 
     function drasticMeasure() external whenPaused {
-        PausableMockStorage.layout().drasticMeasureTaken = true;
+        drasticMeasureTaken = true;
     }
 
     function pause() external {
@@ -34,14 +34,11 @@ contract PausableMockUpgradeable is Initializable, PausableUpgradeable {
     function unpause() external {
         _unpause();
     }
-    // generated getter for ${varDecl.name}
-    function drasticMeasureTaken() public view returns(bool) {
-        return PausableMockStorage.layout().drasticMeasureTaken;
-    }
 
-    // generated getter for ${varDecl.name}
-    function count() public view returns(uint256) {
-        return PausableMockStorage.layout().count;
-    }
-
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[48] private __gap;
 }

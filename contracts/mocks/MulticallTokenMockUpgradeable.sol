@@ -13,4 +13,11 @@ contract MulticallTokenMockUpgradeable is Initializable, ERC20MockUpgradeable, M
     }
 
     function __MulticallTokenMock_init_unchained(uint256) internal onlyInitializing {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

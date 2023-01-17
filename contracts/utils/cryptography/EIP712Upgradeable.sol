@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "./ECDSAUpgradeable.sol";
-import { EIP712Storage } from "./EIP712Storage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -29,7 +28,9 @@ import "../../proxy/utils/Initializable.sol";
  * @custom:storage-size 52
  */
 abstract contract EIP712Upgradeable is Initializable {
-    using EIP712Storage for EIP712Storage.Layout;
+    /* solhint-disable var-name-mixedcase */
+    bytes32 private _HASHED_NAME;
+    bytes32 private _HASHED_VERSION;
     bytes32 private constant _TYPE_HASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
 
     /* solhint-enable var-name-mixedcase */
@@ -53,8 +54,8 @@ abstract contract EIP712Upgradeable is Initializable {
     function __EIP712_init_unchained(string memory name, string memory version) internal onlyInitializing {
         bytes32 hashedName = keccak256(bytes(name));
         bytes32 hashedVersion = keccak256(bytes(version));
-        EIP712Storage.layout()._HASHED_NAME = hashedName;
-        EIP712Storage.layout()._HASHED_VERSION = hashedVersion;
+        _HASHED_NAME = hashedName;
+        _HASHED_VERSION = hashedVersion;
     }
 
     /**
@@ -98,7 +99,7 @@ abstract contract EIP712Upgradeable is Initializable {
      * are a concern.
      */
     function _EIP712NameHash() internal virtual view returns (bytes32) {
-        return EIP712Storage.layout()._HASHED_NAME;
+        return _HASHED_NAME;
     }
 
     /**
@@ -108,6 +109,13 @@ abstract contract EIP712Upgradeable is Initializable {
      * are a concern.
      */
     function _EIP712VersionHash() internal virtual view returns (bytes32) {
-        return EIP712Storage.layout()._HASHED_VERSION;
+        return _HASHED_VERSION;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

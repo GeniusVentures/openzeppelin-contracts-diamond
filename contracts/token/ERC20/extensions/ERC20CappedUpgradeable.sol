@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "../ERC20Upgradeable.sol";
-import { ERC20CappedStorage } from "./ERC20CappedStorage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -13,7 +12,7 @@ import "../../../proxy/utils/Initializable.sol";
  * @custom:storage-size 51
  */
 abstract contract ERC20CappedUpgradeable is Initializable, ERC20Upgradeable {
-    using ERC20CappedStorage for ERC20CappedStorage.Layout;
+    uint256 private _cap;
 
     /**
      * @dev Sets the value of the `cap`. This value is immutable, it can only be
@@ -25,14 +24,14 @@ abstract contract ERC20CappedUpgradeable is Initializable, ERC20Upgradeable {
 
     function __ERC20Capped_init_unchained(uint256 cap_) internal onlyInitializing {
         require(cap_ > 0, "ERC20Capped: cap is 0");
-        ERC20CappedStorage.layout()._cap = cap_;
+        _cap = cap_;
     }
 
     /**
      * @dev Returns the cap on the token's total supply.
      */
     function cap() public view virtual returns (uint256) {
-        return ERC20CappedStorage.layout()._cap;
+        return _cap;
     }
 
     /**
@@ -42,4 +41,11 @@ abstract contract ERC20CappedUpgradeable is Initializable, ERC20Upgradeable {
         require(ERC20Upgradeable.totalSupply() + amount <= cap(), "ERC20Capped: cap exceeded");
         super._mint(account, amount);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

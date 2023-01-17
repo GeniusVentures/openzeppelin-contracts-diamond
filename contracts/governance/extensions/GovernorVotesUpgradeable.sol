@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "../GovernorUpgradeable.sol";
 import "../utils/IVotesUpgradeable.sol";
-import { GovernorVotesStorage } from "./GovernorVotesStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -16,14 +15,14 @@ import "../../proxy/utils/Initializable.sol";
  * @custom:storage-size 51
  */
 abstract contract GovernorVotesUpgradeable is Initializable, GovernorUpgradeable {
-    using GovernorVotesStorage for GovernorVotesStorage.Layout;
+    IVotesUpgradeable public token;
 
     function __GovernorVotes_init(IVotesUpgradeable tokenAddress) internal onlyInitializing {
         __GovernorVotes_init_unchained(tokenAddress);
     }
 
     function __GovernorVotes_init_unchained(IVotesUpgradeable tokenAddress) internal onlyInitializing {
-        GovernorVotesStorage.layout().token = tokenAddress;
+        token = tokenAddress;
     }
 
     /**
@@ -34,11 +33,13 @@ abstract contract GovernorVotesUpgradeable is Initializable, GovernorUpgradeable
         uint256 blockNumber,
         bytes memory /*params*/
     ) internal view virtual override returns (uint256) {
-        return GovernorVotesStorage.layout().token.getPastVotes(account, blockNumber);
-    }
-    // generated getter for ${varDecl.name}
-    function token() public view returns(IVotesUpgradeable) {
-        return GovernorVotesStorage.layout().token;
+        return token.getPastVotes(account, blockNumber);
     }
 
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

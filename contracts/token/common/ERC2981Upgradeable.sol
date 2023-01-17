@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "../../interfaces/IERC2981Upgradeable.sol";
 import "../../utils/introspection/ERC165Upgradeable.sol";
-import { ERC2981Storage } from "./ERC2981Storage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -24,7 +23,6 @@ import "../../proxy/utils/Initializable.sol";
  * _Available since v4.5._
  */
 abstract contract ERC2981Upgradeable is Initializable, IERC2981Upgradeable, ERC165Upgradeable {
-    using ERC2981Storage for ERC2981Storage.Layout;
     function __ERC2981_init() internal onlyInitializing {
     }
 
@@ -34,6 +32,9 @@ abstract contract ERC2981Upgradeable is Initializable, IERC2981Upgradeable, ERC1
         address receiver;
         uint96 royaltyFraction;
     }
+
+    RoyaltyInfo private _defaultRoyaltyInfo;
+    mapping(uint256 => RoyaltyInfo) private _tokenRoyaltyInfo;
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -46,10 +47,10 @@ abstract contract ERC2981Upgradeable is Initializable, IERC2981Upgradeable, ERC1
      * @inheritdoc IERC2981Upgradeable
      */
     function royaltyInfo(uint256 _tokenId, uint256 _salePrice) public view virtual override returns (address, uint256) {
-        RoyaltyInfo memory royalty = ERC2981Storage.layout()._tokenRoyaltyInfo[_tokenId];
+        RoyaltyInfo memory royalty = _tokenRoyaltyInfo[_tokenId];
 
         if (royalty.receiver == address(0)) {
-            royalty = ERC2981Storage.layout()._defaultRoyaltyInfo;
+            royalty = _defaultRoyaltyInfo;
         }
 
         uint256 royaltyAmount = (_salePrice * royalty.royaltyFraction) / _feeDenominator();
@@ -78,14 +79,14 @@ abstract contract ERC2981Upgradeable is Initializable, IERC2981Upgradeable, ERC1
         require(feeNumerator <= _feeDenominator(), "ERC2981: royalty fee will exceed salePrice");
         require(receiver != address(0), "ERC2981: invalid receiver");
 
-        ERC2981Storage.layout()._defaultRoyaltyInfo = RoyaltyInfo(receiver, feeNumerator);
+        _defaultRoyaltyInfo = RoyaltyInfo(receiver, feeNumerator);
     }
 
     /**
      * @dev Removes default royalty information.
      */
     function _deleteDefaultRoyalty() internal virtual {
-        delete ERC2981Storage.layout()._defaultRoyaltyInfo;
+        delete _defaultRoyaltyInfo;
     }
 
     /**
@@ -104,13 +105,20 @@ abstract contract ERC2981Upgradeable is Initializable, IERC2981Upgradeable, ERC1
         require(feeNumerator <= _feeDenominator(), "ERC2981: royalty fee will exceed salePrice");
         require(receiver != address(0), "ERC2981: Invalid parameters");
 
-        ERC2981Storage.layout()._tokenRoyaltyInfo[tokenId] = RoyaltyInfo(receiver, feeNumerator);
+        _tokenRoyaltyInfo[tokenId] = RoyaltyInfo(receiver, feeNumerator);
     }
 
     /**
      * @dev Resets royalty information for the token id back to the global default.
      */
     function _resetTokenRoyalty(uint256 tokenId) internal virtual {
-        delete ERC2981Storage.layout()._tokenRoyaltyInfo[tokenId];
+        delete _tokenRoyaltyInfo[tokenId];
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[48] private __gap;
 }

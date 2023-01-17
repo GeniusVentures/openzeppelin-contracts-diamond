@@ -10,7 +10,6 @@ import "../../utils/AddressUpgradeable.sol";
 import "../../utils/ContextUpgradeable.sol";
 import "../../utils/StringsUpgradeable.sol";
 import "../../utils/introspection/ERC165Upgradeable.sol";
-import { ERC721Storage } from "./ERC721Storage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -19,9 +18,26 @@ import "../../proxy/utils/Initializable.sol";
  * {ERC721Enumerable}.
  */
 contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeable, IERC721Upgradeable, IERC721MetadataUpgradeable {
-    using ERC721Storage for ERC721Storage.Layout;
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
+
+    // Token name
+    string private _name;
+
+    // Token symbol
+    string private _symbol;
+
+    // Mapping from token ID to owner address
+    mapping(uint256 => address) private _owners;
+
+    // Mapping owner address to token count
+    mapping(address => uint256) private _balances;
+
+    // Mapping from token ID to approved address
+    mapping(uint256 => address) private _tokenApprovals;
+
+    // Mapping from owner to operator approvals
+    mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
@@ -31,8 +47,8 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
     }
 
     function __ERC721_init_unchained(string memory name_, string memory symbol_) internal onlyInitializing {
-        ERC721Storage.layout()._name = name_;
-        ERC721Storage.layout()._symbol = symbol_;
+        _name = name_;
+        _symbol = symbol_;
     }
 
     /**
@@ -50,7 +66,7 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
      */
     function balanceOf(address owner) public view virtual override returns (uint256) {
         require(owner != address(0), "ERC721: address zero is not a valid owner");
-        return ERC721Storage.layout()._balances[owner];
+        return _balances[owner];
     }
 
     /**
@@ -66,14 +82,14 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
      * @dev See {IERC721Metadata-name}.
      */
     function name() public view virtual override returns (string memory) {
-        return ERC721Storage.layout()._name;
+        return _name;
     }
 
     /**
      * @dev See {IERC721Metadata-symbol}.
      */
     function symbol() public view virtual override returns (string memory) {
-        return ERC721Storage.layout()._symbol;
+        return _symbol;
     }
 
     /**
@@ -116,7 +132,7 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
     function getApproved(uint256 tokenId) public view virtual override returns (address) {
         _requireMinted(tokenId);
 
-        return ERC721Storage.layout()._tokenApprovals[tokenId];
+        return _tokenApprovals[tokenId];
     }
 
     /**
@@ -130,7 +146,7 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
      * @dev See {IERC721-isApprovedForAll}.
      */
     function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
-        return ERC721Storage.layout()._operatorApprovals[owner][operator];
+        return _operatorApprovals[owner][operator];
     }
 
     /**
@@ -203,7 +219,7 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
      * @dev Returns the owner of the `tokenId`. Does NOT revert if token doesn't exist
      */
     function _ownerOf(uint256 tokenId) internal view virtual returns (address) {
-        return ERC721Storage.layout()._owners[tokenId];
+        return _owners[tokenId];
     }
 
     /**
@@ -286,10 +302,10 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
             // Given that tokens are minted one by one, it is impossible in practice that
             // this ever happens. Might change if we allow batch minting.
             // The ERC fails to describe this case.
-            ERC721Storage.layout()._balances[to] += 1;
+            _balances[to] += 1;
         }
 
-        ERC721Storage.layout()._owners[tokenId] = to;
+        _owners[tokenId] = to;
 
         emit Transfer(address(0), to, tokenId);
 
@@ -316,14 +332,14 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
         owner = ERC721Upgradeable.ownerOf(tokenId);
 
         // Clear approvals
-        delete ERC721Storage.layout()._tokenApprovals[tokenId];
+        delete _tokenApprovals[tokenId];
 
         unchecked {
             // Cannot overflow, as that would require more tokens to be burned/transferred
             // out than the owner initially received through minting and transferring in.
-            ERC721Storage.layout()._balances[owner] -= 1;
+            _balances[owner] -= 1;
         }
-        delete ERC721Storage.layout()._owners[tokenId];
+        delete _owners[tokenId];
 
         emit Transfer(owner, address(0), tokenId);
 
@@ -355,7 +371,7 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
         require(ERC721Upgradeable.ownerOf(tokenId) == from, "ERC721: transfer from incorrect owner");
 
         // Clear approvals from the previous owner
-        delete ERC721Storage.layout()._tokenApprovals[tokenId];
+        delete _tokenApprovals[tokenId];
 
         unchecked {
             // `_balances[from]` cannot overflow for the same reason as described in `_burn`:
@@ -363,10 +379,10 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
             // transfer.
             // `_balances[to]` could overflow in the conditions described in `_mint`. That would require
             // all 2**256 token ids to be minted, which in practice is impossible.
-            ERC721Storage.layout()._balances[from] -= 1;
-            ERC721Storage.layout()._balances[to] += 1;
+            _balances[from] -= 1;
+            _balances[to] += 1;
         }
-        ERC721Storage.layout()._owners[tokenId] = to;
+        _owners[tokenId] = to;
 
         emit Transfer(from, to, tokenId);
 
@@ -379,7 +395,7 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
      * Emits an {Approval} event.
      */
     function _approve(address to, uint256 tokenId) internal virtual {
-        ERC721Storage.layout()._tokenApprovals[tokenId] = to;
+        _tokenApprovals[tokenId] = to;
         emit Approval(ERC721Upgradeable.ownerOf(tokenId), to, tokenId);
     }
 
@@ -394,7 +410,7 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
         bool approved
     ) internal virtual {
         require(owner != operator, "ERC721: approve to caller");
-        ERC721Storage.layout()._operatorApprovals[owner][operator] = approved;
+        _operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);
     }
 
@@ -461,10 +477,10 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
     ) internal virtual {
         if (batchSize > 1) {
             if (from != address(0)) {
-                ERC721Storage.layout()._balances[from] -= batchSize;
+                _balances[from] -= batchSize;
             }
             if (to != address(0)) {
-                ERC721Storage.layout()._balances[to] += batchSize;
+                _balances[to] += batchSize;
             }
         }
     }
@@ -489,4 +505,11 @@ contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeab
         uint256 firstTokenId,
         uint256 batchSize
     ) internal virtual {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[44] private __gap;
 }

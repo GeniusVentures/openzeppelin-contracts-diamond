@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "../GovernorUpgradeable.sol";
-import { GovernorCountingSimpleStorage } from "./GovernorCountingSimpleStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -13,7 +12,6 @@ import "../../proxy/utils/Initializable.sol";
  * _Available since v4.3._
  */
 abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUpgradeable {
-    using GovernorCountingSimpleStorage for GovernorCountingSimpleStorage.Layout;
     function __GovernorCountingSimple_init() internal onlyInitializing {
     }
 
@@ -35,6 +33,8 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
         mapping(address => bool) hasVoted;
     }
 
+    mapping(uint256 => ProposalVote) private _proposalVotes;
+
     /**
      * @dev See {IGovernor-COUNTING_MODE}.
      */
@@ -47,7 +47,7 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
      * @dev See {IGovernor-hasVoted}.
      */
     function hasVoted(uint256 proposalId, address account) public view virtual override returns (bool) {
-        return GovernorCountingSimpleStorage.layout()._proposalVotes[proposalId].hasVoted[account];
+        return _proposalVotes[proposalId].hasVoted[account];
     }
 
     /**
@@ -63,7 +63,7 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
             uint256 abstainVotes
         )
     {
-        ProposalVote storage proposalVote = GovernorCountingSimpleStorage.layout()._proposalVotes[proposalId];
+        ProposalVote storage proposalVote = _proposalVotes[proposalId];
         return (proposalVote.againstVotes, proposalVote.forVotes, proposalVote.abstainVotes);
     }
 
@@ -71,7 +71,7 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
      * @dev See {Governor-_quorumReached}.
      */
     function _quorumReached(uint256 proposalId) internal view virtual override returns (bool) {
-        ProposalVote storage proposalVote = GovernorCountingSimpleStorage.layout()._proposalVotes[proposalId];
+        ProposalVote storage proposalVote = _proposalVotes[proposalId];
 
         return quorum(proposalSnapshot(proposalId)) <= proposalVote.forVotes + proposalVote.abstainVotes;
     }
@@ -80,7 +80,7 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
      * @dev See {Governor-_voteSucceeded}. In this module, the forVotes must be strictly over the againstVotes.
      */
     function _voteSucceeded(uint256 proposalId) internal view virtual override returns (bool) {
-        ProposalVote storage proposalVote = GovernorCountingSimpleStorage.layout()._proposalVotes[proposalId];
+        ProposalVote storage proposalVote = _proposalVotes[proposalId];
 
         return proposalVote.forVotes > proposalVote.againstVotes;
     }
@@ -95,7 +95,7 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
         uint256 weight,
         bytes memory // params
     ) internal virtual override {
-        ProposalVote storage proposalVote = GovernorCountingSimpleStorage.layout()._proposalVotes[proposalId];
+        ProposalVote storage proposalVote = _proposalVotes[proposalId];
 
         require(!proposalVote.hasVoted[account], "GovernorVotingSimple: vote already cast");
         proposalVote.hasVoted[account] = true;
@@ -110,4 +110,11 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
             revert("GovernorVotingSimple: invalid value for enum VoteType");
         }
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

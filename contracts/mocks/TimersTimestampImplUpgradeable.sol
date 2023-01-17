@@ -3,11 +3,9 @@
 pragma solidity ^0.8.0;
 
 import "../utils/TimersUpgradeable.sol";
-import { TimersTimestampImplStorage } from "./TimersTimestampImplStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract TimersTimestampImplUpgradeable is Initializable {
-    using TimersTimestampImplStorage for TimersTimestampImplStorage.Layout;
     function __TimersTimestampImpl_init() internal onlyInitializing {
     }
 
@@ -15,31 +13,40 @@ contract TimersTimestampImplUpgradeable is Initializable {
     }
     using TimersUpgradeable for TimersUpgradeable.Timestamp;
 
+    TimersUpgradeable.Timestamp private _timer;
+
     function getDeadline() public view returns (uint64) {
-        return TimersTimestampImplStorage.layout()._timer.getDeadline();
+        return _timer.getDeadline();
     }
 
     function setDeadline(uint64 timestamp) public {
-        TimersTimestampImplStorage.layout()._timer.setDeadline(timestamp);
+        _timer.setDeadline(timestamp);
     }
 
     function reset() public {
-        TimersTimestampImplStorage.layout()._timer.reset();
+        _timer.reset();
     }
 
     function isUnset() public view returns (bool) {
-        return TimersTimestampImplStorage.layout()._timer.isUnset();
+        return _timer.isUnset();
     }
 
     function isStarted() public view returns (bool) {
-        return TimersTimestampImplStorage.layout()._timer.isStarted();
+        return _timer.isStarted();
     }
 
     function isPending() public view returns (bool) {
-        return TimersTimestampImplStorage.layout()._timer.isPending();
+        return _timer.isPending();
     }
 
     function isExpired() public view returns (bool) {
-        return TimersTimestampImplStorage.layout()._timer.isExpired();
+        return _timer.isExpired();
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

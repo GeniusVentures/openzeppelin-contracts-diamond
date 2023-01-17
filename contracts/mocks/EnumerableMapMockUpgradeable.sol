@@ -4,12 +4,10 @@
 pragma solidity ^0.8.0;
 
 import "../utils/structs/EnumerableMapUpgradeable.sol";
-import { UintToAddressMapMockStorage, AddressToUintMapMockStorage, Bytes32ToBytes32MapMockStorage, UintToUintMapMockStorage, Bytes32ToUintMapMockStorage } from "./EnumerableMapMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 // UintToAddressMap
 contract UintToAddressMapMockUpgradeable is Initializable {
-    using UintToAddressMapMockStorage for UintToAddressMapMockStorage.Layout;
     function __UintToAddressMapMock_init() internal onlyInitializing {
     }
 
@@ -19,44 +17,52 @@ contract UintToAddressMapMockUpgradeable is Initializable {
 
     event OperationResult(bool result);
 
+    EnumerableMapUpgradeable.UintToAddressMap private _map;
+
     function contains(uint256 key) public view returns (bool) {
-        return UintToAddressMapMockStorage.layout()._map.contains(key);
+        return _map.contains(key);
     }
 
     function set(uint256 key, address value) public {
-        bool result = UintToAddressMapMockStorage.layout()._map.set(key, value);
+        bool result = _map.set(key, value);
         emit OperationResult(result);
     }
 
     function remove(uint256 key) public {
-        bool result = UintToAddressMapMockStorage.layout()._map.remove(key);
+        bool result = _map.remove(key);
         emit OperationResult(result);
     }
 
     function length() public view returns (uint256) {
-        return UintToAddressMapMockStorage.layout()._map.length();
+        return _map.length();
     }
 
     function at(uint256 index) public view returns (uint256 key, address value) {
-        return UintToAddressMapMockStorage.layout()._map.at(index);
+        return _map.at(index);
     }
 
     function tryGet(uint256 key) public view returns (bool, address) {
-        return UintToAddressMapMockStorage.layout()._map.tryGet(key);
+        return _map.tryGet(key);
     }
 
     function get(uint256 key) public view returns (address) {
-        return UintToAddressMapMockStorage.layout()._map.get(key);
+        return _map.get(key);
     }
 
     function getWithMessage(uint256 key, string calldata errorMessage) public view returns (address) {
-        return UintToAddressMapMockStorage.layout()._map.get(key, errorMessage);
+        return _map.get(key, errorMessage);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[47] private __gap;
 }
 
 // AddressToUintMap
 contract AddressToUintMapMockUpgradeable is Initializable {
-    using AddressToUintMapMockStorage for AddressToUintMapMockStorage.Layout;
     function __AddressToUintMapMock_init() internal onlyInitializing {
     }
 
@@ -66,44 +72,52 @@ contract AddressToUintMapMockUpgradeable is Initializable {
 
     event OperationResult(bool result);
 
+    EnumerableMapUpgradeable.AddressToUintMap private _map;
+
     function contains(address key) public view returns (bool) {
-        return AddressToUintMapMockStorage.layout()._map.contains(key);
+        return _map.contains(key);
     }
 
     function set(address key, uint256 value) public {
-        bool result = AddressToUintMapMockStorage.layout()._map.set(key, value);
+        bool result = _map.set(key, value);
         emit OperationResult(result);
     }
 
     function remove(address key) public {
-        bool result = AddressToUintMapMockStorage.layout()._map.remove(key);
+        bool result = _map.remove(key);
         emit OperationResult(result);
     }
 
     function length() public view returns (uint256) {
-        return AddressToUintMapMockStorage.layout()._map.length();
+        return _map.length();
     }
 
     function at(uint256 index) public view returns (address key, uint256 value) {
-        return AddressToUintMapMockStorage.layout()._map.at(index);
+        return _map.at(index);
     }
 
     function tryGet(address key) public view returns (bool, uint256) {
-        return AddressToUintMapMockStorage.layout()._map.tryGet(key);
+        return _map.tryGet(key);
     }
 
     function get(address key) public view returns (uint256) {
-        return AddressToUintMapMockStorage.layout()._map.get(key);
+        return _map.get(key);
     }
 
     function getWithMessage(address key, string calldata errorMessage) public view returns (uint256) {
-        return AddressToUintMapMockStorage.layout()._map.get(key, errorMessage);
+        return _map.get(key, errorMessage);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[47] private __gap;
 }
 
 // Bytes32ToBytes32Map
 contract Bytes32ToBytes32MapMockUpgradeable is Initializable {
-    using Bytes32ToBytes32MapMockStorage for Bytes32ToBytes32MapMockStorage.Layout;
     function __Bytes32ToBytes32MapMock_init() internal onlyInitializing {
     }
 
@@ -113,44 +127,52 @@ contract Bytes32ToBytes32MapMockUpgradeable is Initializable {
 
     event OperationResult(bool result);
 
+    EnumerableMapUpgradeable.Bytes32ToBytes32Map private _map;
+
     function contains(bytes32 key) public view returns (bool) {
-        return Bytes32ToBytes32MapMockStorage.layout()._map.contains(key);
+        return _map.contains(key);
     }
 
     function set(bytes32 key, bytes32 value) public {
-        bool result = Bytes32ToBytes32MapMockStorage.layout()._map.set(key, value);
+        bool result = _map.set(key, value);
         emit OperationResult(result);
     }
 
     function remove(bytes32 key) public {
-        bool result = Bytes32ToBytes32MapMockStorage.layout()._map.remove(key);
+        bool result = _map.remove(key);
         emit OperationResult(result);
     }
 
     function length() public view returns (uint256) {
-        return Bytes32ToBytes32MapMockStorage.layout()._map.length();
+        return _map.length();
     }
 
     function at(uint256 index) public view returns (bytes32 key, bytes32 value) {
-        return Bytes32ToBytes32MapMockStorage.layout()._map.at(index);
+        return _map.at(index);
     }
 
     function tryGet(bytes32 key) public view returns (bool, bytes32) {
-        return Bytes32ToBytes32MapMockStorage.layout()._map.tryGet(key);
+        return _map.tryGet(key);
     }
 
     function get(bytes32 key) public view returns (bytes32) {
-        return Bytes32ToBytes32MapMockStorage.layout()._map.get(key);
+        return _map.get(key);
     }
 
     function getWithMessage(bytes32 key, string calldata errorMessage) public view returns (bytes32) {
-        return Bytes32ToBytes32MapMockStorage.layout()._map.get(key, errorMessage);
+        return _map.get(key, errorMessage);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[47] private __gap;
 }
 
 // UintToUintMap
 contract UintToUintMapMockUpgradeable is Initializable {
-    using UintToUintMapMockStorage for UintToUintMapMockStorage.Layout;
     function __UintToUintMapMock_init() internal onlyInitializing {
     }
 
@@ -160,44 +182,52 @@ contract UintToUintMapMockUpgradeable is Initializable {
 
     event OperationResult(bool result);
 
+    EnumerableMapUpgradeable.UintToUintMap private _map;
+
     function contains(uint256 key) public view returns (bool) {
-        return UintToUintMapMockStorage.layout()._map.contains(key);
+        return _map.contains(key);
     }
 
     function set(uint256 key, uint256 value) public {
-        bool result = UintToUintMapMockStorage.layout()._map.set(key, value);
+        bool result = _map.set(key, value);
         emit OperationResult(result);
     }
 
     function remove(uint256 key) public {
-        bool result = UintToUintMapMockStorage.layout()._map.remove(key);
+        bool result = _map.remove(key);
         emit OperationResult(result);
     }
 
     function length() public view returns (uint256) {
-        return UintToUintMapMockStorage.layout()._map.length();
+        return _map.length();
     }
 
     function at(uint256 index) public view returns (uint256 key, uint256 value) {
-        return UintToUintMapMockStorage.layout()._map.at(index);
+        return _map.at(index);
     }
 
     function tryGet(uint256 key) public view returns (bool, uint256) {
-        return UintToUintMapMockStorage.layout()._map.tryGet(key);
+        return _map.tryGet(key);
     }
 
     function get(uint256 key) public view returns (uint256) {
-        return UintToUintMapMockStorage.layout()._map.get(key);
+        return _map.get(key);
     }
 
     function getWithMessage(uint256 key, string calldata errorMessage) public view returns (uint256) {
-        return UintToUintMapMockStorage.layout()._map.get(key, errorMessage);
+        return _map.get(key, errorMessage);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[47] private __gap;
 }
 
 // Bytes32ToUintMap
 contract Bytes32ToUintMapMockUpgradeable is Initializable {
-    using Bytes32ToUintMapMockStorage for Bytes32ToUintMapMockStorage.Layout;
     function __Bytes32ToUintMapMock_init() internal onlyInitializing {
     }
 
@@ -207,37 +237,46 @@ contract Bytes32ToUintMapMockUpgradeable is Initializable {
 
     event OperationResult(bool result);
 
+    EnumerableMapUpgradeable.Bytes32ToUintMap private _map;
+
     function contains(bytes32 key) public view returns (bool) {
-        return Bytes32ToUintMapMockStorage.layout()._map.contains(key);
+        return _map.contains(key);
     }
 
     function set(bytes32 key, uint256 value) public {
-        bool result = Bytes32ToUintMapMockStorage.layout()._map.set(key, value);
+        bool result = _map.set(key, value);
         emit OperationResult(result);
     }
 
     function remove(bytes32 key) public {
-        bool result = Bytes32ToUintMapMockStorage.layout()._map.remove(key);
+        bool result = _map.remove(key);
         emit OperationResult(result);
     }
 
     function length() public view returns (uint256) {
-        return Bytes32ToUintMapMockStorage.layout()._map.length();
+        return _map.length();
     }
 
     function at(uint256 index) public view returns (bytes32 key, uint256 value) {
-        return Bytes32ToUintMapMockStorage.layout()._map.at(index);
+        return _map.at(index);
     }
 
     function tryGet(bytes32 key) public view returns (bool, uint256) {
-        return Bytes32ToUintMapMockStorage.layout()._map.tryGet(key);
+        return _map.tryGet(key);
     }
 
     function get(bytes32 key) public view returns (uint256) {
-        return Bytes32ToUintMapMockStorage.layout()._map.get(key);
+        return _map.get(key);
     }
 
     function getWithMessage(bytes32 key, string calldata errorMessage) public view returns (uint256) {
-        return Bytes32ToUintMapMockStorage.layout()._map.get(key, errorMessage);
+        return _map.get(key, errorMessage);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[47] private __gap;
 }

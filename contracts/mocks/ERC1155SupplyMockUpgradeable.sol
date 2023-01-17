@@ -24,4 +24,11 @@ contract ERC1155SupplyMockUpgradeable is Initializable, ERC1155MockUpgradeable, 
     ) internal override(ERC1155Upgradeable, ERC1155SupplyUpgradeable) {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "../utils/escrow/EscrowUpgradeable.sol";
-import { PullPaymentStorage } from "./PullPaymentStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -28,15 +27,15 @@ import "../proxy/utils/Initializable.sol";
  * @custom:storage-size 51
  */
 abstract contract PullPaymentUpgradeable is Initializable {
-    using PullPaymentStorage for PullPaymentStorage.Layout;
+    EscrowUpgradeable private _escrow;
 
     function __PullPayment_init() internal onlyInitializing {
         __PullPayment_init_unchained();
     }
 
     function __PullPayment_init_unchained() internal onlyInitializing {
-        PullPaymentStorage.layout()._escrow = new EscrowUpgradeable();
-        PullPaymentStorage.layout()._escrow.initialize();
+        _escrow = new EscrowUpgradeable();
+        _escrow.initialize();
     }
 
     /**
@@ -56,7 +55,7 @@ abstract contract PullPaymentUpgradeable is Initializable {
      * Causes the `escrow` to emit a {Withdrawn} event.
      */
     function withdrawPayments(address payable payee) public virtual {
-        PullPaymentStorage.layout()._escrow.withdraw(payee);
+        _escrow.withdraw(payee);
     }
 
     /**
@@ -64,7 +63,7 @@ abstract contract PullPaymentUpgradeable is Initializable {
      * @param dest The creditor's address.
      */
     function payments(address dest) public view returns (uint256) {
-        return PullPaymentStorage.layout()._escrow.depositsOf(dest);
+        return _escrow.depositsOf(dest);
     }
 
     /**
@@ -78,6 +77,13 @@ abstract contract PullPaymentUpgradeable is Initializable {
      * Causes the `escrow` to emit a {Deposited} event.
      */
     function _asyncTransfer(address dest, uint256 amount) internal virtual {
-        PullPaymentStorage.layout()._escrow.deposit{value: amount}(dest);
+        _escrow.deposit{value: amount}(dest);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

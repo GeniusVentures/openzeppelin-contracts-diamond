@@ -3,11 +3,9 @@
 pragma solidity ^0.8.0;
 
 import "../utils/CountersUpgradeable.sol";
-import { CountersImplStorage } from "./CountersImplStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract CountersImplUpgradeable is Initializable {
-    using CountersImplStorage for CountersImplStorage.Layout;
     function __CountersImpl_init() internal onlyInitializing {
     }
 
@@ -15,19 +13,28 @@ contract CountersImplUpgradeable is Initializable {
     }
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
+    CountersUpgradeable.Counter private _counter;
+
     function current() public view returns (uint256) {
-        return CountersImplStorage.layout()._counter.current();
+        return _counter.current();
     }
 
     function increment() public {
-        CountersImplStorage.layout()._counter.increment();
+        _counter.increment();
     }
 
     function decrement() public {
-        CountersImplStorage.layout()._counter.decrement();
+        _counter.decrement();
     }
 
     function reset() public {
-        CountersImplStorage.layout()._counter.reset();
+        _counter.reset();
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

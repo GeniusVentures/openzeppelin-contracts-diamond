@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "./SafeERC20Upgradeable.sol";
-import { TokenTimelockStorage } from "./TokenTimelockStorage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -17,8 +16,16 @@ import "../../../proxy/utils/Initializable.sol";
  * @custom:storage-size 53
  */
 contract TokenTimelockUpgradeable is Initializable {
-    using TokenTimelockStorage for TokenTimelockStorage.Layout;
     using SafeERC20Upgradeable for IERC20Upgradeable;
+
+    // ERC20 basic token contract being held
+    IERC20Upgradeable private _token;
+
+    // beneficiary of tokens after they are released
+    address private _beneficiary;
+
+    // timestamp when token release is enabled
+    uint256 private _releaseTime;
 
     /**
      * @dev Deploys a timelock instance that is able to hold the token specified, and will only release it to
@@ -39,30 +46,30 @@ contract TokenTimelockUpgradeable is Initializable {
         uint256 releaseTime_
     ) internal onlyInitializing {
         require(releaseTime_ > block.timestamp, "TokenTimelock: release time is before current time");
-        TokenTimelockStorage.layout()._token = token_;
-        TokenTimelockStorage.layout()._beneficiary = beneficiary_;
-        TokenTimelockStorage.layout()._releaseTime = releaseTime_;
+        _token = token_;
+        _beneficiary = beneficiary_;
+        _releaseTime = releaseTime_;
     }
 
     /**
      * @dev Returns the token being held.
      */
     function token() public view virtual returns (IERC20Upgradeable) {
-        return TokenTimelockStorage.layout()._token;
+        return _token;
     }
 
     /**
      * @dev Returns the beneficiary that will receive the tokens.
      */
     function beneficiary() public view virtual returns (address) {
-        return TokenTimelockStorage.layout()._beneficiary;
+        return _beneficiary;
     }
 
     /**
      * @dev Returns the time when the tokens are released in seconds since Unix epoch (i.e. Unix timestamp).
      */
     function releaseTime() public view virtual returns (uint256) {
-        return TokenTimelockStorage.layout()._releaseTime;
+        return _releaseTime;
     }
 
     /**
@@ -77,4 +84,11 @@ contract TokenTimelockUpgradeable is Initializable {
 
         token().safeTransfer(beneficiary(), amount);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

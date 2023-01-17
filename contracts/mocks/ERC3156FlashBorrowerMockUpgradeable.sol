@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 import "../token/ERC20/IERC20Upgradeable.sol";
 import "../interfaces/IERC3156Upgradeable.sol";
 import "../utils/AddressUpgradeable.sol";
-import { ERC3156FlashBorrowerMockStorage } from "./ERC3156FlashBorrowerMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -16,8 +15,10 @@ import "../proxy/utils/Initializable.sol";
  * live networks.
  */
 contract ERC3156FlashBorrowerMockUpgradeable is Initializable, IERC3156FlashBorrowerUpgradeable {
-    using ERC3156FlashBorrowerMockStorage for ERC3156FlashBorrowerMockStorage.Layout;
     bytes32 internal constant _RETURN_VALUE = keccak256("ERC3156FlashBorrower.onFlashLoan");
+
+    bool _enableApprove;
+    bool _enableReturn;
 
     event BalanceOf(address token, address account, uint256 value);
     event TotalSupply(address token, uint256 value);
@@ -27,8 +28,8 @@ contract ERC3156FlashBorrowerMockUpgradeable is Initializable, IERC3156FlashBorr
     }
 
     function __ERC3156FlashBorrowerMock_init_unchained(bool enableReturn, bool enableApprove) internal onlyInitializing {
-        ERC3156FlashBorrowerMockStorage.layout()._enableApprove = enableApprove;
-        ERC3156FlashBorrowerMockStorage.layout()._enableReturn = enableReturn;
+        _enableApprove = enableApprove;
+        _enableReturn = enableReturn;
     }
 
     function onFlashLoan(
@@ -48,10 +49,17 @@ contract ERC3156FlashBorrowerMockUpgradeable is Initializable, IERC3156FlashBorr
             AddressUpgradeable.functionCall(token, data);
         }
 
-        if (ERC3156FlashBorrowerMockStorage.layout()._enableApprove) {
+        if (_enableApprove) {
             IERC20Upgradeable(token).approve(token, amount + fee);
         }
 
-        return ERC3156FlashBorrowerMockStorage.layout()._enableReturn ? _RETURN_VALUE : bytes32(0);
+        return _enableReturn ? _RETURN_VALUE : bytes32(0);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

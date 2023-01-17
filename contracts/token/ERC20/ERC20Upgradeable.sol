@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 import "./IERC20Upgradeable.sol";
 import "./extensions/IERC20MetadataUpgradeable.sol";
 import "../../utils/ContextUpgradeable.sol";
-import { ERC20Storage } from "./ERC20Storage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -35,7 +34,14 @@ import "../../proxy/utils/Initializable.sol";
  * allowances. See {IERC20-approve}.
  */
 contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeable, IERC20MetadataUpgradeable {
-    using ERC20Storage for ERC20Storage.Layout;
+    mapping(address => uint256) private _balances;
+
+    mapping(address => mapping(address => uint256)) private _allowances;
+
+    uint256 private _totalSupply;
+
+    string private _name;
+    string private _symbol;
 
     /**
      * @dev Sets the values for {name} and {symbol}.
@@ -51,15 +57,15 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
     }
 
     function __ERC20_init_unchained(string memory name_, string memory symbol_) internal onlyInitializing {
-        ERC20Storage.layout()._name = name_;
-        ERC20Storage.layout()._symbol = symbol_;
+        _name = name_;
+        _symbol = symbol_;
     }
 
     /**
      * @dev Returns the name of the token.
      */
     function name() public view virtual override returns (string memory) {
-        return ERC20Storage.layout()._name;
+        return _name;
     }
 
     /**
@@ -67,7 +73,7 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
      * name.
      */
     function symbol() public view virtual override returns (string memory) {
-        return ERC20Storage.layout()._symbol;
+        return _symbol;
     }
 
     /**
@@ -91,14 +97,14 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
      * @dev See {IERC20-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {
-        return ERC20Storage.layout()._totalSupply;
+        return _totalSupply;
     }
 
     /**
      * @dev See {IERC20-balanceOf}.
      */
     function balanceOf(address account) public view virtual override returns (uint256) {
-        return ERC20Storage.layout()._balances[account];
+        return _balances[account];
     }
 
     /**
@@ -119,7 +125,7 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
      * @dev See {IERC20-allowance}.
      */
     function allowance(address owner, address spender) public view virtual override returns (uint256) {
-        return ERC20Storage.layout()._allowances[owner][spender];
+        return _allowances[owner][spender];
     }
 
     /**
@@ -232,13 +238,13 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
 
         _beforeTokenTransfer(from, to, amount);
 
-        uint256 fromBalance = ERC20Storage.layout()._balances[from];
+        uint256 fromBalance = _balances[from];
         require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
         unchecked {
-            ERC20Storage.layout()._balances[from] = fromBalance - amount;
+            _balances[from] = fromBalance - amount;
             // Overflow not possible: the sum of all balances is capped by totalSupply, and the sum is preserved by
             // decrementing then incrementing.
-            ERC20Storage.layout()._balances[to] += amount;
+            _balances[to] += amount;
         }
 
         emit Transfer(from, to, amount);
@@ -260,10 +266,10 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
 
         _beforeTokenTransfer(address(0), account, amount);
 
-        ERC20Storage.layout()._totalSupply += amount;
+        _totalSupply += amount;
         unchecked {
             // Overflow not possible: balance + amount is at most totalSupply + amount, which is checked above.
-            ERC20Storage.layout()._balances[account] += amount;
+            _balances[account] += amount;
         }
         emit Transfer(address(0), account, amount);
 
@@ -286,12 +292,12 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
 
         _beforeTokenTransfer(account, address(0), amount);
 
-        uint256 accountBalance = ERC20Storage.layout()._balances[account];
+        uint256 accountBalance = _balances[account];
         require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
         unchecked {
-            ERC20Storage.layout()._balances[account] = accountBalance - amount;
+            _balances[account] = accountBalance - amount;
             // Overflow not possible: amount <= accountBalance <= totalSupply.
-            ERC20Storage.layout()._totalSupply -= amount;
+            _totalSupply -= amount;
         }
 
         emit Transfer(account, address(0), amount);
@@ -320,7 +326,7 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
         require(owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
 
-        ERC20Storage.layout()._allowances[owner][spender] = amount;
+        _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
 
@@ -385,4 +391,11 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
         address to,
         uint256 amount
     ) internal virtual {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[45] private __gap;
 }

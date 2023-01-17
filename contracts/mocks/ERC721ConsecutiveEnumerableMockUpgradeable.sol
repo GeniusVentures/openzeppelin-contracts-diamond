@@ -63,4 +63,11 @@ contract ERC721ConsecutiveEnumerableMockUpgradeable is Initializable, ERC721Cons
     ) internal virtual override(ERC721Upgradeable, ERC721ConsecutiveUpgradeable) {
         super._afterTokenTransfer(from, to, firstTokenId, batchSize);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

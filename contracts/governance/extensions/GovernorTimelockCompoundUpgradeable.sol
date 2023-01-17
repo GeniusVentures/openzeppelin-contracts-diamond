@@ -7,7 +7,6 @@ import "./IGovernorTimelockUpgradeable.sol";
 import "../GovernorUpgradeable.sol";
 import "../../utils/math/SafeCastUpgradeable.sol";
 import "../../vendor/compound/ICompoundTimelockUpgradeable.sol";
-import { GovernorTimelockCompoundStorage } from "./GovernorTimelockCompoundStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -23,13 +22,16 @@ import "../../proxy/utils/Initializable.sol";
  * _Available since v4.3._
  */
 abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGovernorTimelockUpgradeable, GovernorUpgradeable {
-    using GovernorTimelockCompoundStorage for GovernorTimelockCompoundStorage.Layout;
     using SafeCastUpgradeable for uint256;
     using TimersUpgradeable for TimersUpgradeable.Timestamp;
 
     struct ProposalTimelock {
         TimersUpgradeable.Timestamp timer;
     }
+
+    ICompoundTimelockUpgradeable private _timelock;
+
+    mapping(uint256 => ProposalTimelock) private _proposalTimelocks;
 
     /**
      * @dev Emitted when the timelock controller used for proposal execution is modified.
@@ -67,7 +69,7 @@ abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGoverno
         uint256 eta = proposalEta(proposalId);
         if (eta == 0) {
             return status;
-        } else if (block.timestamp >= eta + GovernorTimelockCompoundStorage.layout()._timelock.GRACE_PERIOD()) {
+        } else if (block.timestamp >= eta + _timelock.GRACE_PERIOD()) {
             return ProposalState.Expired;
         } else {
             return ProposalState.Queued;
@@ -78,14 +80,14 @@ abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGoverno
      * @dev Public accessor to check the address of the timelock
      */
     function timelock() public view virtual override returns (address) {
-        return address(GovernorTimelockCompoundStorage.layout()._timelock);
+        return address(_timelock);
     }
 
     /**
      * @dev Public accessor to check the eta of a queued proposal
      */
     function proposalEta(uint256 proposalId) public view virtual override returns (uint256) {
-        return GovernorTimelockCompoundStorage.layout()._proposalTimelocks[proposalId].timer.getDeadline();
+        return _proposalTimelocks[proposalId].timer.getDeadline();
     }
 
     /**
@@ -101,14 +103,14 @@ abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGoverno
 
         require(state(proposalId) == ProposalState.Succeeded, "Governor: proposal not successful");
 
-        uint256 eta = block.timestamp + GovernorTimelockCompoundStorage.layout()._timelock.delay();
-        GovernorTimelockCompoundStorage.layout()._proposalTimelocks[proposalId].timer.setDeadline(eta.toUint64());
+        uint256 eta = block.timestamp + _timelock.delay();
+        _proposalTimelocks[proposalId].timer.setDeadline(eta.toUint64());
         for (uint256 i = 0; i < targets.length; ++i) {
             require(
-                !GovernorTimelockCompoundStorage.layout()._timelock.queuedTransactions(keccak256(abi.encode(targets[i], values[i], "", calldatas[i], eta))),
+                !_timelock.queuedTransactions(keccak256(abi.encode(targets[i], values[i], "", calldatas[i], eta))),
                 "GovernorTimelockCompound: identical proposal action already queued"
             );
-            GovernorTimelockCompoundStorage.layout()._timelock.queueTransaction(targets[i], values[i], "", calldatas[i], eta);
+            _timelock.queueTransaction(targets[i], values[i], "", calldatas[i], eta);
         }
 
         emit ProposalQueued(proposalId, eta);
@@ -128,9 +130,9 @@ abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGoverno
     ) internal virtual override {
         uint256 eta = proposalEta(proposalId);
         require(eta > 0, "GovernorTimelockCompound: proposal not yet queued");
-        AddressUpgradeable.sendValue(payable(GovernorTimelockCompoundStorage.layout()._timelock), msg.value);
+        AddressUpgradeable.sendValue(payable(_timelock), msg.value);
         for (uint256 i = 0; i < targets.length; ++i) {
-            GovernorTimelockCompoundStorage.layout()._timelock.executeTransaction(targets[i], values[i], "", calldatas[i], eta);
+            _timelock.executeTransaction(targets[i], values[i], "", calldatas[i], eta);
         }
     }
 
@@ -149,9 +151,9 @@ abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGoverno
         uint256 eta = proposalEta(proposalId);
         if (eta > 0) {
             for (uint256 i = 0; i < targets.length; ++i) {
-                GovernorTimelockCompoundStorage.layout()._timelock.cancelTransaction(targets[i], values[i], "", calldatas[i], eta);
+                _timelock.cancelTransaction(targets[i], values[i], "", calldatas[i], eta);
             }
-            GovernorTimelockCompoundStorage.layout()._proposalTimelocks[proposalId].timer.reset();
+            _proposalTimelocks[proposalId].timer.reset();
         }
 
         return proposalId;
@@ -161,7 +163,7 @@ abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGoverno
      * @dev Address through which the governor executes action. In this case, the timelock.
      */
     function _executor() internal view virtual override returns (address) {
-        return address(GovernorTimelockCompoundStorage.layout()._timelock);
+        return address(_timelock);
     }
 
     /**
@@ -169,7 +171,7 @@ abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGoverno
      */
     // solhint-disable-next-line private-vars-leading-underscore
     function __acceptAdmin() public {
-        GovernorTimelockCompoundStorage.layout()._timelock.acceptAdmin();
+        _timelock.acceptAdmin();
     }
 
     /**
@@ -190,7 +192,14 @@ abstract contract GovernorTimelockCompoundUpgradeable is Initializable, IGoverno
     }
 
     function _updateTimelock(ICompoundTimelockUpgradeable newTimelock) private {
-        emit TimelockChange(address(GovernorTimelockCompoundStorage.layout()._timelock), address(newTimelock));
-        GovernorTimelockCompoundStorage.layout()._timelock = newTimelock;
+        emit TimelockChange(address(_timelock), address(newTimelock));
+        _timelock = newTimelock;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[48] private __gap;
 }

@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "../utils/ContextUpgradeable.sol";
-import { PausableStorage } from "./PausableStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -17,7 +16,6 @@ import "../proxy/utils/Initializable.sol";
  * simply including this module, only once the modifiers are put in place.
  */
 abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
-    using PausableStorage for PausableStorage.Layout;
     /**
      * @dev Emitted when the pause is triggered by `account`.
      */
@@ -28,6 +26,8 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
      */
     event Unpaused(address account);
 
+    bool private _paused;
+
     /**
      * @dev Initializes the contract in unpaused state.
      */
@@ -36,7 +36,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
     }
 
     function __Pausable_init_unchained() internal onlyInitializing {
-        PausableStorage.layout()._paused = false;
+        _paused = false;
     }
 
     /**
@@ -67,7 +67,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
      * @dev Returns true if the contract is paused, and false otherwise.
      */
     function paused() public view virtual returns (bool) {
-        return PausableStorage.layout()._paused;
+        return _paused;
     }
 
     /**
@@ -92,7 +92,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
      * - The contract must not be paused.
      */
     function _pause() internal virtual whenNotPaused {
-        PausableStorage.layout()._paused = true;
+        _paused = true;
         emit Paused(_msgSender());
     }
 
@@ -104,7 +104,14 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
      * - The contract must be paused.
      */
     function _unpause() internal virtual whenPaused {
-        PausableStorage.layout()._paused = false;
+        _paused = false;
         emit Unpaused(_msgSender());
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

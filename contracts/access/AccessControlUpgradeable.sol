@@ -7,7 +7,6 @@ import "./IAccessControlUpgradeable.sol";
 import "../utils/ContextUpgradeable.sol";
 import "../utils/StringsUpgradeable.sol";
 import "../utils/introspection/ERC165Upgradeable.sol";
-import { AccessControlStorage } from "./AccessControlStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -49,7 +48,6 @@ import "../proxy/utils/Initializable.sol";
  * accounts that have been granted it.
  */
 abstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable, IAccessControlUpgradeable, ERC165Upgradeable {
-    using AccessControlStorage for AccessControlStorage.Layout;
     function __AccessControl_init() internal onlyInitializing {
     }
 
@@ -59,6 +57,8 @@ abstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable,
         mapping(address => bool) members;
         bytes32 adminRole;
     }
+
+    mapping(bytes32 => RoleData) private _roles;
 
     bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
 
@@ -88,7 +88,7 @@ abstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable,
      * @dev Returns `true` if `account` has been granted `role`.
      */
     function hasRole(bytes32 role, address account) public view virtual override returns (bool) {
-        return AccessControlStorage.layout()._roles[role].members[account];
+        return _roles[role].members[account];
     }
 
     /**
@@ -132,7 +132,7 @@ abstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable,
      * To change a role's admin, use {_setRoleAdmin}.
      */
     function getRoleAdmin(bytes32 role) public view virtual override returns (bytes32) {
-        return AccessControlStorage.layout()._roles[role].adminRole;
+        return _roles[role].adminRole;
     }
 
     /**
@@ -219,7 +219,7 @@ abstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable,
      */
     function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {
         bytes32 previousAdminRole = getRoleAdmin(role);
-        AccessControlStorage.layout()._roles[role].adminRole = adminRole;
+        _roles[role].adminRole = adminRole;
         emit RoleAdminChanged(role, previousAdminRole, adminRole);
     }
 
@@ -232,7 +232,7 @@ abstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable,
      */
     function _grantRole(bytes32 role, address account) internal virtual {
         if (!hasRole(role, account)) {
-            AccessControlStorage.layout()._roles[role].members[account] = true;
+            _roles[role].members[account] = true;
             emit RoleGranted(role, account, _msgSender());
         }
     }
@@ -246,8 +246,15 @@ abstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable,
      */
     function _revokeRole(bytes32 role, address account) internal virtual {
         if (hasRole(role, account)) {
-            AccessControlStorage.layout()._roles[role].members[account] = false;
+            _roles[role].members[account] = false;
             emit RoleRevoked(role, account, _msgSender());
         }
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

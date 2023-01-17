@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "../GovernorUpgradeable.sol";
 import "../../token/ERC20/extensions/ERC20VotesCompUpgradeable.sol";
-import { GovernorVotesCompStorage } from "./GovernorVotesCompStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -16,14 +15,14 @@ import "../../proxy/utils/Initializable.sol";
  * @custom:storage-size 51
  */
 abstract contract GovernorVotesCompUpgradeable is Initializable, GovernorUpgradeable {
-    using GovernorVotesCompStorage for GovernorVotesCompStorage.Layout;
+    ERC20VotesCompUpgradeable public token;
 
     function __GovernorVotesComp_init(ERC20VotesCompUpgradeable token_) internal onlyInitializing {
         __GovernorVotesComp_init_unchained(token_);
     }
 
     function __GovernorVotesComp_init_unchained(ERC20VotesCompUpgradeable token_) internal onlyInitializing {
-        GovernorVotesCompStorage.layout().token = token_;
+        token = token_;
     }
 
     /**
@@ -34,11 +33,13 @@ abstract contract GovernorVotesCompUpgradeable is Initializable, GovernorUpgrade
         uint256 blockNumber,
         bytes memory /*params*/
     ) internal view virtual override returns (uint256) {
-        return GovernorVotesCompStorage.layout().token.getPriorVotes(account, blockNumber);
-    }
-    // generated getter for ${varDecl.name}
-    function token() public view returns(ERC20VotesCompUpgradeable) {
-        return GovernorVotesCompStorage.layout().token;
+        return token.getPriorVotes(account, blockNumber);
     }
 
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

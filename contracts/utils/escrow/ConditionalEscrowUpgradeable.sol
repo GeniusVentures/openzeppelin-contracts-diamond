@@ -29,4 +29,11 @@ abstract contract ConditionalEscrowUpgradeable is Initializable, EscrowUpgradeab
         require(withdrawalAllowed(payee), "ConditionalEscrow: payee is not allowed to withdraw");
         super.withdraw(payee);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

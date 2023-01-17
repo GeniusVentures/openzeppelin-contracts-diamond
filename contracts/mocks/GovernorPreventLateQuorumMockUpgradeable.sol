@@ -6,7 +6,6 @@ import "../governance/extensions/GovernorPreventLateQuorumUpgradeable.sol";
 import "../governance/extensions/GovernorSettingsUpgradeable.sol";
 import "../governance/extensions/GovernorCountingSimpleUpgradeable.sol";
 import "../governance/extensions/GovernorVotesUpgradeable.sol";
-import { GovernorPreventLateQuorumMockStorage } from "./GovernorPreventLateQuorumMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract GovernorPreventLateQuorumMockUpgradeable is
@@ -15,7 +14,7 @@ contract GovernorPreventLateQuorumMockUpgradeable is
     GovernorCountingSimpleUpgradeable,
     GovernorPreventLateQuorumUpgradeable
 {
-    using GovernorPreventLateQuorumMockStorage for GovernorPreventLateQuorumMockStorage.Layout;
+    uint256 private _quorum;
 
     function __GovernorPreventLateQuorumMock_init(
         string memory name_,
@@ -41,11 +40,11 @@ contract GovernorPreventLateQuorumMockUpgradeable is
         uint256 quorum_,
         uint64
     ) internal onlyInitializing {
-        GovernorPreventLateQuorumMockStorage.layout()._quorum = quorum_;
+        _quorum = quorum_;
     }
 
     function quorum(uint256) public view override returns (uint256) {
-        return GovernorPreventLateQuorumMockStorage.layout()._quorum;
+        return _quorum;
     }
 
     function proposalDeadline(uint256 proposalId)
@@ -70,4 +69,11 @@ contract GovernorPreventLateQuorumMockUpgradeable is
     ) internal override(GovernorUpgradeable, GovernorPreventLateQuorumUpgradeable) returns (uint256) {
         return super._castVote(proposalId, account, support, reason, params);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

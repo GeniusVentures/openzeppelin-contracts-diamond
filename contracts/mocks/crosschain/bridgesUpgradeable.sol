@@ -4,11 +4,9 @@ pragma solidity ^0.8.0;
 
 import "../../utils/AddressUpgradeable.sol";
 import "../../vendor/polygon/IFxMessageProcessorUpgradeable.sol";
-import { BaseRelayMockStorage } from "./bridgesStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 abstract contract BaseRelayMockUpgradeable is Initializable {
-    using BaseRelayMockStorage for BaseRelayMockStorage.Layout;
     function __BaseRelayMock_init() internal onlyInitializing {
     }
 
@@ -18,42 +16,56 @@ abstract contract BaseRelayMockUpgradeable is Initializable {
     error NotCrossChainCall();
     error InvalidCrossChainSender(address sender, address expected);
 
+    address internal _currentSender;
+
     function relayAs(
         address target,
         bytes calldata data,
         address sender
     ) external virtual {
-        address previousSender = BaseRelayMockStorage.layout()._currentSender;
+        address previousSender = _currentSender;
 
-        BaseRelayMockStorage.layout()._currentSender = sender;
+        _currentSender = sender;
 
         (bool success, bytes memory returndata) = target.call(data);
         AddressUpgradeable.verifyCallResultFromTarget(target, success, returndata, "low-level call reverted");
 
-        BaseRelayMockStorage.layout()._currentSender = previousSender;
+        _currentSender = previousSender;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }
 
 /**
  * AMB
  */
 contract BridgeAMBMockUpgradeable is Initializable, BaseRelayMockUpgradeable {
-    using BaseRelayMockStorage for BaseRelayMockStorage.Layout;
     function __BridgeAMBMock_init() internal onlyInitializing {
     }
 
     function __BridgeAMBMock_init_unchained() internal onlyInitializing {
     }
     function messageSender() public view returns (address) {
-        return BaseRelayMockStorage.layout()._currentSender;
+        return _currentSender;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 /**
  * Arbitrum
  */
 contract BridgeArbitrumL1MockUpgradeable is Initializable, BaseRelayMockUpgradeable {
-    using BaseRelayMockStorage for BaseRelayMockStorage.Layout;
     function __BridgeArbitrumL1Mock_init() internal onlyInitializing {
     }
 
@@ -69,8 +81,15 @@ contract BridgeArbitrumL1MockUpgradeable is Initializable, BaseRelayMockUpgradea
     }
 
     function currentSender() public view returns (address) {
-        return BaseRelayMockStorage.layout()._currentSender;
+        return _currentSender;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 contract BridgeArbitrumL1InboxUpgradeable is Initializable {
@@ -81,6 +100,13 @@ contract BridgeArbitrumL1InboxUpgradeable is Initializable {
     }
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable state-variable-assignment
     address public immutable bridge = msg.sender;
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 contract BridgeArbitrumL1OutboxUpgradeable is Initializable {
@@ -95,37 +121,56 @@ contract BridgeArbitrumL1OutboxUpgradeable is Initializable {
     function l2ToL1Sender() public view returns (address) {
         return BridgeArbitrumL1MockUpgradeable(bridge).currentSender();
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 contract BridgeArbitrumL2MockUpgradeable is Initializable, BaseRelayMockUpgradeable {
-    using BaseRelayMockStorage for BaseRelayMockStorage.Layout;
     function __BridgeArbitrumL2Mock_init() internal onlyInitializing {
     }
 
     function __BridgeArbitrumL2Mock_init_unchained() internal onlyInitializing {
     }
     function wasMyCallersAddressAliased() public view returns (bool) {
-        return BaseRelayMockStorage.layout()._currentSender != address(0);
+        return _currentSender != address(0);
     }
 
     function myCallersAddressWithoutAliasing() public view returns (address) {
-        return BaseRelayMockStorage.layout()._currentSender;
+        return _currentSender;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 /**
  * Optimism
  */
 contract BridgeOptimismMockUpgradeable is Initializable, BaseRelayMockUpgradeable {
-    using BaseRelayMockStorage for BaseRelayMockStorage.Layout;
     function __BridgeOptimismMock_init() internal onlyInitializing {
     }
 
     function __BridgeOptimismMock_init_unchained() internal onlyInitializing {
     }
     function xDomainMessageSender() public view returns (address) {
-        return BaseRelayMockStorage.layout()._currentSender;
+        return _currentSender;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 /**
@@ -144,4 +189,11 @@ contract BridgePolygonChildMockUpgradeable is Initializable, BaseRelayMockUpgrad
     ) external override {
         IFxMessageProcessorUpgradeable(target).processMessageFromRoot(0, sender, data);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

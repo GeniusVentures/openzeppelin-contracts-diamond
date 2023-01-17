@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "../ERC20Upgradeable.sol";
 import "../utils/SafeERC20Upgradeable.sol";
-import { ERC20WrapperStorage } from "./ERC20WrapperStorage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -20,21 +19,21 @@ import "../../../proxy/utils/Initializable.sol";
  * @custom:storage-size 51
  */
 abstract contract ERC20WrapperUpgradeable is Initializable, ERC20Upgradeable {
-    using ERC20WrapperStorage for ERC20WrapperStorage.Layout;
+    IERC20Upgradeable public underlying;
 
     function __ERC20Wrapper_init(IERC20Upgradeable underlyingToken) internal onlyInitializing {
         __ERC20Wrapper_init_unchained(underlyingToken);
     }
 
     function __ERC20Wrapper_init_unchained(IERC20Upgradeable underlyingToken) internal onlyInitializing {
-        ERC20WrapperStorage.layout().underlying = underlyingToken;
+        underlying = underlyingToken;
     }
 
     /**
      * @dev See {ERC20-decimals}.
      */
     function decimals() public view virtual override returns (uint8) {
-        try IERC20MetadataUpgradeable(address(ERC20WrapperStorage.layout().underlying)).decimals() returns (uint8 value) {
+        try IERC20MetadataUpgradeable(address(underlying)).decimals() returns (uint8 value) {
             return value;
         } catch {
             return super.decimals();
@@ -45,7 +44,7 @@ abstract contract ERC20WrapperUpgradeable is Initializable, ERC20Upgradeable {
      * @dev Allow a user to deposit underlying tokens and mint the corresponding number of wrapped tokens.
      */
     function depositFor(address account, uint256 amount) public virtual returns (bool) {
-        SafeERC20Upgradeable.safeTransferFrom(ERC20WrapperStorage.layout().underlying, _msgSender(), address(this), amount);
+        SafeERC20Upgradeable.safeTransferFrom(underlying, _msgSender(), address(this), amount);
         _mint(account, amount);
         return true;
     }
@@ -55,7 +54,7 @@ abstract contract ERC20WrapperUpgradeable is Initializable, ERC20Upgradeable {
      */
     function withdrawTo(address account, uint256 amount) public virtual returns (bool) {
         _burn(_msgSender(), amount);
-        SafeERC20Upgradeable.safeTransfer(ERC20WrapperStorage.layout().underlying, account, amount);
+        SafeERC20Upgradeable.safeTransfer(underlying, account, amount);
         return true;
     }
 
@@ -64,13 +63,15 @@ abstract contract ERC20WrapperUpgradeable is Initializable, ERC20Upgradeable {
      * function that can be exposed with access control if desired.
      */
     function _recover(address account) internal virtual returns (uint256) {
-        uint256 value = ERC20WrapperStorage.layout().underlying.balanceOf(address(this)) - totalSupply();
+        uint256 value = underlying.balanceOf(address(this)) - totalSupply();
         _mint(account, value);
         return value;
     }
-    // generated getter for ${varDecl.name}
-    function underlying() public view returns(IERC20Upgradeable) {
-        return ERC20WrapperStorage.layout().underlying;
-    }
 
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

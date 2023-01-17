@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "../token/ERC20/extensions/ERC4626Upgradeable.sol";
-import { ERC4626DecimalMockStorage } from "./ERC4626MockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract ERC4626MockUpgradeable is Initializable, ERC4626Upgradeable {
@@ -29,11 +28,19 @@ contract ERC4626MockUpgradeable is Initializable, ERC4626Upgradeable {
     function mockBurn(address account, uint256 amount) public {
         _burn(account, amount);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 contract ERC4626DecimalMockUpgradeable is Initializable, ERC4626MockUpgradeable {
-    using ERC4626DecimalMockStorage for ERC4626DecimalMockStorage.Layout;
     using MathUpgradeable for uint256;
+
+    uint8 private _decimals;
 
     function __ERC4626DecimalMock_init(
         IERC20MetadataUpgradeable asset,
@@ -53,11 +60,11 @@ contract ERC4626DecimalMockUpgradeable is Initializable, ERC4626MockUpgradeable 
         string memory,
         uint8 decimalsOverride
     ) internal onlyInitializing {
-        ERC4626DecimalMockStorage.layout()._decimals = decimalsOverride;
+        _decimals = decimalsOverride;
     }
 
     function decimals() public view virtual override returns (uint8) {
-        return ERC4626DecimalMockStorage.layout()._decimals;
+        return _decimals;
     }
 
     function _initialConvertToShares(uint256 assets, MathUpgradeable.Rounding rounding)
@@ -79,4 +86,11 @@ contract ERC4626DecimalMockUpgradeable is Initializable, ERC4626MockUpgradeable 
     {
         return shares.mulDiv(10**super.decimals(), 10**decimals(), rounding);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

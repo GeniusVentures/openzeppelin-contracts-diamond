@@ -9,7 +9,6 @@ import "./extensions/IERC1155MetadataURIUpgradeable.sol";
 import "../../utils/AddressUpgradeable.sol";
 import "../../utils/ContextUpgradeable.sol";
 import "../../utils/introspection/ERC165Upgradeable.sol";
-import { ERC1155Storage } from "./ERC1155Storage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -20,8 +19,16 @@ import "../../proxy/utils/Initializable.sol";
  * _Available since v3.1._
  */
 contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeable, IERC1155Upgradeable, IERC1155MetadataURIUpgradeable {
-    using ERC1155Storage for ERC1155Storage.Layout;
     using AddressUpgradeable for address;
+
+    // Mapping from token ID to account balances
+    mapping(uint256 => mapping(address => uint256)) private _balances;
+
+    // Mapping from account to operator approvals
+    mapping(address => mapping(address => bool)) private _operatorApprovals;
+
+    // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
+    string private _uri;
 
     /**
      * @dev See {_setURI}.
@@ -55,7 +62,7 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
      * actual token type ID.
      */
     function uri(uint256) public view virtual override returns (string memory) {
-        return ERC1155Storage.layout()._uri;
+        return _uri;
     }
 
     /**
@@ -67,7 +74,7 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
      */
     function balanceOf(address account, uint256 id) public view virtual override returns (uint256) {
         require(account != address(0), "ERC1155: address zero is not a valid owner");
-        return ERC1155Storage.layout()._balances[id][account];
+        return _balances[id][account];
     }
 
     /**
@@ -106,7 +113,7 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
      * @dev See {IERC1155-isApprovedForAll}.
      */
     function isApprovedForAll(address account, address operator) public view virtual override returns (bool) {
-        return ERC1155Storage.layout()._operatorApprovals[account][operator];
+        return _operatorApprovals[account][operator];
     }
 
     /**
@@ -170,12 +177,12 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
 
         _beforeTokenTransfer(operator, from, to, ids, amounts, data);
 
-        uint256 fromBalance = ERC1155Storage.layout()._balances[id][from];
+        uint256 fromBalance = _balances[id][from];
         require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
         unchecked {
-            ERC1155Storage.layout()._balances[id][from] = fromBalance - amount;
+            _balances[id][from] = fromBalance - amount;
         }
-        ERC1155Storage.layout()._balances[id][to] += amount;
+        _balances[id][to] += amount;
 
         emit TransferSingle(operator, from, to, id, amount);
 
@@ -212,12 +219,12 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
-            uint256 fromBalance = ERC1155Storage.layout()._balances[id][from];
+            uint256 fromBalance = _balances[id][from];
             require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
             unchecked {
-                ERC1155Storage.layout()._balances[id][from] = fromBalance - amount;
+                _balances[id][from] = fromBalance - amount;
             }
-            ERC1155Storage.layout()._balances[id][to] += amount;
+            _balances[id][to] += amount;
         }
 
         emit TransferBatch(operator, from, to, ids, amounts);
@@ -247,7 +254,7 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
      * this function emits no events.
      */
     function _setURI(string memory newuri) internal virtual {
-        ERC1155Storage.layout()._uri = newuri;
+        _uri = newuri;
     }
 
     /**
@@ -275,7 +282,7 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
 
         _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
 
-        ERC1155Storage.layout()._balances[id][to] += amount;
+        _balances[id][to] += amount;
         emit TransferSingle(operator, address(0), to, id, amount);
 
         _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
@@ -308,7 +315,7 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
         _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
 
         for (uint256 i = 0; i < ids.length; i++) {
-            ERC1155Storage.layout()._balances[ids[i]][to] += amounts[i];
+            _balances[ids[i]][to] += amounts[i];
         }
 
         emit TransferBatch(operator, address(0), to, ids, amounts);
@@ -341,10 +348,10 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
 
         _beforeTokenTransfer(operator, from, address(0), ids, amounts, "");
 
-        uint256 fromBalance = ERC1155Storage.layout()._balances[id][from];
+        uint256 fromBalance = _balances[id][from];
         require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
         unchecked {
-            ERC1155Storage.layout()._balances[id][from] = fromBalance - amount;
+            _balances[id][from] = fromBalance - amount;
         }
 
         emit TransferSingle(operator, from, address(0), id, amount);
@@ -377,10 +384,10 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
-            uint256 fromBalance = ERC1155Storage.layout()._balances[id][from];
+            uint256 fromBalance = _balances[id][from];
             require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
             unchecked {
-                ERC1155Storage.layout()._balances[id][from] = fromBalance - amount;
+                _balances[id][from] = fromBalance - amount;
             }
         }
 
@@ -400,7 +407,7 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
         bool approved
     ) internal virtual {
         require(owner != operator, "ERC1155: setting approval status for self");
-        ERC1155Storage.layout()._operatorApprovals[owner][operator] = approved;
+        _operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);
     }
 
@@ -512,4 +519,11 @@ contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradea
 
         return array;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[47] private __gap;
 }

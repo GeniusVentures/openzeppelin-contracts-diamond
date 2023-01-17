@@ -7,7 +7,6 @@ import "../access/AccessControlUpgradeable.sol";
 import "../token/ERC721/IERC721ReceiverUpgradeable.sol";
 import "../token/ERC1155/IERC1155ReceiverUpgradeable.sol";
 import "../utils/AddressUpgradeable.sol";
-import { TimelockControllerStorage } from "./TimelockControllerStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -26,12 +25,14 @@ import "../proxy/utils/Initializable.sol";
  * _Available since v3.3._
  */
 contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeable, IERC721ReceiverUpgradeable, IERC1155ReceiverUpgradeable {
-    using TimelockControllerStorage for TimelockControllerStorage.Layout;
     bytes32 public constant TIMELOCK_ADMIN_ROLE = keccak256("TIMELOCK_ADMIN_ROLE");
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
     bytes32 public constant EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
     bytes32 public constant CANCELLER_ROLE = keccak256("CANCELLER_ROLE");
     uint256 internal constant _DONE_TIMESTAMP = uint256(1);
+
+    mapping(bytes32 => uint256) private _timestamps;
+    uint256 private _minDelay;
 
     /**
      * @dev Emitted when a call is scheduled as part of operation `id`.
@@ -113,7 +114,7 @@ contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeabl
             _setupRole(EXECUTOR_ROLE, executors[i]);
         }
 
-        TimelockControllerStorage.layout()._minDelay = minDelay;
+        _minDelay = minDelay;
         emit MinDelayChange(0, minDelay);
     }
 
@@ -177,7 +178,7 @@ contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeabl
      * unset operations, 1 for done operations).
      */
     function getTimestamp(bytes32 id) public view virtual returns (uint256 timestamp) {
-        return TimelockControllerStorage.layout()._timestamps[id];
+        return _timestamps[id];
     }
 
     /**
@@ -186,7 +187,7 @@ contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeabl
      * This value can be changed by executing an operation that calls `updateDelay`.
      */
     function getMinDelay() public view virtual returns (uint256 duration) {
-        return TimelockControllerStorage.layout()._minDelay;
+        return _minDelay;
     }
 
     /**
@@ -272,7 +273,7 @@ contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeabl
     function _schedule(bytes32 id, uint256 delay) private {
         require(!isOperation(id), "TimelockController: operation already scheduled");
         require(delay >= getMinDelay(), "TimelockController: insufficient delay");
-        TimelockControllerStorage.layout()._timestamps[id] = block.timestamp + delay;
+        _timestamps[id] = block.timestamp + delay;
     }
 
     /**
@@ -284,7 +285,7 @@ contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeabl
      */
     function cancel(bytes32 id) public virtual onlyRole(CANCELLER_ROLE) {
         require(isOperationPending(id), "TimelockController: operation cannot be cancelled");
-        delete TimelockControllerStorage.layout()._timestamps[id];
+        delete _timestamps[id];
 
         emit Cancelled(id);
     }
@@ -373,7 +374,7 @@ contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeabl
      */
     function _afterCall(bytes32 id) private {
         require(isOperationReady(id), "TimelockController: operation is not ready");
-        TimelockControllerStorage.layout()._timestamps[id] = _DONE_TIMESTAMP;
+        _timestamps[id] = _DONE_TIMESTAMP;
     }
 
     /**
@@ -388,8 +389,8 @@ contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeabl
      */
     function updateDelay(uint256 newDelay) external virtual {
         require(msg.sender == address(this), "TimelockController: caller must be timelock");
-        emit MinDelayChange(TimelockControllerStorage.layout()._minDelay, newDelay);
-        TimelockControllerStorage.layout()._minDelay = newDelay;
+        emit MinDelayChange(_minDelay, newDelay);
+        _minDelay = newDelay;
     }
 
     /**
@@ -429,4 +430,11 @@ contract TimelockControllerUpgradeable is Initializable, AccessControlUpgradeabl
     ) public virtual override returns (bytes4) {
         return this.onERC1155BatchReceived.selector;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[48] private __gap;
 }

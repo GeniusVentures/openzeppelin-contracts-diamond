@@ -8,17 +8,15 @@ import "../token/ERC777/IERC777RecipientUpgradeable.sol";
 import "../utils/ContextUpgradeable.sol";
 import "../utils/introspection/IERC1820RegistryUpgradeable.sol";
 import "../utils/introspection/ERC1820ImplementerUpgradeable.sol";
-import { ERC777SenderRecipientMockStorage } from "./ERC777SenderRecipientMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract ERC777SenderRecipientMockUpgradeable is Initializable, ContextUpgradeable, IERC777SenderUpgradeable, IERC777RecipientUpgradeable, ERC1820ImplementerUpgradeable {
-    using ERC777SenderRecipientMockStorage for ERC777SenderRecipientMockStorage.Layout;
     function __ERC777SenderRecipientMock_init() internal onlyInitializing {
         __ERC777SenderRecipientMock_init_unchained();
     }
 
     function __ERC777SenderRecipientMock_init_unchained() internal onlyInitializing {
-        ERC777SenderRecipientMockStorage.layout()._erc1820 = IERC1820RegistryUpgradeable(0x1820a4B7618BdE71Dce8cdc73aAB6C95905faD24);
+        _erc1820 = IERC1820RegistryUpgradeable(0x1820a4B7618BdE71Dce8cdc73aAB6C95905faD24);
     }
     event TokensToSendCalled(
         address operator,
@@ -47,6 +45,11 @@ contract ERC777SenderRecipientMockUpgradeable is Initializable, ContextUpgradeab
     // Emitted in ERC777Mock. Here for easier decoding
     event BeforeTokenTransfer();
 
+    bool private _shouldRevertSend;
+    bool private _shouldRevertReceive;
+
+    IERC1820RegistryUpgradeable private _erc1820;
+
     bytes32 private constant _TOKENS_SENDER_INTERFACE_HASH = keccak256("ERC777TokensSender");
     bytes32 private constant _TOKENS_RECIPIENT_INTERFACE_HASH = keccak256("ERC777TokensRecipient");
 
@@ -58,7 +61,7 @@ contract ERC777SenderRecipientMockUpgradeable is Initializable, ContextUpgradeab
         bytes calldata userData,
         bytes calldata operatorData
     ) external override {
-        if (ERC777SenderRecipientMockStorage.layout()._shouldRevertSend) {
+        if (_shouldRevertSend) {
             revert();
         }
 
@@ -89,7 +92,7 @@ contract ERC777SenderRecipientMockUpgradeable is Initializable, ContextUpgradeab
         bytes calldata userData,
         bytes calldata operatorData
     ) external override {
-        if (ERC777SenderRecipientMockStorage.layout()._shouldRevertReceive) {
+        if (_shouldRevertReceive) {
             revert();
         }
 
@@ -122,7 +125,7 @@ contract ERC777SenderRecipientMockUpgradeable is Initializable, ContextUpgradeab
     }
 
     function registerSender(address sender) public {
-        ERC777SenderRecipientMockStorage.layout()._erc1820.setInterfaceImplementer(address(this), _TOKENS_SENDER_INTERFACE_HASH, sender);
+        _erc1820.setInterfaceImplementer(address(this), _TOKENS_SENDER_INTERFACE_HASH, sender);
     }
 
     function recipientFor(address account) public {
@@ -135,15 +138,15 @@ contract ERC777SenderRecipientMockUpgradeable is Initializable, ContextUpgradeab
     }
 
     function registerRecipient(address recipient) public {
-        ERC777SenderRecipientMockStorage.layout()._erc1820.setInterfaceImplementer(address(this), _TOKENS_RECIPIENT_INTERFACE_HASH, recipient);
+        _erc1820.setInterfaceImplementer(address(this), _TOKENS_RECIPIENT_INTERFACE_HASH, recipient);
     }
 
     function setShouldRevertSend(bool shouldRevert) public {
-        ERC777SenderRecipientMockStorage.layout()._shouldRevertSend = shouldRevert;
+        _shouldRevertSend = shouldRevert;
     }
 
     function setShouldRevertReceive(bool shouldRevert) public {
-        ERC777SenderRecipientMockStorage.layout()._shouldRevertReceive = shouldRevert;
+        _shouldRevertReceive = shouldRevert;
     }
 
     function send(
@@ -163,4 +166,11 @@ contract ERC777SenderRecipientMockUpgradeable is Initializable, ContextUpgradeab
     ) public {
         token.burn(amount, data);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

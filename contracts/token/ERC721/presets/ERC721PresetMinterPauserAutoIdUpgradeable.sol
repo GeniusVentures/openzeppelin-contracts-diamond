@@ -10,7 +10,6 @@ import "../extensions/ERC721PausableUpgradeable.sol";
 import "../../../access/AccessControlEnumerableUpgradeable.sol";
 import "../../../utils/ContextUpgradeable.sol";
 import "../../../utils/CountersUpgradeable.sol";
-import { ERC721PresetMinterPauserAutoIdStorage } from "./ERC721PresetMinterPauserAutoIdStorage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -37,7 +36,6 @@ contract ERC721PresetMinterPauserAutoIdUpgradeable is
     ERC721BurnableUpgradeable,
     ERC721PausableUpgradeable
 {
-    using ERC721PresetMinterPauserAutoIdStorage for ERC721PresetMinterPauserAutoIdStorage.Layout;
     function initialize(
         string memory name,
         string memory symbol,
@@ -49,6 +47,10 @@ contract ERC721PresetMinterPauserAutoIdUpgradeable is
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+
+    CountersUpgradeable.Counter private _tokenIdTracker;
+
+    string private _baseTokenURI;
 
     /**
      * @dev Grants `DEFAULT_ADMIN_ROLE`, `MINTER_ROLE` and `PAUSER_ROLE` to the
@@ -72,7 +74,7 @@ contract ERC721PresetMinterPauserAutoIdUpgradeable is
         string memory,
         string memory baseTokenURI
     ) internal onlyInitializing {
-        ERC721PresetMinterPauserAutoIdStorage.layout()._baseTokenURI = baseTokenURI;
+        _baseTokenURI = baseTokenURI;
 
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
@@ -81,7 +83,7 @@ contract ERC721PresetMinterPauserAutoIdUpgradeable is
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
-        return ERC721PresetMinterPauserAutoIdStorage.layout()._baseTokenURI;
+        return _baseTokenURI;
     }
 
     /**
@@ -100,8 +102,8 @@ contract ERC721PresetMinterPauserAutoIdUpgradeable is
 
         // We cannot just use balanceOf to create the new tokenId because tokens
         // can be burned (destroyed), so we need a separate counter.
-        _mint(to, ERC721PresetMinterPauserAutoIdStorage.layout()._tokenIdTracker.current());
-        ERC721PresetMinterPauserAutoIdStorage.layout()._tokenIdTracker.increment();
+        _mint(to, _tokenIdTracker.current());
+        _tokenIdTracker.increment();
     }
 
     /**
@@ -153,4 +155,11 @@ contract ERC721PresetMinterPauserAutoIdUpgradeable is
     {
         return super.supportsInterface(interfaceId);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[48] private __gap;
 }

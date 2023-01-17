@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "../ERC721Upgradeable.sol";
 import "./IERC721EnumerableUpgradeable.sol";
-import { ERC721EnumerableStorage } from "./ERC721EnumerableStorage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -14,12 +13,22 @@ import "../../../proxy/utils/Initializable.sol";
  * account.
  */
 abstract contract ERC721EnumerableUpgradeable is Initializable, ERC721Upgradeable, IERC721EnumerableUpgradeable {
-    using ERC721EnumerableStorage for ERC721EnumerableStorage.Layout;
     function __ERC721Enumerable_init() internal onlyInitializing {
     }
 
     function __ERC721Enumerable_init_unchained() internal onlyInitializing {
     }
+    // Mapping from owner to list of owned token IDs
+    mapping(address => mapping(uint256 => uint256)) private _ownedTokens;
+
+    // Mapping from token ID to index of the owner tokens list
+    mapping(uint256 => uint256) private _ownedTokensIndex;
+
+    // Array with all token ids, used for enumeration
+    uint256[] private _allTokens;
+
+    // Mapping from token id to position in the allTokens array
+    mapping(uint256 => uint256) private _allTokensIndex;
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -33,14 +42,14 @@ abstract contract ERC721EnumerableUpgradeable is Initializable, ERC721Upgradeabl
      */
     function tokenOfOwnerByIndex(address owner, uint256 index) public view virtual override returns (uint256) {
         require(index < ERC721Upgradeable.balanceOf(owner), "ERC721Enumerable: owner index out of bounds");
-        return ERC721EnumerableStorage.layout()._ownedTokens[owner][index];
+        return _ownedTokens[owner][index];
     }
 
     /**
      * @dev See {IERC721Enumerable-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {
-        return ERC721EnumerableStorage.layout()._allTokens.length;
+        return _allTokens.length;
     }
 
     /**
@@ -48,7 +57,7 @@ abstract contract ERC721EnumerableUpgradeable is Initializable, ERC721Upgradeabl
      */
     function tokenByIndex(uint256 index) public view virtual override returns (uint256) {
         require(index < ERC721EnumerableUpgradeable.totalSupply(), "ERC721Enumerable: global index out of bounds");
-        return ERC721EnumerableStorage.layout()._allTokens[index];
+        return _allTokens[index];
     }
 
     /**
@@ -88,8 +97,8 @@ abstract contract ERC721EnumerableUpgradeable is Initializable, ERC721Upgradeabl
      */
     function _addTokenToOwnerEnumeration(address to, uint256 tokenId) private {
         uint256 length = ERC721Upgradeable.balanceOf(to);
-        ERC721EnumerableStorage.layout()._ownedTokens[to][length] = tokenId;
-        ERC721EnumerableStorage.layout()._ownedTokensIndex[tokenId] = length;
+        _ownedTokens[to][length] = tokenId;
+        _ownedTokensIndex[tokenId] = length;
     }
 
     /**
@@ -97,8 +106,8 @@ abstract contract ERC721EnumerableUpgradeable is Initializable, ERC721Upgradeabl
      * @param tokenId uint256 ID of the token to be added to the tokens list
      */
     function _addTokenToAllTokensEnumeration(uint256 tokenId) private {
-        ERC721EnumerableStorage.layout()._allTokensIndex[tokenId] = ERC721EnumerableStorage.layout()._allTokens.length;
-        ERC721EnumerableStorage.layout()._allTokens.push(tokenId);
+        _allTokensIndex[tokenId] = _allTokens.length;
+        _allTokens.push(tokenId);
     }
 
     /**
@@ -114,19 +123,19 @@ abstract contract ERC721EnumerableUpgradeable is Initializable, ERC721Upgradeabl
         // then delete the last slot (swap and pop).
 
         uint256 lastTokenIndex = ERC721Upgradeable.balanceOf(from) - 1;
-        uint256 tokenIndex = ERC721EnumerableStorage.layout()._ownedTokensIndex[tokenId];
+        uint256 tokenIndex = _ownedTokensIndex[tokenId];
 
         // When the token to delete is the last token, the swap operation is unnecessary
         if (tokenIndex != lastTokenIndex) {
-            uint256 lastTokenId = ERC721EnumerableStorage.layout()._ownedTokens[from][lastTokenIndex];
+            uint256 lastTokenId = _ownedTokens[from][lastTokenIndex];
 
-            ERC721EnumerableStorage.layout()._ownedTokens[from][tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
-            ERC721EnumerableStorage.layout()._ownedTokensIndex[lastTokenId] = tokenIndex; // Update the moved token's index
+            _ownedTokens[from][tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
+            _ownedTokensIndex[lastTokenId] = tokenIndex; // Update the moved token's index
         }
 
         // This also deletes the contents at the last position of the array
-        delete ERC721EnumerableStorage.layout()._ownedTokensIndex[tokenId];
-        delete ERC721EnumerableStorage.layout()._ownedTokens[from][lastTokenIndex];
+        delete _ownedTokensIndex[tokenId];
+        delete _ownedTokens[from][lastTokenIndex];
     }
 
     /**
@@ -138,19 +147,26 @@ abstract contract ERC721EnumerableUpgradeable is Initializable, ERC721Upgradeabl
         // To prevent a gap in the tokens array, we store the last token in the index of the token to delete, and
         // then delete the last slot (swap and pop).
 
-        uint256 lastTokenIndex = ERC721EnumerableStorage.layout()._allTokens.length - 1;
-        uint256 tokenIndex = ERC721EnumerableStorage.layout()._allTokensIndex[tokenId];
+        uint256 lastTokenIndex = _allTokens.length - 1;
+        uint256 tokenIndex = _allTokensIndex[tokenId];
 
         // When the token to delete is the last token, the swap operation is unnecessary. However, since this occurs so
         // rarely (when the last minted token is burnt) that we still do the swap here to avoid the gas cost of adding
         // an 'if' statement (like in _removeTokenFromOwnerEnumeration)
-        uint256 lastTokenId = ERC721EnumerableStorage.layout()._allTokens[lastTokenIndex];
+        uint256 lastTokenId = _allTokens[lastTokenIndex];
 
-        ERC721EnumerableStorage.layout()._allTokens[tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
-        ERC721EnumerableStorage.layout()._allTokensIndex[lastTokenId] = tokenIndex; // Update the moved token's index
+        _allTokens[tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
+        _allTokensIndex[lastTokenId] = tokenIndex; // Update the moved token's index
 
         // This also deletes the contents at the last position of the array
-        delete ERC721EnumerableStorage.layout()._allTokensIndex[tokenId];
-        ERC721EnumerableStorage.layout()._allTokens.pop();
+        delete _allTokensIndex[tokenId];
+        _allTokens.pop();
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[46] private __gap;
 }

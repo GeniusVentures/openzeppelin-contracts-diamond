@@ -3,11 +3,11 @@
 pragma solidity ^0.8.0;
 
 import "../token/ERC20/extensions/ERC20FlashMintUpgradeable.sol";
-import { ERC20FlashMintMockStorage } from "./ERC20FlashMintMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract ERC20FlashMintMockUpgradeable is Initializable, ERC20FlashMintUpgradeable {
-    using ERC20FlashMintMockStorage for ERC20FlashMintMockStorage.Layout;
+    uint256 _flashFeeAmount;
+    address _flashFeeReceiverAddress;
 
     function __ERC20FlashMintMock_init(
         string memory name,
@@ -33,15 +33,15 @@ contract ERC20FlashMintMockUpgradeable is Initializable, ERC20FlashMintUpgradeab
     }
 
     function setFlashFee(uint256 amount) public {
-        ERC20FlashMintMockStorage.layout()._flashFeeAmount = amount;
+        _flashFeeAmount = amount;
     }
 
     function _flashFee(address, uint256) internal view override returns (uint256) {
-        return ERC20FlashMintMockStorage.layout()._flashFeeAmount;
+        return _flashFeeAmount;
     }
 
     function setFlashFeeReceiver(address receiver) public {
-        ERC20FlashMintMockStorage.layout()._flashFeeReceiverAddress = receiver;
+        _flashFeeReceiverAddress = receiver;
     }
 
     function flashFeeReceiver() public view returns (address) {
@@ -49,6 +49,13 @@ contract ERC20FlashMintMockUpgradeable is Initializable, ERC20FlashMintUpgradeab
     }
 
     function _flashFeeReceiver() internal view override returns (address) {
-        return ERC20FlashMintMockStorage.layout()._flashFeeReceiverAddress;
+        return _flashFeeReceiverAddress;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[48] private __gap;
 }

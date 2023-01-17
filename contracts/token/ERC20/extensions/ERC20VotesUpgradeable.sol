@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.8.0) (token/ERC20/extensions/ERC20Votes.sol)
+// OpenZeppelin Contracts (last updated v4.8.1) (token/ERC20/extensions/ERC20Votes.sol)
 
 pragma solidity ^0.8.0;
 
@@ -8,7 +8,6 @@ import "../../../utils/math/MathUpgradeable.sol";
 import "../../../governance/utils/IVotesUpgradeable.sol";
 import "../../../utils/math/SafeCastUpgradeable.sol";
 import "../../../utils/cryptography/ECDSAUpgradeable.sol";
-import { ERC20VotesStorage } from "./ERC20VotesStorage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -27,7 +26,6 @@ import "../../../proxy/utils/Initializable.sol";
  * _Available since v4.2._
  */
 abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC20PermitUpgradeable {
-    using ERC20VotesStorage for ERC20VotesStorage.Layout;
     function __ERC20Votes_init() internal onlyInitializing {
     }
 
@@ -41,33 +39,37 @@ abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC
     bytes32 private constant _DELEGATION_TYPEHASH =
         keccak256("Delegation(address delegatee,uint256 nonce,uint256 expiry)");
 
+    mapping(address => address) private _delegates;
+    mapping(address => Checkpoint[]) private _checkpoints;
+    Checkpoint[] private _totalSupplyCheckpoints;
+
     /**
      * @dev Get the `pos`-th checkpoint for `account`.
      */
     function checkpoints(address account, uint32 pos) public view virtual returns (Checkpoint memory) {
-        return ERC20VotesStorage.layout()._checkpoints[account][pos];
+        return _checkpoints[account][pos];
     }
 
     /**
      * @dev Get number of checkpoints for `account`.
      */
     function numCheckpoints(address account) public view virtual returns (uint32) {
-        return SafeCastUpgradeable.toUint32(ERC20VotesStorage.layout()._checkpoints[account].length);
+        return SafeCastUpgradeable.toUint32(_checkpoints[account].length);
     }
 
     /**
      * @dev Get the address `account` is currently delegating to.
      */
     function delegates(address account) public view virtual override returns (address) {
-        return ERC20VotesStorage.layout()._delegates[account];
+        return _delegates[account];
     }
 
     /**
      * @dev Gets the current votes balance for `account`
      */
     function getVotes(address account) public view virtual override returns (uint256) {
-        uint256 pos = ERC20VotesStorage.layout()._checkpoints[account].length;
-        return pos == 0 ? 0 : ERC20VotesStorage.layout()._checkpoints[account][pos - 1].votes;
+        uint256 pos = _checkpoints[account].length;
+        return pos == 0 ? 0 : _checkpoints[account][pos - 1].votes;
     }
 
     /**
@@ -79,7 +81,7 @@ abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC
      */
     function getPastVotes(address account, uint256 blockNumber) public view virtual override returns (uint256) {
         require(blockNumber < block.number, "ERC20Votes: block not yet mined");
-        return _checkpointsLookup(ERC20VotesStorage.layout()._checkpoints[account], blockNumber);
+        return _checkpointsLookup(_checkpoints[account], blockNumber);
     }
 
     /**
@@ -92,7 +94,7 @@ abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC
      */
     function getPastTotalSupply(uint256 blockNumber) public view virtual override returns (uint256) {
         require(blockNumber < block.number, "ERC20Votes: block not yet mined");
-        return _checkpointsLookup(ERC20VotesStorage.layout()._totalSupplyCheckpoints, blockNumber);
+        return _checkpointsLookup(_totalSupplyCheckpoints, blockNumber);
     }
 
     /**
@@ -180,7 +182,7 @@ abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC
         super._mint(account, amount);
         require(totalSupply() <= _maxSupply(), "ERC20Votes: total supply risks overflowing votes");
 
-        _writeCheckpoint(ERC20VotesStorage.layout()._totalSupplyCheckpoints, _add, amount);
+        _writeCheckpoint(_totalSupplyCheckpoints, _add, amount);
     }
 
     /**
@@ -189,7 +191,7 @@ abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC
     function _burn(address account, uint256 amount) internal virtual override {
         super._burn(account, amount);
 
-        _writeCheckpoint(ERC20VotesStorage.layout()._totalSupplyCheckpoints, _subtract, amount);
+        _writeCheckpoint(_totalSupplyCheckpoints, _subtract, amount);
     }
 
     /**
@@ -215,7 +217,7 @@ abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC
     function _delegate(address delegator, address delegatee) internal virtual {
         address currentDelegate = delegates(delegator);
         uint256 delegatorBalance = balanceOf(delegator);
-        ERC20VotesStorage.layout()._delegates[delegator] = delegatee;
+        _delegates[delegator] = delegatee;
 
         emit DelegateChanged(delegator, currentDelegate, delegatee);
 
@@ -229,12 +231,12 @@ abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC
     ) private {
         if (src != dst && amount > 0) {
             if (src != address(0)) {
-                (uint256 oldWeight, uint256 newWeight) = _writeCheckpoint(ERC20VotesStorage.layout()._checkpoints[src], _subtract, amount);
+                (uint256 oldWeight, uint256 newWeight) = _writeCheckpoint(_checkpoints[src], _subtract, amount);
                 emit DelegateVotesChanged(src, oldWeight, newWeight);
             }
 
             if (dst != address(0)) {
-                (uint256 oldWeight, uint256 newWeight) = _writeCheckpoint(ERC20VotesStorage.layout()._checkpoints[dst], _add, amount);
+                (uint256 oldWeight, uint256 newWeight) = _writeCheckpoint(_checkpoints[dst], _add, amount);
                 emit DelegateVotesChanged(dst, oldWeight, newWeight);
             }
         }
@@ -276,4 +278,11 @@ abstract contract ERC20VotesUpgradeable is Initializable, IVotesUpgradeable, ERC
             result.slot := add(keccak256(0, 0x20), pos)
         }
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[47] private __gap;
 }

@@ -3,11 +3,9 @@
 pragma solidity ^0.8.0;
 
 import "../utils/structs/BitMapsUpgradeable.sol";
-import { BitMapMockStorage } from "./BitmapMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract BitMapMockUpgradeable is Initializable {
-    using BitMapMockStorage for BitMapMockStorage.Layout;
     function __BitMapMock_init() internal onlyInitializing {
     }
 
@@ -15,19 +13,28 @@ contract BitMapMockUpgradeable is Initializable {
     }
     using BitMapsUpgradeable for BitMapsUpgradeable.BitMap;
 
+    BitMapsUpgradeable.BitMap private _bitmap;
+
     function get(uint256 index) public view returns (bool) {
-        return BitMapMockStorage.layout()._bitmap.get(index);
+        return _bitmap.get(index);
     }
 
     function setTo(uint256 index, bool value) public {
-        BitMapMockStorage.layout()._bitmap.setTo(index, value);
+        _bitmap.setTo(index, value);
     }
 
     function set(uint256 index) public {
-        BitMapMockStorage.layout()._bitmap.set(index);
+        _bitmap.set(index);
     }
 
     function unset(uint256 index) public {
-        BitMapMockStorage.layout()._bitmap.unset(index);
+        _bitmap.unset(index);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

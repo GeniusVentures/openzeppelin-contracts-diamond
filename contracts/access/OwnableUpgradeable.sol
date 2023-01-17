@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "../utils/ContextUpgradeable.sol";
-import { OwnableStorage } from "./OwnableStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -20,7 +19,7 @@ import "../proxy/utils/Initializable.sol";
  * the owner.
  */
 abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
-    using OwnableStorage for OwnableStorage.Layout;
+    address private _owner;
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
@@ -47,7 +46,7 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
      * @dev Returns the address of the current owner.
      */
     function owner() public view virtual returns (address) {
-        return OwnableStorage.layout()._owner;
+        return _owner;
     }
 
     /**
@@ -82,8 +81,15 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
      * Internal function without access restriction.
      */
     function _transferOwnership(address newOwner) internal virtual {
-        address oldOwner = OwnableStorage.layout()._owner;
-        OwnableStorage.layout()._owner = newOwner;
+        address oldOwner = _owner;
+        _owner = newOwner;
         emit OwnershipTransferred(oldOwner, newOwner);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

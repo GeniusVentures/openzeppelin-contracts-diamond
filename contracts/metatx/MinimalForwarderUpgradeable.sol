@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "../utils/cryptography/ECDSAUpgradeable.sol";
 import "../utils/cryptography/EIP712Upgradeable.sol";
-import { MinimalForwarderStorage } from "./MinimalForwarderStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -17,7 +16,6 @@ import "../proxy/utils/Initializable.sol";
  * such as the GSN which do have the goal of building a system like that.
  */
 contract MinimalForwarderUpgradeable is Initializable, EIP712Upgradeable {
-    using MinimalForwarderStorage for MinimalForwarderStorage.Layout;
     using ECDSAUpgradeable for bytes32;
 
     struct ForwardRequest {
@@ -32,6 +30,8 @@ contract MinimalForwarderUpgradeable is Initializable, EIP712Upgradeable {
     bytes32 private constant _TYPEHASH =
         keccak256("ForwardRequest(address from,address to,uint256 value,uint256 gas,uint256 nonce,bytes data)");
 
+    mapping(address => uint256) private _nonces;
+
     function __MinimalForwarder_init() internal onlyInitializing {
         __EIP712_init_unchained("MinimalForwarder", "0.0.1");
     }
@@ -39,14 +39,14 @@ contract MinimalForwarderUpgradeable is Initializable, EIP712Upgradeable {
     function __MinimalForwarder_init_unchained() internal onlyInitializing {}
 
     function getNonce(address from) public view returns (uint256) {
-        return MinimalForwarderStorage.layout()._nonces[from];
+        return _nonces[from];
     }
 
     function verify(ForwardRequest calldata req, bytes calldata signature) public view returns (bool) {
         address signer = _hashTypedDataV4(
             keccak256(abi.encode(_TYPEHASH, req.from, req.to, req.value, req.gas, req.nonce, keccak256(req.data)))
         ).recover(signature);
-        return MinimalForwarderStorage.layout()._nonces[req.from] == req.nonce && signer == req.from;
+        return _nonces[req.from] == req.nonce && signer == req.from;
     }
 
     function execute(ForwardRequest calldata req, bytes calldata signature)
@@ -55,7 +55,7 @@ contract MinimalForwarderUpgradeable is Initializable, EIP712Upgradeable {
         returns (bool, bytes memory)
     {
         require(verify(req, signature), "MinimalForwarder: signature does not match request");
-        MinimalForwarderStorage.layout()._nonces[req.from] = req.nonce + 1;
+        _nonces[req.from] = req.nonce + 1;
 
         (bool success, bytes memory returndata) = req.to.call{gas: req.gas, value: req.value}(
             abi.encodePacked(req.data, req.from)
@@ -75,4 +75,11 @@ contract MinimalForwarderUpgradeable is Initializable, EIP712Upgradeable {
 
         return (success, returndata);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

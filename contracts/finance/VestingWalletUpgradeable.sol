@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 import "../token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../utils/AddressUpgradeable.sol";
 import "../utils/ContextUpgradeable.sol";
-import { VestingWalletStorage } from "./VestingWalletStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -21,9 +20,14 @@ import "../proxy/utils/Initializable.sol";
  * @custom:storage-size 52
  */
 contract VestingWalletUpgradeable is Initializable, ContextUpgradeable {
-    using VestingWalletStorage for VestingWalletStorage.Layout;
     event EtherReleased(uint256 amount);
     event ERC20Released(address indexed token, uint256 amount);
+
+    uint256 private _released;
+    mapping(address => uint256) private _erc20Released;
+    address private _beneficiary;
+    uint64 private _start;
+    uint64 private _duration;
 
     /**
      * @dev Set the beneficiary, start timestamp and vesting duration of the vesting wallet.
@@ -42,9 +46,9 @@ contract VestingWalletUpgradeable is Initializable, ContextUpgradeable {
         uint64 durationSeconds
     ) internal onlyInitializing {
         require(beneficiaryAddress != address(0), "VestingWallet: beneficiary is zero address");
-        VestingWalletStorage.layout()._beneficiary = beneficiaryAddress;
-        VestingWalletStorage.layout()._start = startTimestamp;
-        VestingWalletStorage.layout()._duration = durationSeconds;
+        _beneficiary = beneficiaryAddress;
+        _start = startTimestamp;
+        _duration = durationSeconds;
     }
 
     /**
@@ -56,35 +60,35 @@ contract VestingWalletUpgradeable is Initializable, ContextUpgradeable {
      * @dev Getter for the beneficiary address.
      */
     function beneficiary() public view virtual returns (address) {
-        return VestingWalletStorage.layout()._beneficiary;
+        return _beneficiary;
     }
 
     /**
      * @dev Getter for the start timestamp.
      */
     function start() public view virtual returns (uint256) {
-        return VestingWalletStorage.layout()._start;
+        return _start;
     }
 
     /**
      * @dev Getter for the vesting duration.
      */
     function duration() public view virtual returns (uint256) {
-        return VestingWalletStorage.layout()._duration;
+        return _duration;
     }
 
     /**
      * @dev Amount of eth already released
      */
     function released() public view virtual returns (uint256) {
-        return VestingWalletStorage.layout()._released;
+        return _released;
     }
 
     /**
      * @dev Amount of token already released
      */
     function released(address token) public view virtual returns (uint256) {
-        return VestingWalletStorage.layout()._erc20Released[token];
+        return _erc20Released[token];
     }
 
     /**
@@ -109,7 +113,7 @@ contract VestingWalletUpgradeable is Initializable, ContextUpgradeable {
      */
     function release() public virtual {
         uint256 amount = releasable();
-        VestingWalletStorage.layout()._released += amount;
+        _released += amount;
         emit EtherReleased(amount);
         AddressUpgradeable.sendValue(payable(beneficiary()), amount);
     }
@@ -121,7 +125,7 @@ contract VestingWalletUpgradeable is Initializable, ContextUpgradeable {
      */
     function release(address token) public virtual {
         uint256 amount = releasable(token);
-        VestingWalletStorage.layout()._erc20Released[token] += amount;
+        _erc20Released[token] += amount;
         emit ERC20Released(token, amount);
         SafeERC20Upgradeable.safeTransfer(IERC20Upgradeable(token), beneficiary(), amount);
     }
@@ -153,4 +157,11 @@ contract VestingWalletUpgradeable is Initializable, ContextUpgradeable {
             return (totalAllocation * (timestamp - start())) / duration();
         }
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[48] private __gap;
 }

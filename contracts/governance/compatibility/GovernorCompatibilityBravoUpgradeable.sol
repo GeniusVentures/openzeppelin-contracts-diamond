@@ -7,7 +7,6 @@ import "../../utils/math/SafeCastUpgradeable.sol";
 import "../extensions/IGovernorTimelockUpgradeable.sol";
 import "../GovernorUpgradeable.sol";
 import "./IGovernorCompatibilityBravoUpgradeable.sol";
-import { GovernorCompatibilityBravoStorage } from "./GovernorCompatibilityBravoStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -21,7 +20,6 @@ import "../../proxy/utils/Initializable.sol";
  * _Available since v4.3._
  */
 abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGovernorTimelockUpgradeable, IGovernorCompatibilityBravoUpgradeable, GovernorUpgradeable {
-    using GovernorCompatibilityBravoStorage for GovernorCompatibilityBravoStorage.Layout;
     function __GovernorCompatibilityBravo_init() internal onlyInitializing {
     }
 
@@ -45,6 +43,8 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
         mapping(address => Receipt) receipts;
         bytes32 descriptionHash;
     }
+
+    mapping(uint256 => ProposalDetails) private _proposalDetails;
 
     // solhint-disable-next-line func-name-mixedcase
     function COUNTING_MODE() public pure virtual override returns (string memory) {
@@ -83,7 +83,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
      * @dev See {IGovernorCompatibilityBravo-queue}.
      */
     function queue(uint256 proposalId) public virtual override {
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
         queue(
             details.targets,
             details.values,
@@ -96,7 +96,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
      * @dev See {IGovernorCompatibilityBravo-execute}.
      */
     function execute(uint256 proposalId) public payable virtual override {
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
         execute(
             details.targets,
             details.values,
@@ -106,7 +106,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
     }
 
     function cancel(uint256 proposalId) public virtual override {
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
 
         require(
             _msgSender() == details.proposer || getVotes(details.proposer, block.number - 1) < proposalThreshold(),
@@ -154,7 +154,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
         bytes32 descriptionHash = keccak256(bytes(description));
         uint256 proposalId = hashProposal(targets, values, _encodeCalldata(signatures, calldatas), descriptionHash);
 
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
         if (details.descriptionHash == bytes32(0)) {
             details.proposer = proposer;
             details.targets = targets;
@@ -192,7 +192,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
         startBlock = proposalSnapshot(proposalId);
         endBlock = proposalDeadline(proposalId);
 
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
         proposer = details.proposer;
         forVotes = details.forVotes;
         againstVotes = details.againstVotes;
@@ -218,7 +218,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
             bytes[] memory calldatas
         )
     {
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
         return (details.targets, details.values, details.signatures, details.calldatas);
     }
 
@@ -226,7 +226,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
      * @dev See {IGovernorCompatibilityBravo-getReceipt}.
      */
     function getReceipt(uint256 proposalId, address voter) public view virtual override returns (Receipt memory) {
-        return GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId].receipts[voter];
+        return _proposalDetails[proposalId].receipts[voter];
     }
 
     /**
@@ -241,14 +241,14 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
      * @dev See {IGovernor-hasVoted}.
      */
     function hasVoted(uint256 proposalId, address account) public view virtual override returns (bool) {
-        return GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId].receipts[account].hasVoted;
+        return _proposalDetails[proposalId].receipts[account].hasVoted;
     }
 
     /**
      * @dev See {Governor-_quorumReached}. In this module, only forVotes count toward the quorum.
      */
     function _quorumReached(uint256 proposalId) internal view virtual override returns (bool) {
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
         return quorum(proposalSnapshot(proposalId)) <= details.forVotes;
     }
 
@@ -256,7 +256,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
      * @dev See {Governor-_voteSucceeded}. In this module, the forVotes must be scritly over the againstVotes.
      */
     function _voteSucceeded(uint256 proposalId) internal view virtual override returns (bool) {
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
         return details.forVotes > details.againstVotes;
     }
 
@@ -270,7 +270,7 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
         uint256 weight,
         bytes memory // params
     ) internal virtual override {
-        ProposalDetails storage details = GovernorCompatibilityBravoStorage.layout()._proposalDetails[proposalId];
+        ProposalDetails storage details = _proposalDetails[proposalId];
         Receipt storage receipt = details.receipts[account];
 
         require(!receipt.hasVoted, "GovernorCompatibilityBravo: vote already cast");
@@ -288,4 +288,11 @@ abstract contract GovernorCompatibilityBravoUpgradeable is Initializable, IGover
             revert("GovernorCompatibilityBravo: invalid vote type");
         }
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

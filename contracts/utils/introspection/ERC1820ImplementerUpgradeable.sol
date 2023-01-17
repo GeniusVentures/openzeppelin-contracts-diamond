@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "./IERC1820ImplementerUpgradeable.sol";
-import { ERC1820ImplementerStorage } from "./ERC1820ImplementerStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -16,13 +15,14 @@ import "../../proxy/utils/Initializable.sol";
  * registration to be complete.
  */
 contract ERC1820ImplementerUpgradeable is Initializable, IERC1820ImplementerUpgradeable {
-    using ERC1820ImplementerStorage for ERC1820ImplementerStorage.Layout;
     function __ERC1820Implementer_init() internal onlyInitializing {
     }
 
     function __ERC1820Implementer_init_unchained() internal onlyInitializing {
     }
     bytes32 private constant _ERC1820_ACCEPT_MAGIC = keccak256("ERC1820_ACCEPT_MAGIC");
+
+    mapping(bytes32 => mapping(address => bool)) private _supportedInterfaces;
 
     /**
      * @dev See {IERC1820Implementer-canImplementInterfaceForAddress}.
@@ -34,7 +34,7 @@ contract ERC1820ImplementerUpgradeable is Initializable, IERC1820ImplementerUpgr
         override
         returns (bytes32)
     {
-        return ERC1820ImplementerStorage.layout()._supportedInterfaces[interfaceHash][account] ? _ERC1820_ACCEPT_MAGIC : bytes32(0x00);
+        return _supportedInterfaces[interfaceHash][account] ? _ERC1820_ACCEPT_MAGIC : bytes32(0x00);
     }
 
     /**
@@ -45,6 +45,13 @@ contract ERC1820ImplementerUpgradeable is Initializable, IERC1820ImplementerUpgr
      * {IERC1820Registry-interfaceHash}.
      */
     function _registerInterfaceForAddress(bytes32 interfaceHash, address account) internal virtual {
-        ERC1820ImplementerStorage.layout()._supportedInterfaces[interfaceHash][account] = true;
+        _supportedInterfaces[interfaceHash][account] = true;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

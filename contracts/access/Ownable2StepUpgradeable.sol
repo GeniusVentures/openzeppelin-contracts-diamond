@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "./OwnableUpgradeable.sol";
-import { Ownable2StepStorage } from "./Ownable2StepStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -19,13 +18,13 @@ import "../proxy/utils/Initializable.sol";
  * from parent (Ownable).
  */
 abstract contract Ownable2StepUpgradeable is Initializable, OwnableUpgradeable {
-    using Ownable2StepStorage for Ownable2StepStorage.Layout;
     function __Ownable2Step_init() internal onlyInitializing {
         __Ownable_init_unchained();
     }
 
     function __Ownable2Step_init_unchained() internal onlyInitializing {
     }
+    address private _pendingOwner;
 
     event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
 
@@ -33,7 +32,7 @@ abstract contract Ownable2StepUpgradeable is Initializable, OwnableUpgradeable {
      * @dev Returns the address of the pending owner.
      */
     function pendingOwner() public view virtual returns (address) {
-        return Ownable2StepStorage.layout()._pendingOwner;
+        return _pendingOwner;
     }
 
     /**
@@ -41,7 +40,7 @@ abstract contract Ownable2StepUpgradeable is Initializable, OwnableUpgradeable {
      * Can only be called by the current owner.
      */
     function transferOwnership(address newOwner) public virtual override onlyOwner {
-        Ownable2StepStorage.layout()._pendingOwner = newOwner;
+        _pendingOwner = newOwner;
         emit OwnershipTransferStarted(owner(), newOwner);
     }
 
@@ -50,7 +49,7 @@ abstract contract Ownable2StepUpgradeable is Initializable, OwnableUpgradeable {
      * Internal function without access restriction.
      */
     function _transferOwnership(address newOwner) internal virtual override {
-        delete Ownable2StepStorage.layout()._pendingOwner;
+        delete _pendingOwner;
         super._transferOwnership(newOwner);
     }
 
@@ -62,4 +61,11 @@ abstract contract Ownable2StepUpgradeable is Initializable, OwnableUpgradeable {
         require(pendingOwner() == sender, "Ownable2Step: caller is not the new owner");
         _transferOwnership(sender);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

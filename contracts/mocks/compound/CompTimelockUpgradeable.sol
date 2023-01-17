@@ -25,11 +25,9 @@
  */
 
 pragma solidity ^0.8.0;
-import { CompTimelockStorage } from "./CompTimelockStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 contract CompTimelockUpgradeable is Initializable {
-    using CompTimelockStorage for CompTimelockStorage.Layout;
     event NewAdmin(address indexed newAdmin);
     event NewPendingAdmin(address indexed newPendingAdmin);
     event NewDelay(uint256 indexed newDelay);
@@ -62,6 +60,12 @@ contract CompTimelockUpgradeable is Initializable {
     uint256 public constant MINIMUM_DELAY = 2 days;
     uint256 public constant MAXIMUM_DELAY = 30 days;
 
+    address public admin;
+    address public pendingAdmin;
+    uint256 public delay;
+
+    mapping(bytes32 => bool) public queuedTransactions;
+
     function __CompTimelock_init(address admin_, uint256 delay_) internal onlyInitializing {
         __CompTimelock_init_unchained(admin_, delay_);
     }
@@ -70,8 +74,8 @@ contract CompTimelockUpgradeable is Initializable {
         require(delay_ >= MINIMUM_DELAY, "Timelock::constructor: Delay must exceed minimum delay.");
         require(delay_ <= MAXIMUM_DELAY, "Timelock::setDelay: Delay must not exceed maximum delay.");
 
-        CompTimelockStorage.layout().admin = admin_;
-        CompTimelockStorage.layout().delay = delay_;
+        admin = admin_;
+        delay = delay_;
     }
 
     receive() external payable {}
@@ -80,24 +84,24 @@ contract CompTimelockUpgradeable is Initializable {
         require(msg.sender == address(this), "Timelock::setDelay: Call must come from Timelock.");
         require(delay_ >= MINIMUM_DELAY, "Timelock::setDelay: Delay must exceed minimum delay.");
         require(delay_ <= MAXIMUM_DELAY, "Timelock::setDelay: Delay must not exceed maximum delay.");
-        CompTimelockStorage.layout().delay = delay_;
+        delay = delay_;
 
-        emit NewDelay(CompTimelockStorage.layout().delay);
+        emit NewDelay(delay);
     }
 
     function acceptAdmin() public {
-        require(msg.sender == CompTimelockStorage.layout().pendingAdmin, "Timelock::acceptAdmin: Call must come from pendingAdmin.");
-        CompTimelockStorage.layout().admin = msg.sender;
-        CompTimelockStorage.layout().pendingAdmin = address(0);
+        require(msg.sender == pendingAdmin, "Timelock::acceptAdmin: Call must come from pendingAdmin.");
+        admin = msg.sender;
+        pendingAdmin = address(0);
 
-        emit NewAdmin(CompTimelockStorage.layout().admin);
+        emit NewAdmin(admin);
     }
 
     function setPendingAdmin(address pendingAdmin_) public {
         require(msg.sender == address(this), "Timelock::setPendingAdmin: Call must come from Timelock.");
-        CompTimelockStorage.layout().pendingAdmin = pendingAdmin_;
+        pendingAdmin = pendingAdmin_;
 
-        emit NewPendingAdmin(CompTimelockStorage.layout().pendingAdmin);
+        emit NewPendingAdmin(pendingAdmin);
     }
 
     function queueTransaction(
@@ -107,14 +111,14 @@ contract CompTimelockUpgradeable is Initializable {
         bytes memory data,
         uint256 eta
     ) public returns (bytes32) {
-        require(msg.sender == CompTimelockStorage.layout().admin, "Timelock::queueTransaction: Call must come from admin.");
+        require(msg.sender == admin, "Timelock::queueTransaction: Call must come from admin.");
         require(
-            eta >= getBlockTimestamp() + CompTimelockStorage.layout().delay,
+            eta >= getBlockTimestamp() + delay,
             "Timelock::queueTransaction: Estimated execution block must satisfy delay."
         );
 
         bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
-        CompTimelockStorage.layout().queuedTransactions[txHash] = true;
+        queuedTransactions[txHash] = true;
 
         emit QueueTransaction(txHash, target, value, signature, data, eta);
         return txHash;
@@ -127,10 +131,10 @@ contract CompTimelockUpgradeable is Initializable {
         bytes memory data,
         uint256 eta
     ) public {
-        require(msg.sender == CompTimelockStorage.layout().admin, "Timelock::cancelTransaction: Call must come from admin.");
+        require(msg.sender == admin, "Timelock::cancelTransaction: Call must come from admin.");
 
         bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
-        CompTimelockStorage.layout().queuedTransactions[txHash] = false;
+        queuedTransactions[txHash] = false;
 
         emit CancelTransaction(txHash, target, value, signature, data, eta);
     }
@@ -142,14 +146,14 @@ contract CompTimelockUpgradeable is Initializable {
         bytes memory data,
         uint256 eta
     ) public payable returns (bytes memory) {
-        require(msg.sender == CompTimelockStorage.layout().admin, "Timelock::executeTransaction: Call must come from admin.");
+        require(msg.sender == admin, "Timelock::executeTransaction: Call must come from admin.");
 
         bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
-        require(CompTimelockStorage.layout().queuedTransactions[txHash], "Timelock::executeTransaction: Transaction hasn't been queued.");
+        require(queuedTransactions[txHash], "Timelock::executeTransaction: Transaction hasn't been queued.");
         require(getBlockTimestamp() >= eta, "Timelock::executeTransaction: Transaction hasn't surpassed time lock.");
         require(getBlockTimestamp() <= eta + GRACE_PERIOD, "Timelock::executeTransaction: Transaction is stale.");
 
-        CompTimelockStorage.layout().queuedTransactions[txHash] = false;
+        queuedTransactions[txHash] = false;
 
         bytes memory callData;
 
@@ -172,24 +176,11 @@ contract CompTimelockUpgradeable is Initializable {
         // solium-disable-next-line security/no-block-members
         return block.timestamp;
     }
-    // generated getter for ${varDecl.name}
-    function admin() public view returns(address) {
-        return CompTimelockStorage.layout().admin;
-    }
 
-    // generated getter for ${varDecl.name}
-    function pendingAdmin() public view returns(address) {
-        return CompTimelockStorage.layout().pendingAdmin;
-    }
-
-    // generated getter for ${varDecl.name}
-    function delay() public view returns(uint256) {
-        return CompTimelockStorage.layout().delay;
-    }
-
-    // generated getter for ${varDecl.name}
-    function queuedTransactions(bytes32 arg0) public view returns(bool) {
-        return CompTimelockStorage.layout().queuedTransactions[arg0];
-    }
-
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[46] private __gap;
 }

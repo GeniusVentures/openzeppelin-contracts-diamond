@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
-import { DummyImplementationStorage } from "./DummyImplementationStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 abstract contract ImplUpgradeable is Initializable {
@@ -11,30 +10,39 @@ abstract contract ImplUpgradeable is Initializable {
     function __Impl_init_unchained() internal onlyInitializing {
     }
     function version() public pure virtual returns (string memory);
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 contract DummyImplementationUpgradeable is Initializable {
-    using DummyImplementationStorage for DummyImplementationStorage.Layout;
     function __DummyImplementation_init() internal onlyInitializing {
     }
 
     function __DummyImplementation_init_unchained() internal onlyInitializing {
     }
+    uint256 public value;
+    string public text;
+    uint256[] public values;
 
     function initializeNonPayable() public {
-        DummyImplementationStorage.layout().value = 10;
+        value = 10;
     }
 
     function initializePayable() public payable {
-        DummyImplementationStorage.layout().value = 100;
+        value = 100;
     }
 
     function initializeNonPayableWithValue(uint256 _value) public {
-        DummyImplementationStorage.layout().value = _value;
+        value = _value;
     }
 
     function initializePayableWithValue(uint256 _value) public payable {
-        DummyImplementationStorage.layout().value = _value;
+        value = _value;
     }
 
     function initialize(
@@ -42,9 +50,9 @@ contract DummyImplementationUpgradeable is Initializable {
         string memory _text,
         uint256[] memory _values
     ) public {
-        DummyImplementationStorage.layout().value = _value;
-        DummyImplementationStorage.layout().text = _text;
-        DummyImplementationStorage.layout().values = _values;
+        value = _value;
+        text = _text;
+        values = _values;
     }
 
     function get() public pure returns (bool) {
@@ -58,35 +66,33 @@ contract DummyImplementationUpgradeable is Initializable {
     function reverts() public pure {
         require(false, "DummyImplementation reverted");
     }
-    // generated getter for ${varDecl.name}
-    function value() public view returns(uint256) {
-        return DummyImplementationStorage.layout().value;
-    }
 
-    // generated getter for ${varDecl.name}
-    function text() public view returns(string memory) {
-        return DummyImplementationStorage.layout().text;
-    }
-
-    // generated getter for ${varDecl.name}
-    function values(uint256 arg0) public view returns(uint256) {
-        return DummyImplementationStorage.layout().values[arg0];
-    }
-
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[47] private __gap;
 }
 
 contract DummyImplementationV2Upgradeable is Initializable, DummyImplementationUpgradeable {
-    using DummyImplementationStorage for DummyImplementationStorage.Layout;
     function __DummyImplementationV2_init() internal onlyInitializing {
     }
 
     function __DummyImplementationV2_init_unchained() internal onlyInitializing {
     }
     function migrate(uint256 newVal) public payable {
-        DummyImplementationStorage.layout().value = newVal;
+        value = newVal;
     }
 
     function version() public pure override returns (string memory) {
         return "V2";
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

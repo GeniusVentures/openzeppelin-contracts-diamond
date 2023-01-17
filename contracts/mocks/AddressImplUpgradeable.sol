@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "../utils/AddressUpgradeable.sol";
-import { AddressImplStorage } from "./AddressImplStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract AddressImplUpgradeable is Initializable {
@@ -12,6 +11,7 @@ contract AddressImplUpgradeable is Initializable {
 
     function __AddressImpl_init_unchained() internal onlyInitializing {
     }
+    string public sharedAnswer;
 
     event CallReturnValue(string data);
 
@@ -44,9 +44,11 @@ contract AddressImplUpgradeable is Initializable {
 
     // sendValue's tests require the contract to hold Ether
     receive() external payable {}
-    // generated getter for ${varDecl.name}
-    function sharedAnswer() public view returns(string memory) {
-        return AddressImplStorage.layout().sharedAnswer;
-    }
 
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

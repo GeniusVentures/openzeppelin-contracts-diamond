@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 import "../ERC20Upgradeable.sol";
 import "../../../utils/ArraysUpgradeable.sol";
 import "../../../utils/CountersUpgradeable.sol";
-import { ERC20SnapshotStorage } from "./ERC20SnapshotStorage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -42,7 +41,6 @@ import "../../../proxy/utils/Initializable.sol";
  */
 
 abstract contract ERC20SnapshotUpgradeable is Initializable, ERC20Upgradeable {
-    using ERC20SnapshotStorage for ERC20SnapshotStorage.Layout;
     function __ERC20Snapshot_init() internal onlyInitializing {
     }
 
@@ -60,6 +58,12 @@ abstract contract ERC20SnapshotUpgradeable is Initializable, ERC20Upgradeable {
         uint256[] ids;
         uint256[] values;
     }
+
+    mapping(address => Snapshots) private _accountBalanceSnapshots;
+    Snapshots private _totalSupplySnapshots;
+
+    // Snapshot ids increase monotonically, with the first value being 1. An id of 0 is invalid.
+    CountersUpgradeable.Counter private _currentSnapshotId;
 
     /**
      * @dev Emitted by {_snapshot} when a snapshot identified by `id` is created.
@@ -88,7 +92,7 @@ abstract contract ERC20SnapshotUpgradeable is Initializable, ERC20Upgradeable {
      * ====
      */
     function _snapshot() internal virtual returns (uint256) {
-        ERC20SnapshotStorage.layout()._currentSnapshotId.increment();
+        _currentSnapshotId.increment();
 
         uint256 currentId = _getCurrentSnapshotId();
         emit Snapshot(currentId);
@@ -99,14 +103,14 @@ abstract contract ERC20SnapshotUpgradeable is Initializable, ERC20Upgradeable {
      * @dev Get the current snapshotId
      */
     function _getCurrentSnapshotId() internal view virtual returns (uint256) {
-        return ERC20SnapshotStorage.layout()._currentSnapshotId.current();
+        return _currentSnapshotId.current();
     }
 
     /**
      * @dev Retrieves the balance of `account` at the time `snapshotId` was created.
      */
     function balanceOfAt(address account, uint256 snapshotId) public view virtual returns (uint256) {
-        (bool snapshotted, uint256 value) = _valueAt(snapshotId, ERC20SnapshotStorage.layout()._accountBalanceSnapshots[account]);
+        (bool snapshotted, uint256 value) = _valueAt(snapshotId, _accountBalanceSnapshots[account]);
 
         return snapshotted ? value : balanceOf(account);
     }
@@ -115,7 +119,7 @@ abstract contract ERC20SnapshotUpgradeable is Initializable, ERC20Upgradeable {
      * @dev Retrieves the total supply at the time `snapshotId` was created.
      */
     function totalSupplyAt(uint256 snapshotId) public view virtual returns (uint256) {
-        (bool snapshotted, uint256 value) = _valueAt(snapshotId, ERC20SnapshotStorage.layout()._totalSupplySnapshots);
+        (bool snapshotted, uint256 value) = _valueAt(snapshotId, _totalSupplySnapshots);
 
         return snapshotted ? value : totalSupply();
     }
@@ -172,11 +176,11 @@ abstract contract ERC20SnapshotUpgradeable is Initializable, ERC20Upgradeable {
     }
 
     function _updateAccountSnapshot(address account) private {
-        _updateSnapshot(ERC20SnapshotStorage.layout()._accountBalanceSnapshots[account], balanceOf(account));
+        _updateSnapshot(_accountBalanceSnapshots[account], balanceOf(account));
     }
 
     function _updateTotalSupplySnapshot() private {
-        _updateSnapshot(ERC20SnapshotStorage.layout()._totalSupplySnapshots, totalSupply());
+        _updateSnapshot(_totalSupplySnapshots, totalSupply());
     }
 
     function _updateSnapshot(Snapshots storage snapshots, uint256 currentValue) private {
@@ -194,4 +198,11 @@ abstract contract ERC20SnapshotUpgradeable is Initializable, ERC20Upgradeable {
             return ids[ids.length - 1];
         }
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[46] private __gap;
 }

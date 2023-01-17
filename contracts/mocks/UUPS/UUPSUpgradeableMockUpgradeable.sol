@@ -14,6 +14,13 @@ contract UUPSUpgradeableMockUpgradeable is Initializable, CountersImplUpgradeabl
     }
     // Not having any checks in this function is dangerous! Do not do this outside tests!
     function _authorizeUpgrade(address) internal override {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 contract UUPSUpgradeableUnsafeMockUpgradeable is Initializable, UUPSUpgradeableMockUpgradeable {
@@ -29,4 +36,11 @@ contract UUPSUpgradeableUnsafeMockUpgradeable is Initializable, UUPSUpgradeableM
     function upgradeToAndCall(address newImplementation, bytes memory data) external payable override {
         ERC1967UpgradeUpgradeable._upgradeToAndCall(newImplementation, data, false);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

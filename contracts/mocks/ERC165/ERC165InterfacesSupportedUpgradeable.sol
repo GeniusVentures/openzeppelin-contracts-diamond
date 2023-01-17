@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "../../utils/introspection/IERC165Upgradeable.sol";
-import { SupportsInterfaceWithLookupMockStorage } from "./ERC165InterfacesSupportedStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -17,11 +16,15 @@ import "../../proxy/utils/Initializable.sol";
  * solidity-coverage ignores the /mocks folder, so we duplicate its implementation here to avoid instrumenting it
  */
 contract SupportsInterfaceWithLookupMockUpgradeable is Initializable, IERC165Upgradeable {
-    using SupportsInterfaceWithLookupMockStorage for SupportsInterfaceWithLookupMockStorage.Layout;
     /*
      * bytes4(keccak256('supportsInterface(bytes4)')) == 0x01ffc9a7
      */
     bytes4 public constant INTERFACE_ID_ERC165 = 0x01ffc9a7;
+
+    /**
+     * @dev A mapping of interface id to whether or not it's supported.
+     */
+    mapping(bytes4 => bool) private _supportedInterfaces;
 
     /**
      * @dev A contract implementing SupportsInterfaceWithLookup
@@ -39,7 +42,7 @@ contract SupportsInterfaceWithLookupMockUpgradeable is Initializable, IERC165Upg
      * @dev Implement supportsInterface(bytes4) using a lookup table.
      */
     function supportsInterface(bytes4 interfaceId) public view override returns (bool) {
-        return SupportsInterfaceWithLookupMockStorage.layout()._supportedInterfaces[interfaceId];
+        return _supportedInterfaces[interfaceId];
     }
 
     /**
@@ -47,8 +50,15 @@ contract SupportsInterfaceWithLookupMockUpgradeable is Initializable, IERC165Upg
      */
     function _registerInterface(bytes4 interfaceId) internal {
         require(interfaceId != 0xffffffff, "ERC165InterfacesSupported: invalid interface id");
-        SupportsInterfaceWithLookupMockStorage.layout()._supportedInterfaces[interfaceId] = true;
+        _supportedInterfaces[interfaceId] = true;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }
 
 contract ERC165InterfacesSupportedUpgradeable is Initializable, SupportsInterfaceWithLookupMockUpgradeable {
@@ -62,4 +72,11 @@ contract ERC165InterfacesSupportedUpgradeable is Initializable, SupportsInterfac
             _registerInterface(interfaceIds[i]);
         }
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

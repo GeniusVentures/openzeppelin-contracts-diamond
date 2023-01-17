@@ -2,7 +2,6 @@
 // OpenZeppelin Contracts (last updated v4.8.0) (security/ReentrancyGuard.sol)
 
 pragma solidity ^0.8.0;
-import { ReentrancyGuardStorage } from "./ReentrancyGuardStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -22,7 +21,6 @@ import "../proxy/utils/Initializable.sol";
  * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
  */
 abstract contract ReentrancyGuardUpgradeable is Initializable {
-    using ReentrancyGuardStorage for ReentrancyGuardStorage.Layout;
     // Booleans are more expensive than uint256 or any type that takes up a full
     // word because each write operation emits an extra SLOAD to first read the
     // slot's contents, replace the bits taken up by the boolean, and then write
@@ -37,12 +35,14 @@ abstract contract ReentrancyGuardUpgradeable is Initializable {
     uint256 private constant _NOT_ENTERED = 1;
     uint256 private constant _ENTERED = 2;
 
+    uint256 private _status;
+
     function __ReentrancyGuard_init() internal onlyInitializing {
         __ReentrancyGuard_init_unchained();
     }
 
     function __ReentrancyGuard_init_unchained() internal onlyInitializing {
-        ReentrancyGuardStorage.layout()._status = _NOT_ENTERED;
+        _status = _NOT_ENTERED;
     }
 
     /**
@@ -60,15 +60,22 @@ abstract contract ReentrancyGuardUpgradeable is Initializable {
 
     function _nonReentrantBefore() private {
         // On the first call to nonReentrant, _status will be _NOT_ENTERED
-        require(ReentrancyGuardStorage.layout()._status != _ENTERED, "ReentrancyGuard: reentrant call");
+        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
 
         // Any calls to nonReentrant after this point will fail
-        ReentrancyGuardStorage.layout()._status = _ENTERED;
+        _status = _ENTERED;
     }
 
     function _nonReentrantAfter() private {
         // By storing the original value once again, a refund is triggered (see
         // https://eips.ethereum.org/EIPS/eip-2200)
-        ReentrancyGuardStorage.layout()._status = _NOT_ENTERED;
+        _status = _NOT_ENTERED;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.8.0) (token/ERC20/extensions/ERC4626.sol)
+// OpenZeppelin Contracts (last updated v4.8.1) (token/ERC20/extensions/ERC4626.sol)
 
 pragma solidity ^0.8.0;
 
@@ -7,7 +7,6 @@ import "../ERC20Upgradeable.sol";
 import "../utils/SafeERC20Upgradeable.sol";
 import "../../../interfaces/IERC4626Upgradeable.sol";
 import "../../../utils/math/MathUpgradeable.sol";
-import { ERC4626Storage } from "./ERC4626Storage.sol";
 import "../../../proxy/utils/Initializable.sol";
 
 /**
@@ -30,8 +29,10 @@ import "../../../proxy/utils/Initializable.sol";
  * _Available since v4.7._
  */
 abstract contract ERC4626Upgradeable is Initializable, ERC20Upgradeable, IERC4626Upgradeable {
-    using ERC4626Storage for ERC4626Storage.Layout;
     using MathUpgradeable for uint256;
+
+    IERC20Upgradeable private _asset;
+    uint8 private _decimals;
 
     /**
      * @dev Set the underlying asset contract. This must be an ERC20-compatible contract (ERC20 or ERC777).
@@ -42,8 +43,8 @@ abstract contract ERC4626Upgradeable is Initializable, ERC20Upgradeable, IERC462
 
     function __ERC4626_init_unchained(IERC20Upgradeable asset_) internal onlyInitializing {
         (bool success, uint8 assetDecimals) = _tryGetAssetDecimals(asset_);
-        ERC4626Storage.layout()._decimals = success ? assetDecimals : super.decimals();
-        ERC4626Storage.layout()._asset = asset_;
+        _decimals = success ? assetDecimals : super.decimals();
+        _asset = asset_;
     }
 
     /**
@@ -69,17 +70,17 @@ abstract contract ERC4626Upgradeable is Initializable, ERC20Upgradeable, IERC462
      * See {IERC20Metadata-decimals}.
      */
     function decimals() public view virtual override(IERC20MetadataUpgradeable, ERC20Upgradeable) returns (uint8) {
-        return ERC4626Storage.layout()._decimals;
+        return _decimals;
     }
 
     /** @dev See {IERC4626-asset}. */
     function asset() public view virtual override returns (address) {
-        return address(ERC4626Storage.layout()._asset);
+        return address(_asset);
     }
 
     /** @dev See {IERC4626-totalAssets}. */
     function totalAssets() public view virtual override returns (uint256) {
-        return ERC4626Storage.layout()._asset.balanceOf(address(this));
+        return _asset.balanceOf(address(this));
     }
 
     /** @dev See {IERC4626-convertToShares}. */
@@ -247,7 +248,7 @@ abstract contract ERC4626Upgradeable is Initializable, ERC20Upgradeable, IERC462
         // Conclusion: we need to do the transfer before we mint so that any reentrancy would happen before the
         // assets are transferred and before the shares are minted, which is a valid state.
         // slither-disable-next-line reentrancy-no-eth
-        SafeERC20Upgradeable.safeTransferFrom(ERC4626Storage.layout()._asset, caller, address(this), assets);
+        SafeERC20Upgradeable.safeTransferFrom(_asset, caller, address(this), assets);
         _mint(receiver, shares);
 
         emit Deposit(caller, receiver, assets, shares);
@@ -274,7 +275,7 @@ abstract contract ERC4626Upgradeable is Initializable, ERC20Upgradeable, IERC462
         // Conclusion: we need to do the transfer after the burn so that any reentrancy would happen after the
         // shares are burned and after the assets are transferred, which is a valid state.
         _burn(owner, shares);
-        SafeERC20Upgradeable.safeTransfer(ERC4626Storage.layout()._asset, receiver, assets);
+        SafeERC20Upgradeable.safeTransfer(_asset, receiver, assets);
 
         emit Withdraw(caller, receiver, owner, assets, shares);
     }
@@ -285,4 +286,11 @@ abstract contract ERC4626Upgradeable is Initializable, ERC20Upgradeable, IERC462
     function _isVaultCollateralized() private view returns (bool) {
         return totalAssets() > 0 || totalSupply() == 0;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

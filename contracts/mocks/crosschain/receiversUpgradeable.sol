@@ -23,6 +23,13 @@ abstract contract ReceiverUpgradeable is Initializable, CrossChainEnabledUpgrade
     function crossChainRestricted() external onlyCrossChain {}
 
     function crossChainOwnerRestricted() external onlyCrossChainSender(owner) {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 /**
@@ -31,6 +38,13 @@ abstract contract ReceiverUpgradeable is Initializable, CrossChainEnabledUpgrade
 contract CrossChainEnabledAMBMockUpgradeable is Initializable, ReceiverUpgradeable, CrossChainEnabledAMBUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address bridge) CrossChainEnabledAMBUpgradeable(bridge) {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 /**
@@ -39,6 +53,13 @@ contract CrossChainEnabledAMBMockUpgradeable is Initializable, ReceiverUpgradeab
 contract CrossChainEnabledArbitrumL1MockUpgradeable is Initializable, ReceiverUpgradeable, CrossChainEnabledArbitrumL1Upgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address bridge) CrossChainEnabledArbitrumL1Upgradeable(bridge) {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 contract CrossChainEnabledArbitrumL2MockUpgradeable is Initializable, ReceiverUpgradeable, CrossChainEnabledArbitrumL2Upgradeable {    function __CrossChainEnabledArbitrumL2Mock_init() internal onlyInitializing {
@@ -46,6 +67,13 @@ contract CrossChainEnabledArbitrumL2MockUpgradeable is Initializable, ReceiverUp
 
     function __CrossChainEnabledArbitrumL2Mock_init_unchained() internal onlyInitializing {
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 /**
@@ -54,6 +82,13 @@ contract CrossChainEnabledArbitrumL2MockUpgradeable is Initializable, ReceiverUp
 contract CrossChainEnabledOptimismMockUpgradeable is Initializable, ReceiverUpgradeable, CrossChainEnabledOptimismUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address bridge) CrossChainEnabledOptimismUpgradeable(bridge) {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
 
 /**
@@ -62,4 +97,11 @@ contract CrossChainEnabledOptimismMockUpgradeable is Initializable, ReceiverUpgr
 contract CrossChainEnabledPolygonChildMockUpgradeable is Initializable, ReceiverUpgradeable, CrossChainEnabledPolygonChildUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address bridge) CrossChainEnabledPolygonChildUpgradeable(bridge) {}
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

@@ -3,11 +3,10 @@
 pragma solidity ^0.8.0;
 
 import "../token/ERC20/ERC20Upgradeable.sol";
-import { ERC20DecimalsMockStorage } from "./ERC20DecimalsMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract ERC20DecimalsMockUpgradeable is Initializable, ERC20Upgradeable {
-    using ERC20DecimalsMockStorage for ERC20DecimalsMockStorage.Layout;
+    uint8 private _decimals;
 
     function __ERC20DecimalsMock_init(
         string memory name_,
@@ -23,11 +22,11 @@ contract ERC20DecimalsMockUpgradeable is Initializable, ERC20Upgradeable {
         string memory,
         uint8 decimals_
     ) internal onlyInitializing {
-        ERC20DecimalsMockStorage.layout()._decimals = decimals_;
+        _decimals = decimals_;
     }
 
     function decimals() public view override returns (uint8) {
-        return ERC20DecimalsMockStorage.layout()._decimals;
+        return _decimals;
     }
 
     function mint(address account, uint256 amount) public {
@@ -37,4 +36,11 @@ contract ERC20DecimalsMockUpgradeable is Initializable, ERC20Upgradeable {
     function burn(address account, uint256 amount) public {
         _burn(account, amount);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

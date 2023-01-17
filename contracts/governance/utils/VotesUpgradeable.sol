@@ -7,7 +7,6 @@ import "../../utils/CountersUpgradeable.sol";
 import "../../utils/CheckpointsUpgradeable.sol";
 import "../../utils/cryptography/EIP712Upgradeable.sol";
 import "./IVotesUpgradeable.sol";
-import { VotesStorage } from "./VotesStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -31,7 +30,6 @@ import "../../proxy/utils/Initializable.sol";
  * _Available since v4.5._
  */
 abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextUpgradeable, EIP712Upgradeable {
-    using VotesStorage for VotesStorage.Layout;
     function __Votes_init() internal onlyInitializing {
     }
 
@@ -43,11 +41,17 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
     bytes32 private constant _DELEGATION_TYPEHASH =
         keccak256("Delegation(address delegatee,uint256 nonce,uint256 expiry)");
 
+    mapping(address => address) private _delegation;
+    mapping(address => CheckpointsUpgradeable.History) private _delegateCheckpoints;
+    CheckpointsUpgradeable.History private _totalCheckpoints;
+
+    mapping(address => CountersUpgradeable.Counter) private _nonces;
+
     /**
      * @dev Returns the current amount of votes that `account` has.
      */
     function getVotes(address account) public view virtual override returns (uint256) {
-        return VotesStorage.layout()._delegateCheckpoints[account].latest();
+        return _delegateCheckpoints[account].latest();
     }
 
     /**
@@ -58,7 +62,7 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
      * - `blockNumber` must have been already mined
      */
     function getPastVotes(address account, uint256 blockNumber) public view virtual override returns (uint256) {
-        return VotesStorage.layout()._delegateCheckpoints[account].getAtProbablyRecentBlock(blockNumber);
+        return _delegateCheckpoints[account].getAtProbablyRecentBlock(blockNumber);
     }
 
     /**
@@ -74,21 +78,21 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
      */
     function getPastTotalSupply(uint256 blockNumber) public view virtual override returns (uint256) {
         require(blockNumber < block.number, "Votes: block not yet mined");
-        return VotesStorage.layout()._totalCheckpoints.getAtProbablyRecentBlock(blockNumber);
+        return _totalCheckpoints.getAtProbablyRecentBlock(blockNumber);
     }
 
     /**
      * @dev Returns the current total supply of votes.
      */
     function _getTotalSupply() internal view virtual returns (uint256) {
-        return VotesStorage.layout()._totalCheckpoints.latest();
+        return _totalCheckpoints.latest();
     }
 
     /**
      * @dev Returns the delegate that `account` has chosen.
      */
     function delegates(address account) public view virtual override returns (address) {
-        return VotesStorage.layout()._delegation[account];
+        return _delegation[account];
     }
 
     /**
@@ -128,7 +132,7 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
      */
     function _delegate(address account, address delegatee) internal virtual {
         address oldDelegate = delegates(account);
-        VotesStorage.layout()._delegation[account] = delegatee;
+        _delegation[account] = delegatee;
 
         emit DelegateChanged(account, oldDelegate, delegatee);
         _moveDelegateVotes(oldDelegate, delegatee, _getVotingUnits(account));
@@ -144,10 +148,10 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
         uint256 amount
     ) internal virtual {
         if (from == address(0)) {
-            VotesStorage.layout()._totalCheckpoints.push(_add, amount);
+            _totalCheckpoints.push(_add, amount);
         }
         if (to == address(0)) {
-            VotesStorage.layout()._totalCheckpoints.push(_subtract, amount);
+            _totalCheckpoints.push(_subtract, amount);
         }
         _moveDelegateVotes(delegates(from), delegates(to), amount);
     }
@@ -162,11 +166,11 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
     ) private {
         if (from != to && amount > 0) {
             if (from != address(0)) {
-                (uint256 oldValue, uint256 newValue) = VotesStorage.layout()._delegateCheckpoints[from].push(_subtract, amount);
+                (uint256 oldValue, uint256 newValue) = _delegateCheckpoints[from].push(_subtract, amount);
                 emit DelegateVotesChanged(from, oldValue, newValue);
             }
             if (to != address(0)) {
-                (uint256 oldValue, uint256 newValue) = VotesStorage.layout()._delegateCheckpoints[to].push(_add, amount);
+                (uint256 oldValue, uint256 newValue) = _delegateCheckpoints[to].push(_add, amount);
                 emit DelegateVotesChanged(to, oldValue, newValue);
             }
         }
@@ -186,7 +190,7 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
      * Returns the current value and increments nonce.
      */
     function _useNonce(address owner) internal virtual returns (uint256 current) {
-        CountersUpgradeable.Counter storage nonce = VotesStorage.layout()._nonces[owner];
+        CountersUpgradeable.Counter storage nonce = _nonces[owner];
         current = nonce.current();
         nonce.increment();
     }
@@ -195,7 +199,7 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
      * @dev Returns an address nonce.
      */
     function nonces(address owner) public view virtual returns (uint256) {
-        return VotesStorage.layout()._nonces[owner].current();
+        return _nonces[owner].current();
     }
 
     /**
@@ -210,4 +214,11 @@ abstract contract VotesUpgradeable is Initializable, IVotesUpgradeable, ContextU
      * @dev Must return the voting units held by an account.
      */
     function _getVotingUnits(address) internal view virtual returns (uint256);
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[46] private __gap;
 }

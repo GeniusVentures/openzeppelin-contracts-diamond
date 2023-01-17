@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "../../access/OwnableUpgradeable.sol";
 import "../AddressUpgradeable.sol";
-import { EscrowStorage } from "./EscrowStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -22,7 +21,6 @@ import "../../proxy/utils/Initializable.sol";
  * to the escrow's deposit and withdraw.
  */
 contract EscrowUpgradeable is Initializable, OwnableUpgradeable {
-    using EscrowStorage for EscrowStorage.Layout;
     function __Escrow_init() internal onlyInitializing {
         __Ownable_init_unchained();
     }
@@ -37,8 +35,10 @@ contract EscrowUpgradeable is Initializable, OwnableUpgradeable {
     event Deposited(address indexed payee, uint256 weiAmount);
     event Withdrawn(address indexed payee, uint256 weiAmount);
 
+    mapping(address => uint256) private _deposits;
+
     function depositsOf(address payee) public view returns (uint256) {
-        return EscrowStorage.layout()._deposits[payee];
+        return _deposits[payee];
     }
 
     /**
@@ -49,7 +49,7 @@ contract EscrowUpgradeable is Initializable, OwnableUpgradeable {
      */
     function deposit(address payee) public payable virtual onlyOwner {
         uint256 amount = msg.value;
-        EscrowStorage.layout()._deposits[payee] += amount;
+        _deposits[payee] += amount;
         emit Deposited(payee, amount);
     }
 
@@ -66,12 +66,19 @@ contract EscrowUpgradeable is Initializable, OwnableUpgradeable {
      * Emits a {Withdrawn} event.
      */
     function withdraw(address payable payee) public virtual onlyOwner {
-        uint256 payment = EscrowStorage.layout()._deposits[payee];
+        uint256 payment = _deposits[payee];
 
-        EscrowStorage.layout()._deposits[payee] = 0;
+        _deposits[payee] = 0;
 
         payee.sendValue(payment);
 
         emit Withdrawn(payee, payment);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

@@ -4,7 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "./ConditionalEscrowUpgradeable.sol";
-import { RefundEscrowStorage } from "./RefundEscrowStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 /**
@@ -18,7 +17,6 @@ import "../../proxy/utils/Initializable.sol";
  * with `RefundEscrow` will be made through the owner contract.
  */
 contract RefundEscrowUpgradeable is Initializable, ConditionalEscrowUpgradeable {
-    using RefundEscrowStorage for RefundEscrowStorage.Layout;
     using AddressUpgradeable for address payable;
 
     enum State {
@@ -29,6 +27,9 @@ contract RefundEscrowUpgradeable is Initializable, ConditionalEscrowUpgradeable 
 
     event RefundsClosed();
     event RefundsEnabled();
+
+    State private _state;
+    address payable private _beneficiary;
 
     /**
      * @dev Constructor.
@@ -41,22 +42,22 @@ contract RefundEscrowUpgradeable is Initializable, ConditionalEscrowUpgradeable 
 
     function __RefundEscrow_init_unchained(address payable beneficiary_) internal onlyInitializing {
         require(beneficiary_ != address(0), "RefundEscrow: beneficiary is the zero address");
-        RefundEscrowStorage.layout()._beneficiary = beneficiary_;
-        RefundEscrowStorage.layout()._state = State.Active;
+        _beneficiary = beneficiary_;
+        _state = State.Active;
     }
 
     /**
      * @return The current state of the escrow.
      */
     function state() public view virtual returns (State) {
-        return RefundEscrowStorage.layout()._state;
+        return _state;
     }
 
     /**
      * @return The beneficiary of the escrow.
      */
     function beneficiary() public view virtual returns (address payable) {
-        return RefundEscrowStorage.layout()._beneficiary;
+        return _beneficiary;
     }
 
     /**
@@ -74,7 +75,7 @@ contract RefundEscrowUpgradeable is Initializable, ConditionalEscrowUpgradeable 
      */
     function close() public virtual onlyOwner {
         require(state() == State.Active, "RefundEscrow: can only close while active");
-        RefundEscrowStorage.layout()._state = State.Closed;
+        _state = State.Closed;
         emit RefundsClosed();
     }
 
@@ -83,7 +84,7 @@ contract RefundEscrowUpgradeable is Initializable, ConditionalEscrowUpgradeable 
      */
     function enableRefunds() public virtual onlyOwner {
         require(state() == State.Active, "RefundEscrow: can only enable refunds while active");
-        RefundEscrowStorage.layout()._state = State.Refunding;
+        _state = State.Refunding;
         emit RefundsEnabled();
     }
 
@@ -102,4 +103,11 @@ contract RefundEscrowUpgradeable is Initializable, ConditionalEscrowUpgradeable 
     function withdrawalAllowed(address) public view override returns (bool) {
         return state() == State.Refunding;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

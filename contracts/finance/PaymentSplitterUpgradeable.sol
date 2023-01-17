@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 import "../token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../utils/AddressUpgradeable.sol";
 import "../utils/ContextUpgradeable.sol";
-import { PaymentSplitterStorage } from "./PaymentSplitterStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 /**
@@ -28,11 +27,20 @@ import "../proxy/utils/Initializable.sol";
  * to run tests before sending real value to this contract.
  */
 contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
-    using PaymentSplitterStorage for PaymentSplitterStorage.Layout;
     event PayeeAdded(address account, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20Upgradeable indexed token, address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
+
+    uint256 private _totalShares;
+    uint256 private _totalReleased;
+
+    mapping(address => uint256) private _shares;
+    mapping(address => uint256) private _released;
+    address[] private _payees;
+
+    mapping(IERC20Upgradeable => uint256) private _erc20TotalReleased;
+    mapping(IERC20Upgradeable => mapping(address => uint256)) private _erc20Released;
 
     /**
      * @dev Creates an instance of `PaymentSplitter` where each account in `payees` is assigned the number of shares at
@@ -71,14 +79,14 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
      * @dev Getter for the total shares held by payees.
      */
     function totalShares() public view returns (uint256) {
-        return PaymentSplitterStorage.layout()._totalShares;
+        return _totalShares;
     }
 
     /**
      * @dev Getter for the total amount of Ether already released.
      */
     function totalReleased() public view returns (uint256) {
-        return PaymentSplitterStorage.layout()._totalReleased;
+        return _totalReleased;
     }
 
     /**
@@ -86,21 +94,21 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
      * contract.
      */
     function totalReleased(IERC20Upgradeable token) public view returns (uint256) {
-        return PaymentSplitterStorage.layout()._erc20TotalReleased[token];
+        return _erc20TotalReleased[token];
     }
 
     /**
      * @dev Getter for the amount of shares held by an account.
      */
     function shares(address account) public view returns (uint256) {
-        return PaymentSplitterStorage.layout()._shares[account];
+        return _shares[account];
     }
 
     /**
      * @dev Getter for the amount of Ether already released to a payee.
      */
     function released(address account) public view returns (uint256) {
-        return PaymentSplitterStorage.layout()._released[account];
+        return _released[account];
     }
 
     /**
@@ -108,14 +116,14 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
      * IERC20 contract.
      */
     function released(IERC20Upgradeable token, address account) public view returns (uint256) {
-        return PaymentSplitterStorage.layout()._erc20Released[token][account];
+        return _erc20Released[token][account];
     }
 
     /**
      * @dev Getter for the address of the payee number `index`.
      */
     function payee(uint256 index) public view returns (address) {
-        return PaymentSplitterStorage.layout()._payees[index];
+        return _payees[index];
     }
 
     /**
@@ -140,7 +148,7 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
      * total shares and their previous withdrawals.
      */
     function release(address payable account) public virtual {
-        require(PaymentSplitterStorage.layout()._shares[account] > 0, "PaymentSplitter: account has no shares");
+        require(_shares[account] > 0, "PaymentSplitter: account has no shares");
 
         uint256 payment = releasable(account);
 
@@ -148,9 +156,9 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
 
         // _totalReleased is the sum of all values in _released.
         // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
-        PaymentSplitterStorage.layout()._totalReleased += payment;
+        _totalReleased += payment;
         unchecked {
-            PaymentSplitterStorage.layout()._released[account] += payment;
+            _released[account] += payment;
         }
 
         AddressUpgradeable.sendValue(account, payment);
@@ -163,7 +171,7 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
      * contract.
      */
     function release(IERC20Upgradeable token, address account) public virtual {
-        require(PaymentSplitterStorage.layout()._shares[account] > 0, "PaymentSplitter: account has no shares");
+        require(_shares[account] > 0, "PaymentSplitter: account has no shares");
 
         uint256 payment = releasable(token, account);
 
@@ -172,9 +180,9 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
         // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
         // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment"
         // cannot overflow.
-        PaymentSplitterStorage.layout()._erc20TotalReleased[token] += payment;
+        _erc20TotalReleased[token] += payment;
         unchecked {
-            PaymentSplitterStorage.layout()._erc20Released[token][account] += payment;
+            _erc20Released[token][account] += payment;
         }
 
         SafeERC20Upgradeable.safeTransfer(token, account, payment);
@@ -190,7 +198,7 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
         uint256 totalReceived,
         uint256 alreadyReleased
     ) private view returns (uint256) {
-        return (totalReceived * PaymentSplitterStorage.layout()._shares[account]) / PaymentSplitterStorage.layout()._totalShares - alreadyReleased;
+        return (totalReceived * _shares[account]) / _totalShares - alreadyReleased;
     }
 
     /**
@@ -201,11 +209,18 @@ contract PaymentSplitterUpgradeable is Initializable, ContextUpgradeable {
     function _addPayee(address account, uint256 shares_) private {
         require(account != address(0), "PaymentSplitter: account is the zero address");
         require(shares_ > 0, "PaymentSplitter: shares are 0");
-        require(PaymentSplitterStorage.layout()._shares[account] == 0, "PaymentSplitter: account already has shares");
+        require(_shares[account] == 0, "PaymentSplitter: account already has shares");
 
-        PaymentSplitterStorage.layout()._payees.push(account);
-        PaymentSplitterStorage.layout()._shares[account] = shares_;
-        PaymentSplitterStorage.layout()._totalShares = PaymentSplitterStorage.layout()._totalShares + shares_;
+        _payees.push(account);
+        _shares[account] = shares_;
+        _totalShares = _totalShares + shares_;
         emit PayeeAdded(account, shares_);
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[43] private __gap;
 }

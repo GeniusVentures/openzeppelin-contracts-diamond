@@ -4,11 +4,10 @@ pragma solidity ^0.8.0;
 
 import "../security/ReentrancyGuardUpgradeable.sol";
 import "./ReentrancyAttackUpgradeable.sol";
-import { ReentrancyMockStorage } from "./ReentrancyMockStorage.sol";
 import "../proxy/utils/Initializable.sol";
 
 contract ReentrancyMockUpgradeable is Initializable, ReentrancyGuardUpgradeable {
-    using ReentrancyMockStorage for ReentrancyMockStorage.Layout;
+    uint256 public counter;
 
     function __ReentrancyMock_init() internal onlyInitializing {
         __ReentrancyGuard_init_unchained();
@@ -16,7 +15,7 @@ contract ReentrancyMockUpgradeable is Initializable, ReentrancyGuardUpgradeable 
     }
 
     function __ReentrancyMock_init_unchained() internal onlyInitializing {
-        ReentrancyMockStorage.layout().counter = 0;
+        counter = 0;
     }
 
     function callback() external nonReentrant {
@@ -45,11 +44,13 @@ contract ReentrancyMockUpgradeable is Initializable, ReentrancyGuardUpgradeable 
     }
 
     function _count() private {
-        ReentrancyMockStorage.layout().counter += 1;
-    }
-    // generated getter for ${varDecl.name}
-    function counter() public view returns(uint256) {
-        return ReentrancyMockStorage.layout().counter;
+        counter += 1;
     }
 
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

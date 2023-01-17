@@ -7,7 +7,6 @@ import "../CrossChainEnabledUpgradeable.sol";
 import "../../security/ReentrancyGuardUpgradeable.sol";
 import "../../utils/AddressUpgradeable.sol";
 import "../../vendor/polygon/IFxMessageProcessorUpgradeable.sol";
-import { CrossChainEnabledPolygonChildStorage } from "./CrossChainEnabledPolygonChildStorage.sol";
 import "../../proxy/utils/Initializable.sol";
 
 address constant DEFAULT_SENDER = 0x000000000000000000000000000000000000dEaD;
@@ -28,7 +27,7 @@ address constant DEFAULT_SENDER = 0x000000000000000000000000000000000000dEaD;
 abstract contract CrossChainEnabledPolygonChildUpgradeable is Initializable, IFxMessageProcessorUpgradeable, CrossChainEnabledUpgradeable, ReentrancyGuardUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address private immutable _fxChild;
-address private _sender = DEFAULT_SENDER;
+    address private _sender = DEFAULT_SENDER;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address fxChild) {
@@ -46,7 +45,7 @@ address private _sender = DEFAULT_SENDER;
      * @dev see {CrossChainEnabled-_crossChainSender}
      */
     function _crossChainSender() internal view virtual override onlyCrossChain returns (address) {
-        return CrossChainEnabledPolygonChildStorage.layout()._sender;
+        return _sender;
     }
 
     /**
@@ -67,9 +66,9 @@ address private _sender = DEFAULT_SENDER;
     ) external override nonReentrant {
         if (!_isCrossChain()) revert NotCrossChainCall();
 
-        CrossChainEnabledPolygonChildStorage.layout()._sender = rootMessageSender;
+        _sender = rootMessageSender;
         __functionDelegateCall(address(this), data);
-        CrossChainEnabledPolygonChildStorage.layout()._sender = DEFAULT_SENDER;
+        _sender = DEFAULT_SENDER;
     }
 
     // ERC1967Upgrade._functionDelegateCall is private so we reproduce it here.
@@ -81,4 +80,11 @@ address private _sender = DEFAULT_SENDER;
         (bool success, bytes memory returndata) = target.delegatecall(data);
         return AddressUpgradeable.verifyCallResult(success, returndata, "Address: low-level delegate call failed");
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }
