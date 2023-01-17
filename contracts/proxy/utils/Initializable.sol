@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.8.1) (proxy/utils/Initializable.sol)
+// OpenZeppelin Contracts (last updated v4.8.0) (proxy/utils/Initializable.sol)
 
 pragma solidity ^0.8.2;
 
-import "../../utils/Address.sol";
+import "../../utils/AddressUpgradeable.sol";
+import { InitializableStorage } from "./InitializableStorage.sol";
 
 /**
  * @dev This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed
@@ -55,16 +56,6 @@ import "../../utils/Address.sol";
  * ====
  */
 abstract contract Initializable {
-    /**
-     * @dev Indicates that the contract has been initialized.
-     * @custom:oz-retyped-from bool
-     */
-    uint8 private _initialized;
-
-    /**
-     * @dev Indicates that the contract is in the process of being initialized.
-     */
-    bool private _initializing;
 
     /**
      * @dev Triggered when the contract has been initialized or reinitialized.
@@ -81,18 +72,18 @@ abstract contract Initializable {
      * Emits an {Initialized} event.
      */
     modifier initializer() {
-        bool isTopLevelCall = !_initializing;
+        bool isTopLevelCall = !InitializableStorage.layout()._initializing;
         require(
-            (isTopLevelCall && _initialized < 1) || (!Address.isContract(address(this)) && _initialized == 1),
+            (isTopLevelCall && InitializableStorage.layout()._initialized < 1) || (!AddressUpgradeable.isContract(address(this)) && InitializableStorage.layout()._initialized == 1),
             "Initializable: contract is already initialized"
         );
-        _initialized = 1;
+        InitializableStorage.layout()._initialized = 1;
         if (isTopLevelCall) {
-            _initializing = true;
+            InitializableStorage.layout()._initializing = true;
         }
         _;
         if (isTopLevelCall) {
-            _initializing = false;
+            InitializableStorage.layout()._initializing = false;
             emit Initialized(1);
         }
     }
@@ -116,11 +107,11 @@ abstract contract Initializable {
      * Emits an {Initialized} event.
      */
     modifier reinitializer(uint8 version) {
-        require(!_initializing && _initialized < version, "Initializable: contract is already initialized");
-        _initialized = version;
-        _initializing = true;
+        require(!InitializableStorage.layout()._initializing && InitializableStorage.layout()._initialized < version, "Initializable: contract is already initialized");
+        InitializableStorage.layout()._initialized = version;
+        InitializableStorage.layout()._initializing = true;
         _;
-        _initializing = false;
+        InitializableStorage.layout()._initializing = false;
         emit Initialized(version);
     }
 
@@ -129,7 +120,7 @@ abstract contract Initializable {
      * {initializer} and {reinitializer} modifiers, directly or indirectly.
      */
     modifier onlyInitializing() {
-        require(_initializing, "Initializable: contract is not initializing");
+        require(InitializableStorage.layout()._initializing, "Initializable: contract is not initializing");
         _;
     }
 
@@ -142,9 +133,9 @@ abstract contract Initializable {
      * Emits an {Initialized} event the first time it is successfully executed.
      */
     function _disableInitializers() internal virtual {
-        require(!_initializing, "Initializable: contract is initializing");
-        if (_initialized < type(uint8).max) {
-            _initialized = type(uint8).max;
+        require(!InitializableStorage.layout()._initializing, "Initializable: contract is initializing");
+        if (InitializableStorage.layout()._initialized < type(uint8).max) {
+            InitializableStorage.layout()._initialized = type(uint8).max;
             emit Initialized(type(uint8).max);
         }
     }
@@ -153,13 +144,13 @@ abstract contract Initializable {
      * @dev Returns the highest version that has been initialized. See {reinitializer}.
      */
     function _getInitializedVersion() internal view returns (uint8) {
-        return _initialized;
+        return InitializableStorage.layout()._initialized;
     }
 
     /**
      * @dev Returns `true` if the contract is currently initializing. See {onlyInitializing}.
      */
     function _isInitializing() internal view returns (bool) {
-        return _initializing;
+        return InitializableStorage.layout()._initializing;
     }
 }
