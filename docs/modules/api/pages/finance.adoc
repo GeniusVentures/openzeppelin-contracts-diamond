@@ -1,0 +1,395 @@
+:github-icon: pass:[<svg class="icon"><use href="#github-icon"/></svg>]
+:PaymentSplitter: pass:normal[xref:finance.adoc#PaymentSplitter[`PaymentSplitter`]]
+:VestingWallet: pass:normal[xref:finance.adoc#VestingWallet[`VestingWallet`]]
+:xref-PaymentSplitter-constructor-address---uint256---: xref:finance.adoc#PaymentSplitter-constructor-address---uint256---
+:xref-PaymentSplitter-receive--: xref:finance.adoc#PaymentSplitter-receive--
+:xref-PaymentSplitter-totalShares--: xref:finance.adoc#PaymentSplitter-totalShares--
+:xref-PaymentSplitter-totalReleased--: xref:finance.adoc#PaymentSplitter-totalReleased--
+:xref-PaymentSplitter-totalReleased-contract-IERC20-: xref:finance.adoc#PaymentSplitter-totalReleased-contract-IERC20-
+:xref-PaymentSplitter-shares-address-: xref:finance.adoc#PaymentSplitter-shares-address-
+:xref-PaymentSplitter-released-address-: xref:finance.adoc#PaymentSplitter-released-address-
+:xref-PaymentSplitter-released-contract-IERC20-address-: xref:finance.adoc#PaymentSplitter-released-contract-IERC20-address-
+:xref-PaymentSplitter-payee-uint256-: xref:finance.adoc#PaymentSplitter-payee-uint256-
+:xref-PaymentSplitter-releasable-address-: xref:finance.adoc#PaymentSplitter-releasable-address-
+:xref-PaymentSplitter-releasable-contract-IERC20-address-: xref:finance.adoc#PaymentSplitter-releasable-contract-IERC20-address-
+:xref-PaymentSplitter-release-address-payable-: xref:finance.adoc#PaymentSplitter-release-address-payable-
+:xref-PaymentSplitter-release-contract-IERC20-address-: xref:finance.adoc#PaymentSplitter-release-contract-IERC20-address-
+:xref-PaymentSplitter-PayeeAdded-address-uint256-: xref:finance.adoc#PaymentSplitter-PayeeAdded-address-uint256-
+:xref-PaymentSplitter-PaymentReleased-address-uint256-: xref:finance.adoc#PaymentSplitter-PaymentReleased-address-uint256-
+:xref-PaymentSplitter-ERC20PaymentReleased-contract-IERC20-address-uint256-: xref:finance.adoc#PaymentSplitter-ERC20PaymentReleased-contract-IERC20-address-uint256-
+:xref-PaymentSplitter-PaymentReceived-address-uint256-: xref:finance.adoc#PaymentSplitter-PaymentReceived-address-uint256-
+:xref-VestingWallet-constructor-address-uint64-uint64-: xref:finance.adoc#VestingWallet-constructor-address-uint64-uint64-
+:xref-VestingWallet-receive--: xref:finance.adoc#VestingWallet-receive--
+:xref-VestingWallet-beneficiary--: xref:finance.adoc#VestingWallet-beneficiary--
+:xref-VestingWallet-start--: xref:finance.adoc#VestingWallet-start--
+:xref-VestingWallet-duration--: xref:finance.adoc#VestingWallet-duration--
+:xref-VestingWallet-released--: xref:finance.adoc#VestingWallet-released--
+:xref-VestingWallet-released-address-: xref:finance.adoc#VestingWallet-released-address-
+:xref-VestingWallet-releasable--: xref:finance.adoc#VestingWallet-releasable--
+:xref-VestingWallet-releasable-address-: xref:finance.adoc#VestingWallet-releasable-address-
+:xref-VestingWallet-release--: xref:finance.adoc#VestingWallet-release--
+:xref-VestingWallet-release-address-: xref:finance.adoc#VestingWallet-release-address-
+:xref-VestingWallet-vestedAmount-uint64-: xref:finance.adoc#VestingWallet-vestedAmount-uint64-
+:xref-VestingWallet-vestedAmount-address-uint64-: xref:finance.adoc#VestingWallet-vestedAmount-address-uint64-
+:xref-VestingWallet-_vestingSchedule-uint256-uint64-: xref:finance.adoc#VestingWallet-_vestingSchedule-uint256-uint64-
+:xref-VestingWallet-EtherReleased-uint256-: xref:finance.adoc#VestingWallet-EtherReleased-uint256-
+:xref-VestingWallet-ERC20Released-address-uint256-: xref:finance.adoc#VestingWallet-ERC20Released-address-uint256-
+= Finance
+
+[.readme-notice]
+NOTE: This document is better viewed at https://docs.openzeppelin.com/contracts/api/finance
+
+This directory includes primitives for financial systems:
+
+- {PaymentSplitter} allows to split Ether and ERC20 payments among a group of accounts. The sender does not need to be
+  aware that the assets will be split in this way, since it is handled transparently by the contract. The split can be
+  in equal parts or in any other arbitrary proportion.
+
+- {VestingWallet} handles the vesting of Ether and ERC20 tokens for a given beneficiary. Custody of multiple tokens can
+  be given to this contract, which will release the token to the beneficiary following a given, customizable, vesting
+  schedule.
+
+== Contracts
+
+:PayeeAdded: pass:normal[xref:#PaymentSplitter-PayeeAdded-address-uint256-[`++PayeeAdded++`]]
+:PaymentReleased: pass:normal[xref:#PaymentSplitter-PaymentReleased-address-uint256-[`++PaymentReleased++`]]
+:ERC20PaymentReleased: pass:normal[xref:#PaymentSplitter-ERC20PaymentReleased-contract-IERC20-address-uint256-[`++ERC20PaymentReleased++`]]
+:PaymentReceived: pass:normal[xref:#PaymentSplitter-PaymentReceived-address-uint256-[`++PaymentReceived++`]]
+:constructor: pass:normal[xref:#PaymentSplitter-constructor-address---uint256---[`++constructor++`]]
+:receive: pass:normal[xref:#PaymentSplitter-receive--[`++receive++`]]
+:totalShares: pass:normal[xref:#PaymentSplitter-totalShares--[`++totalShares++`]]
+:totalReleased: pass:normal[xref:#PaymentSplitter-totalReleased--[`++totalReleased++`]]
+:totalReleased: pass:normal[xref:#PaymentSplitter-totalReleased-contract-IERC20-[`++totalReleased++`]]
+:shares: pass:normal[xref:#PaymentSplitter-shares-address-[`++shares++`]]
+:released: pass:normal[xref:#PaymentSplitter-released-address-[`++released++`]]
+:released: pass:normal[xref:#PaymentSplitter-released-contract-IERC20-address-[`++released++`]]
+:payee: pass:normal[xref:#PaymentSplitter-payee-uint256-[`++payee++`]]
+:releasable: pass:normal[xref:#PaymentSplitter-releasable-address-[`++releasable++`]]
+:releasable: pass:normal[xref:#PaymentSplitter-releasable-contract-IERC20-address-[`++releasable++`]]
+:release: pass:normal[xref:#PaymentSplitter-release-address-payable-[`++release++`]]
+:release: pass:normal[xref:#PaymentSplitter-release-contract-IERC20-address-[`++release++`]]
+
+[.contract]
+[[PaymentSplitter]]
+=== `++PaymentSplitter++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/finance/PaymentSplitter.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
+```
+
+This contract allows to split Ether payments among a group of accounts. The sender does not need to be aware
+that the Ether will be split in this way, since it is handled transparently by the contract.
+
+The split can be in equal parts or in any other arbitrary proportion. The way this is specified is by assigning each
+account to a number of shares. Of all the Ether that this contract receives, each account will then be able to claim
+an amount proportional to the percentage of total shares they were assigned. The distribution of shares is set at the
+time of contract deployment and can't be updated thereafter.
+
+`PaymentSplitter` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
+accounts but kept in this contract, and the actual transfer is triggered as a separate step by calling the {release}
+function.
+
+NOTE: This contract assumes that ERC20 tokens will behave similarly to native tokens (Ether). Rebasing tokens, and
+tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you
+to run tests before sending real value to this contract.
+
+[.contract-index]
+.Functions
+--
+* {xref-PaymentSplitter-constructor-address---uint256---}[`++constructor(payees, shares_)++`]
+* {xref-PaymentSplitter-receive--}[`++receive()++`]
+* {xref-PaymentSplitter-totalShares--}[`++totalShares()++`]
+* {xref-PaymentSplitter-totalReleased--}[`++totalReleased()++`]
+* {xref-PaymentSplitter-totalReleased-contract-IERC20-}[`++totalReleased(token)++`]
+* {xref-PaymentSplitter-shares-address-}[`++shares(account)++`]
+* {xref-PaymentSplitter-released-address-}[`++released(account)++`]
+* {xref-PaymentSplitter-released-contract-IERC20-address-}[`++released(token, account)++`]
+* {xref-PaymentSplitter-payee-uint256-}[`++payee(index)++`]
+* {xref-PaymentSplitter-releasable-address-}[`++releasable(account)++`]
+* {xref-PaymentSplitter-releasable-contract-IERC20-address-}[`++releasable(token, account)++`]
+* {xref-PaymentSplitter-release-address-payable-}[`++release(account)++`]
+* {xref-PaymentSplitter-release-contract-IERC20-address-}[`++release(token, account)++`]
+
+--
+
+[.contract-index]
+.Events
+--
+* {xref-PaymentSplitter-PayeeAdded-address-uint256-}[`++PayeeAdded(account, shares)++`]
+* {xref-PaymentSplitter-PaymentReleased-address-uint256-}[`++PaymentReleased(to, amount)++`]
+* {xref-PaymentSplitter-ERC20PaymentReleased-contract-IERC20-address-uint256-}[`++ERC20PaymentReleased(token, to, amount)++`]
+* {xref-PaymentSplitter-PaymentReceived-address-uint256-}[`++PaymentReceived(from, amount)++`]
+
+--
+
+[.contract-item]
+[[PaymentSplitter-constructor-address---uint256---]]
+==== `[.contract-item-name]#++constructor++#++(address[] payees, uint256[] shares_)++` [.item-kind]#public#
+
+Creates an instance of `PaymentSplitter` where each account in `payees` is assigned the number of shares at
+the matching position in the `shares` array.
+
+All addresses in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
+duplicates in `payees`.
+
+[.contract-item]
+[[PaymentSplitter-receive--]]
+==== `[.contract-item-name]#++receive++#++()++` [.item-kind]#external#
+
+The Ether received will be logged with {PaymentReceived} events. Note that these events are not fully
+reliable: it's possible for a contract to receive Ether without triggering this function. This only affects the
+reliability of the events, and not the actual splitting of Ether.
+
+To learn more about this see the Solidity documentation for
+https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback
+functions].
+
+[.contract-item]
+[[PaymentSplitter-totalShares--]]
+==== `[.contract-item-name]#++totalShares++#++() → uint256++` [.item-kind]#public#
+
+Getter for the total shares held by payees.
+
+[.contract-item]
+[[PaymentSplitter-totalReleased--]]
+==== `[.contract-item-name]#++totalReleased++#++() → uint256++` [.item-kind]#public#
+
+Getter for the total amount of Ether already released.
+
+[.contract-item]
+[[PaymentSplitter-totalReleased-contract-IERC20-]]
+==== `[.contract-item-name]#++totalReleased++#++(contract IERC20 token) → uint256++` [.item-kind]#public#
+
+Getter for the total amount of `token` already released. `token` should be the address of an IERC20
+contract.
+
+[.contract-item]
+[[PaymentSplitter-shares-address-]]
+==== `[.contract-item-name]#++shares++#++(address account) → uint256++` [.item-kind]#public#
+
+Getter for the amount of shares held by an account.
+
+[.contract-item]
+[[PaymentSplitter-released-address-]]
+==== `[.contract-item-name]#++released++#++(address account) → uint256++` [.item-kind]#public#
+
+Getter for the amount of Ether already released to a payee.
+
+[.contract-item]
+[[PaymentSplitter-released-contract-IERC20-address-]]
+==== `[.contract-item-name]#++released++#++(contract IERC20 token, address account) → uint256++` [.item-kind]#public#
+
+Getter for the amount of `token` tokens already released to a payee. `token` should be the address of an
+IERC20 contract.
+
+[.contract-item]
+[[PaymentSplitter-payee-uint256-]]
+==== `[.contract-item-name]#++payee++#++(uint256 index) → address++` [.item-kind]#public#
+
+Getter for the address of the payee number `index`.
+
+[.contract-item]
+[[PaymentSplitter-releasable-address-]]
+==== `[.contract-item-name]#++releasable++#++(address account) → uint256++` [.item-kind]#public#
+
+Getter for the amount of payee's releasable Ether.
+
+[.contract-item]
+[[PaymentSplitter-releasable-contract-IERC20-address-]]
+==== `[.contract-item-name]#++releasable++#++(contract IERC20 token, address account) → uint256++` [.item-kind]#public#
+
+Getter for the amount of payee's releasable `token` tokens. `token` should be the address of an
+IERC20 contract.
+
+[.contract-item]
+[[PaymentSplitter-release-address-payable-]]
+==== `[.contract-item-name]#++release++#++(address payable account)++` [.item-kind]#public#
+
+Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the
+total shares and their previous withdrawals.
+
+[.contract-item]
+[[PaymentSplitter-release-contract-IERC20-address-]]
+==== `[.contract-item-name]#++release++#++(contract IERC20 token, address account)++` [.item-kind]#public#
+
+Triggers a transfer to `account` of the amount of `token` tokens they are owed, according to their
+percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
+contract.
+
+[.contract-item]
+[[PaymentSplitter-PayeeAdded-address-uint256-]]
+==== `[.contract-item-name]#++PayeeAdded++#++(address account, uint256 shares)++` [.item-kind]#event#
+
+[.contract-item]
+[[PaymentSplitter-PaymentReleased-address-uint256-]]
+==== `[.contract-item-name]#++PaymentReleased++#++(address to, uint256 amount)++` [.item-kind]#event#
+
+[.contract-item]
+[[PaymentSplitter-ERC20PaymentReleased-contract-IERC20-address-uint256-]]
+==== `[.contract-item-name]#++ERC20PaymentReleased++#++(contract IERC20 indexed token, address to, uint256 amount)++` [.item-kind]#event#
+
+[.contract-item]
+[[PaymentSplitter-PaymentReceived-address-uint256-]]
+==== `[.contract-item-name]#++PaymentReceived++#++(address from, uint256 amount)++` [.item-kind]#event#
+
+:EtherReleased: pass:normal[xref:#VestingWallet-EtherReleased-uint256-[`++EtherReleased++`]]
+:ERC20Released: pass:normal[xref:#VestingWallet-ERC20Released-address-uint256-[`++ERC20Released++`]]
+:constructor: pass:normal[xref:#VestingWallet-constructor-address-uint64-uint64-[`++constructor++`]]
+:receive: pass:normal[xref:#VestingWallet-receive--[`++receive++`]]
+:beneficiary: pass:normal[xref:#VestingWallet-beneficiary--[`++beneficiary++`]]
+:start: pass:normal[xref:#VestingWallet-start--[`++start++`]]
+:duration: pass:normal[xref:#VestingWallet-duration--[`++duration++`]]
+:released: pass:normal[xref:#VestingWallet-released--[`++released++`]]
+:released: pass:normal[xref:#VestingWallet-released-address-[`++released++`]]
+:releasable: pass:normal[xref:#VestingWallet-releasable--[`++releasable++`]]
+:releasable: pass:normal[xref:#VestingWallet-releasable-address-[`++releasable++`]]
+:release: pass:normal[xref:#VestingWallet-release--[`++release++`]]
+:release: pass:normal[xref:#VestingWallet-release-address-[`++release++`]]
+:vestedAmount: pass:normal[xref:#VestingWallet-vestedAmount-uint64-[`++vestedAmount++`]]
+:vestedAmount: pass:normal[xref:#VestingWallet-vestedAmount-address-uint64-[`++vestedAmount++`]]
+:_vestingSchedule: pass:normal[xref:#VestingWallet-_vestingSchedule-uint256-uint64-[`++_vestingSchedule++`]]
+
+[.contract]
+[[VestingWallet]]
+=== `++VestingWallet++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/finance/VestingWallet.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/finance/VestingWallet.sol";
+```
+
+This contract handles the vesting of Eth and ERC20 tokens for a given beneficiary. Custody of multiple tokens
+can be given to this contract, which will release the token to the beneficiary following a given vesting schedule.
+The vesting schedule is customizable through the {vestedAmount} function.
+
+Any token transferred to this contract will follow the vesting schedule as if they were locked from the beginning.
+Consequently, if the vesting has already started, any amount of tokens sent to this contract will (at least partly)
+be immediately releasable.
+
+[.contract-index]
+.Functions
+--
+* {xref-VestingWallet-constructor-address-uint64-uint64-}[`++constructor(beneficiaryAddress, startTimestamp, durationSeconds)++`]
+* {xref-VestingWallet-receive--}[`++receive()++`]
+* {xref-VestingWallet-beneficiary--}[`++beneficiary()++`]
+* {xref-VestingWallet-start--}[`++start()++`]
+* {xref-VestingWallet-duration--}[`++duration()++`]
+* {xref-VestingWallet-released--}[`++released()++`]
+* {xref-VestingWallet-released-address-}[`++released(token)++`]
+* {xref-VestingWallet-releasable--}[`++releasable()++`]
+* {xref-VestingWallet-releasable-address-}[`++releasable(token)++`]
+* {xref-VestingWallet-release--}[`++release()++`]
+* {xref-VestingWallet-release-address-}[`++release(token)++`]
+* {xref-VestingWallet-vestedAmount-uint64-}[`++vestedAmount(timestamp)++`]
+* {xref-VestingWallet-vestedAmount-address-uint64-}[`++vestedAmount(token, timestamp)++`]
+* {xref-VestingWallet-_vestingSchedule-uint256-uint64-}[`++_vestingSchedule(totalAllocation, timestamp)++`]
+
+--
+
+[.contract-index]
+.Events
+--
+* {xref-VestingWallet-EtherReleased-uint256-}[`++EtherReleased(amount)++`]
+* {xref-VestingWallet-ERC20Released-address-uint256-}[`++ERC20Released(token, amount)++`]
+
+--
+
+[.contract-item]
+[[VestingWallet-constructor-address-uint64-uint64-]]
+==== `[.contract-item-name]#++constructor++#++(address beneficiaryAddress, uint64 startTimestamp, uint64 durationSeconds)++` [.item-kind]#public#
+
+Set the beneficiary, start timestamp and vesting duration of the vesting wallet.
+
+[.contract-item]
+[[VestingWallet-receive--]]
+==== `[.contract-item-name]#++receive++#++()++` [.item-kind]#external#
+
+The contract should be able to receive Eth.
+
+[.contract-item]
+[[VestingWallet-beneficiary--]]
+==== `[.contract-item-name]#++beneficiary++#++() → address++` [.item-kind]#public#
+
+Getter for the beneficiary address.
+
+[.contract-item]
+[[VestingWallet-start--]]
+==== `[.contract-item-name]#++start++#++() → uint256++` [.item-kind]#public#
+
+Getter for the start timestamp.
+
+[.contract-item]
+[[VestingWallet-duration--]]
+==== `[.contract-item-name]#++duration++#++() → uint256++` [.item-kind]#public#
+
+Getter for the vesting duration.
+
+[.contract-item]
+[[VestingWallet-released--]]
+==== `[.contract-item-name]#++released++#++() → uint256++` [.item-kind]#public#
+
+Amount of eth already released
+
+[.contract-item]
+[[VestingWallet-released-address-]]
+==== `[.contract-item-name]#++released++#++(address token) → uint256++` [.item-kind]#public#
+
+Amount of token already released
+
+[.contract-item]
+[[VestingWallet-releasable--]]
+==== `[.contract-item-name]#++releasable++#++() → uint256++` [.item-kind]#public#
+
+Getter for the amount of releasable eth.
+
+[.contract-item]
+[[VestingWallet-releasable-address-]]
+==== `[.contract-item-name]#++releasable++#++(address token) → uint256++` [.item-kind]#public#
+
+Getter for the amount of releasable `token` tokens. `token` should be the address of an
+IERC20 contract.
+
+[.contract-item]
+[[VestingWallet-release--]]
+==== `[.contract-item-name]#++release++#++()++` [.item-kind]#public#
+
+Release the native token (ether) that have already vested.
+
+Emits a {EtherReleased} event.
+
+[.contract-item]
+[[VestingWallet-release-address-]]
+==== `[.contract-item-name]#++release++#++(address token)++` [.item-kind]#public#
+
+Release the tokens that have already vested.
+
+Emits a {ERC20Released} event.
+
+[.contract-item]
+[[VestingWallet-vestedAmount-uint64-]]
+==== `[.contract-item-name]#++vestedAmount++#++(uint64 timestamp) → uint256++` [.item-kind]#public#
+
+Calculates the amount of ether that has already vested. Default implementation is a linear vesting curve.
+
+[.contract-item]
+[[VestingWallet-vestedAmount-address-uint64-]]
+==== `[.contract-item-name]#++vestedAmount++#++(address token, uint64 timestamp) → uint256++` [.item-kind]#public#
+
+Calculates the amount of tokens that has already vested. Default implementation is a linear vesting curve.
+
+[.contract-item]
+[[VestingWallet-_vestingSchedule-uint256-uint64-]]
+==== `[.contract-item-name]#++_vestingSchedule++#++(uint256 totalAllocation, uint64 timestamp) → uint256++` [.item-kind]#internal#
+
+Virtual implementation of the vesting formula. This returns the amount vested, as a function of time, for
+an asset given its total historical allocation.
+
+[.contract-item]
+[[VestingWallet-EtherReleased-uint256-]]
+==== `[.contract-item-name]#++EtherReleased++#++(uint256 amount)++` [.item-kind]#event#
+
+[.contract-item]
+[[VestingWallet-ERC20Released-address-uint256-]]
+==== `[.contract-item-name]#++ERC20Released++#++(address indexed token, uint256 amount)++` [.item-kind]#event#
+

@@ -1,0 +1,530 @@
+:github-icon: pass:[<svg class="icon"><use href="#github-icon"/></svg>]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:AccessControlCrossChain: pass:normal[xref:access.adoc#AccessControlCrossChain[`AccessControlCrossChain`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:xref-CrossChainEnabledAMB-constructor-address-: xref:crosschain.adoc#CrossChainEnabledAMB-constructor-address-
+:xref-CrossChainEnabledAMB-_isCrossChain--: xref:crosschain.adoc#CrossChainEnabledAMB-_isCrossChain--
+:xref-CrossChainEnabledAMB-_crossChainSender--: xref:crosschain.adoc#CrossChainEnabledAMB-_crossChainSender--
+:CrossChainEnabled-_isCrossChain: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_isCrossChain--[`CrossChainEnabled._isCrossChain`]]
+:CrossChainEnabled-_crossChainSender: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_crossChainSender--[`CrossChainEnabled._crossChainSender`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:CrossChainEnabledArbitrumL2: pass:normal[xref:crosschain.adoc#CrossChainEnabledArbitrumL2[`CrossChainEnabledArbitrumL2`]]
+:xref-CrossChainEnabledArbitrumL1-constructor-address-: xref:crosschain.adoc#CrossChainEnabledArbitrumL1-constructor-address-
+:xref-CrossChainEnabledArbitrumL1-_isCrossChain--: xref:crosschain.adoc#CrossChainEnabledArbitrumL1-_isCrossChain--
+:xref-CrossChainEnabledArbitrumL1-_crossChainSender--: xref:crosschain.adoc#CrossChainEnabledArbitrumL1-_crossChainSender--
+:CrossChainEnabled-_isCrossChain: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_isCrossChain--[`CrossChainEnabled._isCrossChain`]]
+:CrossChainEnabled-_crossChainSender: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_crossChainSender--[`CrossChainEnabled._crossChainSender`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:CrossChainEnabledArbitrumL1: pass:normal[xref:crosschain.adoc#CrossChainEnabledArbitrumL1[`CrossChainEnabledArbitrumL1`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:xref-CrossChainEnabledArbitrumL2-_isCrossChain--: xref:crosschain.adoc#CrossChainEnabledArbitrumL2-_isCrossChain--
+:xref-CrossChainEnabledArbitrumL2-_crossChainSender--: xref:crosschain.adoc#CrossChainEnabledArbitrumL2-_crossChainSender--
+:CrossChainEnabled-_isCrossChain: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_isCrossChain--[`CrossChainEnabled._isCrossChain`]]
+:CrossChainEnabled-_crossChainSender: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_crossChainSender--[`CrossChainEnabled._crossChainSender`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:xref-CrossChainEnabledOptimism-constructor-address-: xref:crosschain.adoc#CrossChainEnabledOptimism-constructor-address-
+:xref-CrossChainEnabledOptimism-_isCrossChain--: xref:crosschain.adoc#CrossChainEnabledOptimism-_isCrossChain--
+:xref-CrossChainEnabledOptimism-_crossChainSender--: xref:crosschain.adoc#CrossChainEnabledOptimism-_crossChainSender--
+:CrossChainEnabled-_isCrossChain: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_isCrossChain--[`CrossChainEnabled._isCrossChain`]]
+:CrossChainEnabled-_crossChainSender: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_crossChainSender--[`CrossChainEnabled._crossChainSender`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:xref-CrossChainEnabledPolygonChild-constructor-address-: xref:crosschain.adoc#CrossChainEnabledPolygonChild-constructor-address-
+:xref-CrossChainEnabledPolygonChild-_isCrossChain--: xref:crosschain.adoc#CrossChainEnabledPolygonChild-_isCrossChain--
+:xref-CrossChainEnabledPolygonChild-_crossChainSender--: xref:crosschain.adoc#CrossChainEnabledPolygonChild-_crossChainSender--
+:xref-CrossChainEnabledPolygonChild-processMessageFromRoot-uint256-address-bytes-: xref:crosschain.adoc#CrossChainEnabledPolygonChild-processMessageFromRoot-uint256-address-bytes-
+:xref-ReentrancyGuard-_reentrancyGuardEntered--: xref:security.adoc#ReentrancyGuard-_reentrancyGuardEntered--
+:CrossChainEnabled-_isCrossChain: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_isCrossChain--[`CrossChainEnabled._isCrossChain`]]
+:CrossChainEnabled-_crossChainSender: pass:normal[xref:crosschain.adoc#CrossChainEnabled-_crossChainSender--[`CrossChainEnabled._crossChainSender`]]
+:CrossChainEnabled: pass:normal[xref:crosschain.adoc#CrossChainEnabled[`CrossChainEnabled`]]
+:xref-LibAMB-isCrossChain-address-: xref:crosschain.adoc#LibAMB-isCrossChain-address-
+:xref-LibAMB-crossChainSender-address-: xref:crosschain.adoc#LibAMB-crossChainSender-address-
+:LibArbitrumL2: pass:normal[xref:crosschain.adoc#LibArbitrumL2[`LibArbitrumL2`]]
+:xref-LibArbitrumL1-isCrossChain-address-: xref:crosschain.adoc#LibArbitrumL1-isCrossChain-address-
+:xref-LibArbitrumL1-crossChainSender-address-: xref:crosschain.adoc#LibArbitrumL1-crossChainSender-address-
+:LibArbitrumL1: pass:normal[xref:crosschain.adoc#LibArbitrumL1[`LibArbitrumL1`]]
+:xref-LibArbitrumL2-isCrossChain-address-: xref:crosschain.adoc#LibArbitrumL2-isCrossChain-address-
+:xref-LibArbitrumL2-crossChainSender-address-: xref:crosschain.adoc#LibArbitrumL2-crossChainSender-address-
+:xref-LibOptimism-isCrossChain-address-: xref:crosschain.adoc#LibOptimism-isCrossChain-address-
+:xref-LibOptimism-crossChainSender-address-: xref:crosschain.adoc#LibOptimism-crossChainSender-address-
+= Cross Chain Awareness
+
+[.readme-notice]
+NOTE: This document is better viewed at https://docs.openzeppelin.com/contracts/api/crosschain
+
+This directory provides building blocks to improve cross-chain awareness of smart contracts.
+
+- {CrossChainEnabled} is an abstraction that contains accessors and modifiers to control the execution flow when receiving cross-chain messages.
+
+== CrossChainEnabled specializations
+
+The following specializations of {CrossChainEnabled} provide implementations of the {CrossChainEnabled} abstraction for specific bridges. This can be used to complex cross-chain aware components such as {AccessControlCrossChain}.
+
+:constructor: pass:normal[xref:#CrossChainEnabledAMB-constructor-address-[`++constructor++`]]
+:_isCrossChain: pass:normal[xref:#CrossChainEnabledAMB-_isCrossChain--[`++_isCrossChain++`]]
+:_crossChainSender: pass:normal[xref:#CrossChainEnabledAMB-_crossChainSender--[`++_crossChainSender++`]]
+
+[.contract]
+[[CrossChainEnabledAMB]]
+=== `++CrossChainEnabledAMB++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/amb/CrossChainEnabledAMB.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/amb/CrossChainEnabledAMB.sol";
+```
+
+https://docs.tokenbridge.net/amb-bridge/about-amb-bridge[AMB]
+specialization or the {CrossChainEnabled} abstraction.
+
+As of february 2020, AMB bridges are available between the following chains:
+
+- https://docs.tokenbridge.net/eth-xdai-amb-bridge/about-the-eth-xdai-amb[ETH ⇌ xDai]
+- https://docs.tokenbridge.net/eth-qdai-bridge/about-the-eth-qdai-amb[ETH ⇌ qDai]
+- https://docs.tokenbridge.net/eth-etc-amb-bridge/about-the-eth-etc-amb[ETH ⇌ ETC]
+- https://docs.tokenbridge.net/eth-bsc-amb/about-the-eth-bsc-amb[ETH ⇌ BSC]
+- https://docs.tokenbridge.net/eth-poa-amb-bridge/about-the-eth-poa-amb[ETH ⇌ POA]
+- https://docs.tokenbridge.net/bsc-xdai-amb/about-the-bsc-xdai-amb[BSC ⇌ xDai]
+- https://docs.tokenbridge.net/poa-xdai-amb/about-the-poa-xdai-amb[POA ⇌ xDai]
+- https://docs.tokenbridge.net/rinkeby-xdai-amb-bridge/about-the-rinkeby-xdai-amb[Rinkeby ⇌ xDai]
+- https://docs.tokenbridge.net/kovan-sokol-amb-bridge/about-the-kovan-sokol-amb[Kovan ⇌ Sokol]
+
+_Available since v4.6._
+
+[.contract-index]
+.Functions
+--
+* {xref-CrossChainEnabledAMB-constructor-address-}[`++constructor(bridge)++`]
+* {xref-CrossChainEnabledAMB-_isCrossChain--}[`++_isCrossChain()++`]
+* {xref-CrossChainEnabledAMB-_crossChainSender--}[`++_crossChainSender()++`]
+
+[.contract-subindex-inherited]
+.CrossChainEnabled
+
+--
+
+[.contract-item]
+[[CrossChainEnabledAMB-constructor-address-]]
+==== `[.contract-item-name]#++constructor++#++(address bridge)++` [.item-kind]#public#
+
+[.contract-item]
+[[CrossChainEnabledAMB-_isCrossChain--]]
+==== `[.contract-item-name]#++_isCrossChain++#++() → bool++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_isCrossChain}
+
+[.contract-item]
+[[CrossChainEnabledAMB-_crossChainSender--]]
+==== `[.contract-item-name]#++_crossChainSender++#++() → address++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_crossChainSender}
+
+:constructor: pass:normal[xref:#CrossChainEnabledArbitrumL1-constructor-address-[`++constructor++`]]
+:_isCrossChain: pass:normal[xref:#CrossChainEnabledArbitrumL1-_isCrossChain--[`++_isCrossChain++`]]
+:_crossChainSender: pass:normal[xref:#CrossChainEnabledArbitrumL1-_crossChainSender--[`++_crossChainSender++`]]
+
+[.contract]
+[[CrossChainEnabledArbitrumL1]]
+=== `++CrossChainEnabledArbitrumL1++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/arbitrum/CrossChainEnabledArbitrumL1.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/arbitrum/CrossChainEnabledArbitrumL1.sol";
+```
+
+https://arbitrum.io/[Arbitrum] specialization or the
+{CrossChainEnabled} abstraction the L1 side (mainnet).
+
+This version should only be deployed on L1 to process cross-chain messages
+originating from L2. For the other side, use {CrossChainEnabledArbitrumL2}.
+
+The bridge contract is provided and maintained by the arbitrum team. You can
+find the address of this contract on the rinkeby testnet in
+https://developer.offchainlabs.com/docs/useful_addresses[Arbitrum's developer documentation].
+
+_Available since v4.6._
+
+[.contract-index]
+.Functions
+--
+* {xref-CrossChainEnabledArbitrumL1-constructor-address-}[`++constructor(bridge)++`]
+* {xref-CrossChainEnabledArbitrumL1-_isCrossChain--}[`++_isCrossChain()++`]
+* {xref-CrossChainEnabledArbitrumL1-_crossChainSender--}[`++_crossChainSender()++`]
+
+[.contract-subindex-inherited]
+.CrossChainEnabled
+
+--
+
+[.contract-item]
+[[CrossChainEnabledArbitrumL1-constructor-address-]]
+==== `[.contract-item-name]#++constructor++#++(address bridge)++` [.item-kind]#internal#
+
+[.contract-item]
+[[CrossChainEnabledArbitrumL1-_isCrossChain--]]
+==== `[.contract-item-name]#++_isCrossChain++#++() → bool++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_isCrossChain}
+
+[.contract-item]
+[[CrossChainEnabledArbitrumL1-_crossChainSender--]]
+==== `[.contract-item-name]#++_crossChainSender++#++() → address++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_crossChainSender}
+
+:_isCrossChain: pass:normal[xref:#CrossChainEnabledArbitrumL2-_isCrossChain--[`++_isCrossChain++`]]
+:_crossChainSender: pass:normal[xref:#CrossChainEnabledArbitrumL2-_crossChainSender--[`++_crossChainSender++`]]
+
+[.contract]
+[[CrossChainEnabledArbitrumL2]]
+=== `++CrossChainEnabledArbitrumL2++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/arbitrum/CrossChainEnabledArbitrumL2.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/arbitrum/CrossChainEnabledArbitrumL2.sol";
+```
+
+https://arbitrum.io/[Arbitrum] specialization or the
+{CrossChainEnabled} abstraction the L2 side (arbitrum).
+
+This version should only be deployed on L2 to process cross-chain messages
+originating from L1. For the other side, use {CrossChainEnabledArbitrumL1}.
+
+Arbitrum L2 includes the `ArbSys` contract at a fixed address. Therefore,
+this specialization of {CrossChainEnabled} does not include a constructor.
+
+_Available since v4.6._
+
+WARNING: There is currently a bug in Arbitrum that causes this contract to
+fail to detect cross-chain calls when deployed behind a proxy. This will be
+fixed when the network is upgraded to Arbitrum Nitro, currently scheduled for
+August 31st 2022.
+
+[.contract-index]
+.Functions
+--
+* {xref-CrossChainEnabledArbitrumL2-_isCrossChain--}[`++_isCrossChain()++`]
+* {xref-CrossChainEnabledArbitrumL2-_crossChainSender--}[`++_crossChainSender()++`]
+
+[.contract-subindex-inherited]
+.CrossChainEnabled
+
+--
+
+[.contract-item]
+[[CrossChainEnabledArbitrumL2-_isCrossChain--]]
+==== `[.contract-item-name]#++_isCrossChain++#++() → bool++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_isCrossChain}
+
+[.contract-item]
+[[CrossChainEnabledArbitrumL2-_crossChainSender--]]
+==== `[.contract-item-name]#++_crossChainSender++#++() → address++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_crossChainSender}
+
+:constructor: pass:normal[xref:#CrossChainEnabledOptimism-constructor-address-[`++constructor++`]]
+:_isCrossChain: pass:normal[xref:#CrossChainEnabledOptimism-_isCrossChain--[`++_isCrossChain++`]]
+:_crossChainSender: pass:normal[xref:#CrossChainEnabledOptimism-_crossChainSender--[`++_crossChainSender++`]]
+
+[.contract]
+[[CrossChainEnabledOptimism]]
+=== `++CrossChainEnabledOptimism++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/optimism/CrossChainEnabledOptimism.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/optimism/CrossChainEnabledOptimism.sol";
+```
+
+https://www.optimism.io/[Optimism] specialization or the
+{CrossChainEnabled} abstraction.
+
+The messenger (`CrossDomainMessenger`) contract is provided and maintained by
+the optimism team. You can find the address of this contract on mainnet and
+kovan in the https://github.com/ethereum-optimism/optimism/tree/develop/packages/contracts/deployments[deployments section of Optimism monorepo].
+
+_Available since v4.6._
+
+[.contract-index]
+.Functions
+--
+* {xref-CrossChainEnabledOptimism-constructor-address-}[`++constructor(messenger)++`]
+* {xref-CrossChainEnabledOptimism-_isCrossChain--}[`++_isCrossChain()++`]
+* {xref-CrossChainEnabledOptimism-_crossChainSender--}[`++_crossChainSender()++`]
+
+[.contract-subindex-inherited]
+.CrossChainEnabled
+
+--
+
+[.contract-item]
+[[CrossChainEnabledOptimism-constructor-address-]]
+==== `[.contract-item-name]#++constructor++#++(address messenger)++` [.item-kind]#internal#
+
+[.contract-item]
+[[CrossChainEnabledOptimism-_isCrossChain--]]
+==== `[.contract-item-name]#++_isCrossChain++#++() → bool++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_isCrossChain}
+
+[.contract-item]
+[[CrossChainEnabledOptimism-_crossChainSender--]]
+==== `[.contract-item-name]#++_crossChainSender++#++() → address++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_crossChainSender}
+
+:constructor: pass:normal[xref:#CrossChainEnabledPolygonChild-constructor-address-[`++constructor++`]]
+:_isCrossChain: pass:normal[xref:#CrossChainEnabledPolygonChild-_isCrossChain--[`++_isCrossChain++`]]
+:_crossChainSender: pass:normal[xref:#CrossChainEnabledPolygonChild-_crossChainSender--[`++_crossChainSender++`]]
+:processMessageFromRoot: pass:normal[xref:#CrossChainEnabledPolygonChild-processMessageFromRoot-uint256-address-bytes-[`++processMessageFromRoot++`]]
+
+[.contract]
+[[CrossChainEnabledPolygonChild]]
+=== `++CrossChainEnabledPolygonChild++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/polygon/CrossChainEnabledPolygonChild.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/polygon/CrossChainEnabledPolygonChild.sol";
+```
+
+https://polygon.technology/[Polygon] specialization or the
+{CrossChainEnabled} abstraction the child side (polygon/mumbai).
+
+This version should only be deployed on child chain to process cross-chain
+messages originating from the parent chain.
+
+The fxChild contract is provided and maintained by the polygon team. You can
+find the address of this contract polygon and mumbai in
+https://docs.polygon.technology/docs/develop/l1-l2-communication/fx-portal/#contract-addresses[Polygon's Fx-Portal documentation].
+
+_Available since v4.6._
+
+[.contract-index]
+.Functions
+--
+* {xref-CrossChainEnabledPolygonChild-constructor-address-}[`++constructor(fxChild)++`]
+* {xref-CrossChainEnabledPolygonChild-_isCrossChain--}[`++_isCrossChain()++`]
+* {xref-CrossChainEnabledPolygonChild-_crossChainSender--}[`++_crossChainSender()++`]
+* {xref-CrossChainEnabledPolygonChild-processMessageFromRoot-uint256-address-bytes-}[`++processMessageFromRoot(, rootMessageSender, data)++`]
+
+[.contract-subindex-inherited]
+.ReentrancyGuard
+* {xref-ReentrancyGuard-_reentrancyGuardEntered--}[`++_reentrancyGuardEntered()++`]
+
+[.contract-subindex-inherited]
+.CrossChainEnabled
+
+[.contract-subindex-inherited]
+.IFxMessageProcessor
+
+--
+
+[.contract-item]
+[[CrossChainEnabledPolygonChild-constructor-address-]]
+==== `[.contract-item-name]#++constructor++#++(address fxChild)++` [.item-kind]#internal#
+
+[.contract-item]
+[[CrossChainEnabledPolygonChild-_isCrossChain--]]
+==== `[.contract-item-name]#++_isCrossChain++#++() → bool++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_isCrossChain}
+
+[.contract-item]
+[[CrossChainEnabledPolygonChild-_crossChainSender--]]
+==== `[.contract-item-name]#++_crossChainSender++#++() → address++` [.item-kind]#internal#
+
+see {CrossChainEnabled-_crossChainSender}
+
+[.contract-item]
+[[CrossChainEnabledPolygonChild-processMessageFromRoot-uint256-address-bytes-]]
+==== `[.contract-item-name]#++processMessageFromRoot++#++(uint256, address rootMessageSender, bytes data)++` [.item-kind]#external#
+
+External entry point to receive and relay messages originating
+from the fxChild.
+
+Non-reentrancy is crucial to avoid a cross-chain call being able
+to impersonate anyone by just looping through this with user-defined
+arguments.
+
+Note: if _fxChild calls any other function that does a delegate-call,
+then security could be compromised.
+
+== Libraries for cross-chain
+
+In addition to the {CrossChainEnabled} abstraction, cross-chain awareness is also available through libraries. These libraries can be used to build complex designs such as contracts with the ability to interact with multiple bridges.
+
+:isCrossChain: pass:normal[xref:#LibAMB-isCrossChain-address-[`++isCrossChain++`]]
+:crossChainSender: pass:normal[xref:#LibAMB-crossChainSender-address-[`++crossChainSender++`]]
+
+[.contract]
+[[LibAMB]]
+=== `++LibAMB++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/amb/LibAMB.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/amb/LibAMB.sol";
+```
+
+Primitives for cross-chain aware contracts using the
+https://docs.tokenbridge.net/amb-bridge/about-amb-bridge[AMB]
+family of bridges.
+
+[.contract-index]
+.Functions
+--
+* {xref-LibAMB-isCrossChain-address-}[`++isCrossChain(bridge)++`]
+* {xref-LibAMB-crossChainSender-address-}[`++crossChainSender(bridge)++`]
+
+--
+
+[.contract-item]
+[[LibAMB-isCrossChain-address-]]
+==== `[.contract-item-name]#++isCrossChain++#++(address bridge) → bool++` [.item-kind]#internal#
+
+Returns whether the current function call is the result of a
+cross-chain message relayed by `bridge`.
+
+[.contract-item]
+[[LibAMB-crossChainSender-address-]]
+==== `[.contract-item-name]#++crossChainSender++#++(address bridge) → address++` [.item-kind]#internal#
+
+Returns the address of the sender that triggered the current
+cross-chain message through `bridge`.
+
+NOTE: {isCrossChain} should be checked before trying to recover the
+sender, as it will revert with `NotCrossChainCall` if the current
+function call is not the result of a cross-chain message.
+
+:isCrossChain: pass:normal[xref:#LibArbitrumL1-isCrossChain-address-[`++isCrossChain++`]]
+:crossChainSender: pass:normal[xref:#LibArbitrumL1-crossChainSender-address-[`++crossChainSender++`]]
+
+[.contract]
+[[LibArbitrumL1]]
+=== `++LibArbitrumL1++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/arbitrum/LibArbitrumL1.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/arbitrum/LibArbitrumL1.sol";
+```
+
+Primitives for cross-chain aware contracts for
+https://arbitrum.io/[Arbitrum].
+
+This version should only be used on L1 to process cross-chain messages
+originating from L2. For the other side, use {LibArbitrumL2}.
+
+[.contract-index]
+.Functions
+--
+* {xref-LibArbitrumL1-isCrossChain-address-}[`++isCrossChain(bridge)++`]
+* {xref-LibArbitrumL1-crossChainSender-address-}[`++crossChainSender(bridge)++`]
+
+--
+
+[.contract-item]
+[[LibArbitrumL1-isCrossChain-address-]]
+==== `[.contract-item-name]#++isCrossChain++#++(address bridge) → bool++` [.item-kind]#internal#
+
+Returns whether the current function call is the result of a
+cross-chain message relayed by the `bridge`.
+
+[.contract-item]
+[[LibArbitrumL1-crossChainSender-address-]]
+==== `[.contract-item-name]#++crossChainSender++#++(address bridge) → address++` [.item-kind]#internal#
+
+Returns the address of the sender that triggered the current
+cross-chain message through the `bridge`.
+
+NOTE: {isCrossChain} should be checked before trying to recover the
+sender, as it will revert with `NotCrossChainCall` if the current
+function call is not the result of a cross-chain message.
+
+:ARBSYS: pass:normal[xref:#LibArbitrumL2-ARBSYS-address[`++ARBSYS++`]]
+:isCrossChain: pass:normal[xref:#LibArbitrumL2-isCrossChain-address-[`++isCrossChain++`]]
+:crossChainSender: pass:normal[xref:#LibArbitrumL2-crossChainSender-address-[`++crossChainSender++`]]
+
+[.contract]
+[[LibArbitrumL2]]
+=== `++LibArbitrumL2++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/arbitrum/LibArbitrumL2.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/arbitrum/LibArbitrumL2.sol";
+```
+
+Primitives for cross-chain aware contracts for
+https://arbitrum.io/[Arbitrum].
+
+This version should only be used on L2 to process cross-chain messages
+originating from L1. For the other side, use {LibArbitrumL1}.
+
+WARNING: There is currently a bug in Arbitrum that causes this contract to
+fail to detect cross-chain calls when deployed behind a proxy. This will be
+fixed when the network is upgraded to Arbitrum Nitro, currently scheduled for
+August 31st 2022.
+
+[.contract-index]
+.Functions
+--
+* {xref-LibArbitrumL2-isCrossChain-address-}[`++isCrossChain(arbsys)++`]
+* {xref-LibArbitrumL2-crossChainSender-address-}[`++crossChainSender(arbsys)++`]
+
+--
+
+[.contract-item]
+[[LibArbitrumL2-isCrossChain-address-]]
+==== `[.contract-item-name]#++isCrossChain++#++(address arbsys) → bool++` [.item-kind]#internal#
+
+[.contract-item]
+[[LibArbitrumL2-crossChainSender-address-]]
+==== `[.contract-item-name]#++crossChainSender++#++(address arbsys) → address++` [.item-kind]#internal#
+
+Returns the address of the sender that triggered the current
+cross-chain message through `arbsys`.
+
+NOTE: {isCrossChain} should be checked before trying to recover the
+sender, as it will revert with `NotCrossChainCall` if the current
+function call is not the result of a cross-chain message.
+
+:isCrossChain: pass:normal[xref:#LibOptimism-isCrossChain-address-[`++isCrossChain++`]]
+:crossChainSender: pass:normal[xref:#LibOptimism-crossChainSender-address-[`++crossChainSender++`]]
+
+[.contract]
+[[LibOptimism]]
+=== `++LibOptimism++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/crosschain/optimism/LibOptimism.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/crosschain/optimism/LibOptimism.sol";
+```
+
+Primitives for cross-chain aware contracts for https://www.optimism.io/[Optimism].
+See the https://community.optimism.io/docs/developers/bridge/messaging/#accessing-msg-sender[documentation]
+for the functionality used here.
+
+[.contract-index]
+.Functions
+--
+* {xref-LibOptimism-isCrossChain-address-}[`++isCrossChain(messenger)++`]
+* {xref-LibOptimism-crossChainSender-address-}[`++crossChainSender(messenger)++`]
+
+--
+
+[.contract-item]
+[[LibOptimism-isCrossChain-address-]]
+==== `[.contract-item-name]#++isCrossChain++#++(address messenger) → bool++` [.item-kind]#internal#
+
+Returns whether the current function call is the result of a
+cross-chain message relayed by `messenger`.
+
+[.contract-item]
+[[LibOptimism-crossChainSender-address-]]
+==== `[.contract-item-name]#++crossChainSender++#++(address messenger) → address++` [.item-kind]#internal#
+
+Returns the address of the sender that triggered the current
+cross-chain message through `messenger`.
+
+NOTE: {isCrossChain} should be checked before trying to recover the
+sender, as it will revert with `NotCrossChainCall` if the current
+function call is not the result of a cross-chain message.
+

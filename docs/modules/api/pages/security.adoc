@@ -1,0 +1,306 @@
+:github-icon: pass:[<svg class="icon"><use href="#github-icon"/></svg>]
+:PullPayment: pass:normal[xref:security.adoc#PullPayment[`PullPayment`]]
+:ReentrancyGuard: pass:normal[xref:security.adoc#ReentrancyGuard[`ReentrancyGuard`]]
+:Pausable: pass:normal[xref:security.adoc#Pausable[`Pausable`]]
+:xref-PullPayment-constructor--: xref:security.adoc#PullPayment-constructor--
+:xref-PullPayment-withdrawPayments-address-payable-: xref:security.adoc#PullPayment-withdrawPayments-address-payable-
+:xref-PullPayment-payments-address-: xref:security.adoc#PullPayment-payments-address-
+:xref-PullPayment-_asyncTransfer-address-uint256-: xref:security.adoc#PullPayment-_asyncTransfer-address-uint256-
+:ReentrancyGuard: pass:normal[xref:security.adoc#ReentrancyGuard[`ReentrancyGuard`]]
+:Escrow: pass:normal[xref:utils.adoc#Escrow[`Escrow`]]
+:xref-ReentrancyGuard-nonReentrant--: xref:security.adoc#ReentrancyGuard-nonReentrant--
+:xref-ReentrancyGuard-constructor--: xref:security.adoc#ReentrancyGuard-constructor--
+:xref-ReentrancyGuard-_reentrancyGuardEntered--: xref:security.adoc#ReentrancyGuard-_reentrancyGuardEntered--
+:xref-Pausable-whenNotPaused--: xref:security.adoc#Pausable-whenNotPaused--
+:xref-Pausable-whenPaused--: xref:security.adoc#Pausable-whenPaused--
+:xref-Pausable-constructor--: xref:security.adoc#Pausable-constructor--
+:xref-Pausable-paused--: xref:security.adoc#Pausable-paused--
+:xref-Pausable-_requireNotPaused--: xref:security.adoc#Pausable-_requireNotPaused--
+:xref-Pausable-_requirePaused--: xref:security.adoc#Pausable-_requirePaused--
+:xref-Pausable-_pause--: xref:security.adoc#Pausable-_pause--
+:xref-Pausable-_unpause--: xref:security.adoc#Pausable-_unpause--
+:xref-Pausable-Paused-address-: xref:security.adoc#Pausable-Paused-address-
+:xref-Pausable-Unpaused-address-: xref:security.adoc#Pausable-Unpaused-address-
+= Security
+
+[.readme-notice]
+NOTE: This document is better viewed at https://docs.openzeppelin.com/contracts/api/security
+
+These contracts aim to cover common security practices.
+
+* {PullPayment}: A pattern that can be used to avoid reentrancy attacks.
+* {ReentrancyGuard}: A modifier that can prevent reentrancy during certain functions.
+* {Pausable}: A common emergency response mechanism that can pause functionality while a remediation is pending.
+
+TIP: For an overview on reentrancy and the possible mechanisms to prevent it, read our article https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
+
+== Contracts
+
+:constructor: pass:normal[xref:#PullPayment-constructor--[`++constructor++`]]
+:withdrawPayments: pass:normal[xref:#PullPayment-withdrawPayments-address-payable-[`++withdrawPayments++`]]
+:payments: pass:normal[xref:#PullPayment-payments-address-[`++payments++`]]
+:_asyncTransfer: pass:normal[xref:#PullPayment-_asyncTransfer-address-uint256-[`++_asyncTransfer++`]]
+
+[.contract]
+[[PullPayment]]
+=== `++PullPayment++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/security/PullPayment.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/security/PullPayment.sol";
+```
+
+Simple implementation of a
+https://consensys.github.io/smart-contract-best-practices/development-recommendations/general/external-calls/#favor-pull-over-push-for-external-calls[pull-payment]
+strategy, where the paying contract doesn't interact directly with the
+receiver account, which must withdraw its payments itself.
+
+Pull-payments are often considered the best practice when it comes to sending
+Ether, security-wise. It prevents recipients from blocking execution, and
+eliminates reentrancy concerns.
+
+TIP: If you would like to learn more about reentrancy and alternative ways
+to protect against it, check out our blog post
+https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
+
+To use, derive from the `PullPayment` contract, and use {_asyncTransfer}
+instead of Solidity's `transfer` function. Payees can query their due
+payments with {payments}, and retrieve them with {withdrawPayments}.
+
+[.contract-index]
+.Functions
+--
+* {xref-PullPayment-constructor--}[`++constructor()++`]
+* {xref-PullPayment-withdrawPayments-address-payable-}[`++withdrawPayments(payee)++`]
+* {xref-PullPayment-payments-address-}[`++payments(dest)++`]
+* {xref-PullPayment-_asyncTransfer-address-uint256-}[`++_asyncTransfer(dest, amount)++`]
+
+--
+
+[.contract-item]
+[[PullPayment-constructor--]]
+==== `[.contract-item-name]#++constructor++#++()++` [.item-kind]#internal#
+
+[.contract-item]
+[[PullPayment-withdrawPayments-address-payable-]]
+==== `[.contract-item-name]#++withdrawPayments++#++(address payable payee)++` [.item-kind]#public#
+
+Withdraw accumulated payments, forwarding all gas to the recipient.
+
+Note that _any_ account can call this function, not just the `payee`.
+This means that contracts unaware of the `PullPayment` protocol can still
+receive funds this way, by having a separate account call
+{withdrawPayments}.
+
+WARNING: Forwarding all gas opens the door to reentrancy vulnerabilities.
+Make sure you trust the recipient, or are either following the
+checks-effects-interactions pattern or using {ReentrancyGuard}.
+
+[.contract-item]
+[[PullPayment-payments-address-]]
+==== `[.contract-item-name]#++payments++#++(address dest) → uint256++` [.item-kind]#public#
+
+Returns the payments owed to an address.
+
+[.contract-item]
+[[PullPayment-_asyncTransfer-address-uint256-]]
+==== `[.contract-item-name]#++_asyncTransfer++#++(address dest, uint256 amount)++` [.item-kind]#internal#
+
+Called by the payer to store the sent amount as credit to be pulled.
+Funds sent in this way are stored in an intermediate {Escrow} contract, so
+there is no danger of them being spent before withdrawal.
+
+:constructor: pass:normal[xref:#ReentrancyGuard-constructor--[`++constructor++`]]
+:nonReentrant: pass:normal[xref:#ReentrancyGuard-nonReentrant--[`++nonReentrant++`]]
+:_reentrancyGuardEntered: pass:normal[xref:#ReentrancyGuard-_reentrancyGuardEntered--[`++_reentrancyGuardEntered++`]]
+
+[.contract]
+[[ReentrancyGuard]]
+=== `++ReentrancyGuard++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/security/ReentrancyGuard.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+```
+
+Contract module that helps prevent reentrant calls to a function.
+
+Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier
+available, which can be applied to functions to make sure there are no nested
+(reentrant) calls to them.
+
+Note that because there is a single `nonReentrant` guard, functions marked as
+`nonReentrant` may not call one another. This can be worked around by making
+those functions `private`, and then adding `external` `nonReentrant` entry
+points to them.
+
+TIP: If you would like to learn more about reentrancy and alternative ways
+to protect against it, check out our blog post
+https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
+
+[.contract-index]
+.Modifiers
+--
+* {xref-ReentrancyGuard-nonReentrant--}[`++nonReentrant()++`]
+--
+
+[.contract-index]
+.Functions
+--
+* {xref-ReentrancyGuard-constructor--}[`++constructor()++`]
+* {xref-ReentrancyGuard-_reentrancyGuardEntered--}[`++_reentrancyGuardEntered()++`]
+
+--
+
+[.contract-item]
+[[ReentrancyGuard-nonReentrant--]]
+==== `[.contract-item-name]#++nonReentrant++#++()++` [.item-kind]#modifier#
+
+Prevents a contract from calling itself, directly or indirectly.
+Calling a `nonReentrant` function from another `nonReentrant`
+function is not supported. It is possible to prevent this from happening
+by making the `nonReentrant` function external, and making it call a
+`private` function that does the actual work.
+
+[.contract-item]
+[[ReentrancyGuard-constructor--]]
+==== `[.contract-item-name]#++constructor++#++()++` [.item-kind]#internal#
+
+[.contract-item]
+[[ReentrancyGuard-_reentrancyGuardEntered--]]
+==== `[.contract-item-name]#++_reentrancyGuardEntered++#++() → bool++` [.item-kind]#internal#
+
+Returns true if the reentrancy guard is currently set to "entered", which indicates there is a
+`nonReentrant` function in the call stack.
+
+:Paused: pass:normal[xref:#Pausable-Paused-address-[`++Paused++`]]
+:Unpaused: pass:normal[xref:#Pausable-Unpaused-address-[`++Unpaused++`]]
+:constructor: pass:normal[xref:#Pausable-constructor--[`++constructor++`]]
+:whenNotPaused: pass:normal[xref:#Pausable-whenNotPaused--[`++whenNotPaused++`]]
+:whenPaused: pass:normal[xref:#Pausable-whenPaused--[`++whenPaused++`]]
+:paused: pass:normal[xref:#Pausable-paused--[`++paused++`]]
+:_requireNotPaused: pass:normal[xref:#Pausable-_requireNotPaused--[`++_requireNotPaused++`]]
+:_requirePaused: pass:normal[xref:#Pausable-_requirePaused--[`++_requirePaused++`]]
+:_pause: pass:normal[xref:#Pausable-_pause--[`++_pause++`]]
+:_unpause: pass:normal[xref:#Pausable-_unpause--[`++_unpause++`]]
+
+[.contract]
+[[Pausable]]
+=== `++Pausable++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/security/Pausable.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/security/Pausable.sol";
+```
+
+Contract module which allows children to implement an emergency stop
+mechanism that can be triggered by an authorized account.
+
+This module is used through inheritance. It will make available the
+modifiers `whenNotPaused` and `whenPaused`, which can be applied to
+the functions of your contract. Note that they will not be pausable by
+simply including this module, only once the modifiers are put in place.
+
+[.contract-index]
+.Modifiers
+--
+* {xref-Pausable-whenNotPaused--}[`++whenNotPaused()++`]
+* {xref-Pausable-whenPaused--}[`++whenPaused()++`]
+--
+
+[.contract-index]
+.Functions
+--
+* {xref-Pausable-constructor--}[`++constructor()++`]
+* {xref-Pausable-paused--}[`++paused()++`]
+* {xref-Pausable-_requireNotPaused--}[`++_requireNotPaused()++`]
+* {xref-Pausable-_requirePaused--}[`++_requirePaused()++`]
+* {xref-Pausable-_pause--}[`++_pause()++`]
+* {xref-Pausable-_unpause--}[`++_unpause()++`]
+
+--
+
+[.contract-index]
+.Events
+--
+* {xref-Pausable-Paused-address-}[`++Paused(account)++`]
+* {xref-Pausable-Unpaused-address-}[`++Unpaused(account)++`]
+
+--
+
+[.contract-item]
+[[Pausable-whenNotPaused--]]
+==== `[.contract-item-name]#++whenNotPaused++#++()++` [.item-kind]#modifier#
+
+Modifier to make a function callable only when the contract is not paused.
+
+Requirements:
+
+- The contract must not be paused.
+
+[.contract-item]
+[[Pausable-whenPaused--]]
+==== `[.contract-item-name]#++whenPaused++#++()++` [.item-kind]#modifier#
+
+Modifier to make a function callable only when the contract is paused.
+
+Requirements:
+
+- The contract must be paused.
+
+[.contract-item]
+[[Pausable-constructor--]]
+==== `[.contract-item-name]#++constructor++#++()++` [.item-kind]#internal#
+
+Initializes the contract in unpaused state.
+
+[.contract-item]
+[[Pausable-paused--]]
+==== `[.contract-item-name]#++paused++#++() → bool++` [.item-kind]#public#
+
+Returns true if the contract is paused, and false otherwise.
+
+[.contract-item]
+[[Pausable-_requireNotPaused--]]
+==== `[.contract-item-name]#++_requireNotPaused++#++()++` [.item-kind]#internal#
+
+Throws if the contract is paused.
+
+[.contract-item]
+[[Pausable-_requirePaused--]]
+==== `[.contract-item-name]#++_requirePaused++#++()++` [.item-kind]#internal#
+
+Throws if the contract is not paused.
+
+[.contract-item]
+[[Pausable-_pause--]]
+==== `[.contract-item-name]#++_pause++#++()++` [.item-kind]#internal#
+
+Triggers stopped state.
+
+Requirements:
+
+- The contract must not be paused.
+
+[.contract-item]
+[[Pausable-_unpause--]]
+==== `[.contract-item-name]#++_unpause++#++()++` [.item-kind]#internal#
+
+Returns to normal state.
+
+Requirements:
+
+- The contract must be paused.
+
+[.contract-item]
+[[Pausable-Paused-address-]]
+==== `[.contract-item-name]#++Paused++#++(address account)++` [.item-kind]#event#
+
+Emitted when the pause is triggered by `account`.
+
+[.contract-item]
+[[Pausable-Unpaused-address-]]
+==== `[.contract-item-name]#++Unpaused++#++(address account)++` [.item-kind]#event#
+
+Emitted when the pause is lifted by `account`.
+

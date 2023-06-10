@@ -1,0 +1,1322 @@
+:github-icon: pass:[<svg class="icon"><use href="#github-icon"/></svg>]
+:Proxy: pass:normal[xref:proxy.adoc#Proxy[`Proxy`]]
+:ERC1967Upgrade: pass:normal[xref:proxy.adoc#ERC1967Upgrade[`ERC1967Upgrade`]]
+:ERC1967Proxy: pass:normal[xref:proxy.adoc#ERC1967Proxy[`ERC1967Proxy`]]
+:TransparentUpgradeableProxy: pass:normal[xref:proxy.adoc#TransparentUpgradeableProxy[`TransparentUpgradeableProxy`]]
+:UUPSUpgradeable: pass:normal[xref:proxy.adoc#UUPSUpgradeable[`UUPSUpgradeable`]]
+:BeaconProxy: pass:normal[xref:proxy.adoc#BeaconProxy[`BeaconProxy`]]
+:UpgradeableBeacon: pass:normal[xref:proxy.adoc#UpgradeableBeacon[`UpgradeableBeacon`]]
+:BeaconProxy: pass:normal[xref:proxy.adoc#BeaconProxy[`BeaconProxy`]]
+:Clones: pass:normal[xref:proxy.adoc#Clones[`Clones`]]
+:TransparentUpgradeableProxy: pass:normal[xref:proxy.adoc#TransparentUpgradeableProxy[`TransparentUpgradeableProxy`]]
+:ERC1967Proxy: pass:normal[xref:proxy.adoc#ERC1967Proxy[`ERC1967Proxy`]]
+:UUPSUpgradeable: pass:normal[xref:proxy.adoc#UUPSUpgradeable[`UUPSUpgradeable`]]
+:xref-UUPSUpgradeable-_authorizeUpgrade-address-: xref:proxy.adoc#UUPSUpgradeable-_authorizeUpgrade-address-
+:TransparentUpgradeableProxy: pass:normal[xref:proxy.adoc#TransparentUpgradeableProxy[`TransparentUpgradeableProxy`]]
+:UUPSUpgradeable: pass:normal[xref:proxy.adoc#UUPSUpgradeable[`UUPSUpgradeable`]]
+:xref-Proxy-_delegate-address-: xref:proxy.adoc#Proxy-_delegate-address-
+:xref-Proxy-_implementation--: xref:proxy.adoc#Proxy-_implementation--
+:xref-Proxy-_fallback--: xref:proxy.adoc#Proxy-_fallback--
+:xref-Proxy-fallback--: xref:proxy.adoc#Proxy-fallback--
+:xref-Proxy-receive--: xref:proxy.adoc#Proxy-receive--
+:xref-Proxy-_beforeFallback--: xref:proxy.adoc#Proxy-_beforeFallback--
+:xref-ERC1967Proxy-constructor-address-bytes-: xref:proxy.adoc#ERC1967Proxy-constructor-address-bytes-
+:xref-ERC1967Proxy-_implementation--: xref:proxy.adoc#ERC1967Proxy-_implementation--
+:xref-ERC1967Upgrade-_getImplementation--: xref:proxy.adoc#ERC1967Upgrade-_getImplementation--
+:xref-ERC1967Upgrade-_upgradeTo-address-: xref:proxy.adoc#ERC1967Upgrade-_upgradeTo-address-
+:xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-
+:xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-
+:xref-ERC1967Upgrade-_getAdmin--: xref:proxy.adoc#ERC1967Upgrade-_getAdmin--
+:xref-ERC1967Upgrade-_changeAdmin-address-: xref:proxy.adoc#ERC1967Upgrade-_changeAdmin-address-
+:xref-ERC1967Upgrade-_getBeacon--: xref:proxy.adoc#ERC1967Upgrade-_getBeacon--
+:xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-
+:xref-Proxy-_delegate-address-: xref:proxy.adoc#Proxy-_delegate-address-
+:xref-Proxy-_fallback--: xref:proxy.adoc#Proxy-_fallback--
+:xref-Proxy-fallback--: xref:proxy.adoc#Proxy-fallback--
+:xref-Proxy-receive--: xref:proxy.adoc#Proxy-receive--
+:xref-Proxy-_beforeFallback--: xref:proxy.adoc#Proxy-_beforeFallback--
+:xref-IERC1967-Upgraded-address-: xref:interfaces.adoc#IERC1967-Upgraded-address-
+:xref-IERC1967-AdminChanged-address-address-: xref:interfaces.adoc#IERC1967-AdminChanged-address-address-
+:xref-IERC1967-BeaconUpgraded-address-: xref:interfaces.adoc#IERC1967-BeaconUpgraded-address-
+:xref-ERC1967Upgrade-_getImplementation--: xref:proxy.adoc#ERC1967Upgrade-_getImplementation--
+:xref-ERC1967Upgrade-_upgradeTo-address-: xref:proxy.adoc#ERC1967Upgrade-_upgradeTo-address-
+:xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-
+:xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-
+:xref-ERC1967Upgrade-_getAdmin--: xref:proxy.adoc#ERC1967Upgrade-_getAdmin--
+:xref-ERC1967Upgrade-_changeAdmin-address-: xref:proxy.adoc#ERC1967Upgrade-_changeAdmin-address-
+:xref-ERC1967Upgrade-_getBeacon--: xref:proxy.adoc#ERC1967Upgrade-_getBeacon--
+:xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-
+:xref-IERC1967-Upgraded-address-: xref:interfaces.adoc#IERC1967-Upgraded-address-
+:xref-IERC1967-AdminChanged-address-address-: xref:interfaces.adoc#IERC1967-AdminChanged-address-address-
+:xref-IERC1967-BeaconUpgraded-address-: xref:interfaces.adoc#IERC1967-BeaconUpgraded-address-
+:UpgradeableBeacon-_setImplementation: pass:normal[xref:proxy.adoc#UpgradeableBeacon-_setImplementation-address-[`UpgradeableBeacon._setImplementation`]]
+:ProxyAdmin: pass:normal[xref:proxy.adoc#ProxyAdmin[`ProxyAdmin`]]
+:ITransparentUpgradeableProxy: pass:normal[xref:proxy.adoc#ITransparentUpgradeableProxy[`ITransparentUpgradeableProxy`]]
+:xref-TransparentUpgradeableProxy-ifAdmin--: xref:proxy.adoc#TransparentUpgradeableProxy-ifAdmin--
+:xref-TransparentUpgradeableProxy-constructor-address-address-bytes-: xref:proxy.adoc#TransparentUpgradeableProxy-constructor-address-address-bytes-
+:xref-TransparentUpgradeableProxy-_fallback--: xref:proxy.adoc#TransparentUpgradeableProxy-_fallback--
+:xref-TransparentUpgradeableProxy-_admin--: xref:proxy.adoc#TransparentUpgradeableProxy-_admin--
+:xref-ERC1967Proxy-_implementation--: xref:proxy.adoc#ERC1967Proxy-_implementation--
+:xref-ERC1967Upgrade-_getImplementation--: xref:proxy.adoc#ERC1967Upgrade-_getImplementation--
+:xref-ERC1967Upgrade-_upgradeTo-address-: xref:proxy.adoc#ERC1967Upgrade-_upgradeTo-address-
+:xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-
+:xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-
+:xref-ERC1967Upgrade-_getAdmin--: xref:proxy.adoc#ERC1967Upgrade-_getAdmin--
+:xref-ERC1967Upgrade-_changeAdmin-address-: xref:proxy.adoc#ERC1967Upgrade-_changeAdmin-address-
+:xref-ERC1967Upgrade-_getBeacon--: xref:proxy.adoc#ERC1967Upgrade-_getBeacon--
+:xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-
+:xref-Proxy-_delegate-address-: xref:proxy.adoc#Proxy-_delegate-address-
+:xref-Proxy-fallback--: xref:proxy.adoc#Proxy-fallback--
+:xref-Proxy-receive--: xref:proxy.adoc#Proxy-receive--
+:xref-Proxy-_beforeFallback--: xref:proxy.adoc#Proxy-_beforeFallback--
+:xref-IERC1967-Upgraded-address-: xref:interfaces.adoc#IERC1967-Upgraded-address-
+:xref-IERC1967-AdminChanged-address-address-: xref:interfaces.adoc#IERC1967-AdminChanged-address-address-
+:xref-IERC1967-BeaconUpgraded-address-: xref:interfaces.adoc#IERC1967-BeaconUpgraded-address-
+:ERC1967Proxy-constructor: pass:normal[xref:proxy.adoc#ERC1967Proxy-constructor-address-bytes-[`ERC1967Proxy.constructor`]]
+:ERC1967Upgrade-_getAdmin: pass:normal[xref:proxy.adoc#ERC1967Upgrade-_getAdmin--[`ERC1967Upgrade._getAdmin`]]
+:TransparentUpgradeableProxy: pass:normal[xref:proxy.adoc#TransparentUpgradeableProxy[`TransparentUpgradeableProxy`]]
+:TransparentUpgradeableProxy: pass:normal[xref:proxy.adoc#TransparentUpgradeableProxy[`TransparentUpgradeableProxy`]]
+:xref-ProxyAdmin-getProxyImplementation-contract-ITransparentUpgradeableProxy-: xref:proxy.adoc#ProxyAdmin-getProxyImplementation-contract-ITransparentUpgradeableProxy-
+:xref-ProxyAdmin-getProxyAdmin-contract-ITransparentUpgradeableProxy-: xref:proxy.adoc#ProxyAdmin-getProxyAdmin-contract-ITransparentUpgradeableProxy-
+:xref-ProxyAdmin-changeProxyAdmin-contract-ITransparentUpgradeableProxy-address-: xref:proxy.adoc#ProxyAdmin-changeProxyAdmin-contract-ITransparentUpgradeableProxy-address-
+:xref-ProxyAdmin-upgrade-contract-ITransparentUpgradeableProxy-address-: xref:proxy.adoc#ProxyAdmin-upgrade-contract-ITransparentUpgradeableProxy-address-
+:xref-ProxyAdmin-upgradeAndCall-contract-ITransparentUpgradeableProxy-address-bytes-: xref:proxy.adoc#ProxyAdmin-upgradeAndCall-contract-ITransparentUpgradeableProxy-address-bytes-
+:xref-Ownable-owner--: xref:access.adoc#Ownable-owner--
+:xref-Ownable-_checkOwner--: xref:access.adoc#Ownable-_checkOwner--
+:xref-Ownable-renounceOwnership--: xref:access.adoc#Ownable-renounceOwnership--
+:xref-Ownable-transferOwnership-address-: xref:access.adoc#Ownable-transferOwnership-address-
+:xref-Ownable-_transferOwnership-address-: xref:access.adoc#Ownable-_transferOwnership-address-
+:xref-Ownable-OwnershipTransferred-address-address-: xref:access.adoc#Ownable-OwnershipTransferred-address-address-
+:UpgradeableBeacon: pass:normal[xref:proxy.adoc#UpgradeableBeacon[`UpgradeableBeacon`]]
+:xref-BeaconProxy-constructor-address-bytes-: xref:proxy.adoc#BeaconProxy-constructor-address-bytes-
+:xref-BeaconProxy-_beacon--: xref:proxy.adoc#BeaconProxy-_beacon--
+:xref-BeaconProxy-_implementation--: xref:proxy.adoc#BeaconProxy-_implementation--
+:xref-BeaconProxy-_setBeacon-address-bytes-: xref:proxy.adoc#BeaconProxy-_setBeacon-address-bytes-
+:xref-ERC1967Upgrade-_getImplementation--: xref:proxy.adoc#ERC1967Upgrade-_getImplementation--
+:xref-ERC1967Upgrade-_upgradeTo-address-: xref:proxy.adoc#ERC1967Upgrade-_upgradeTo-address-
+:xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-
+:xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-
+:xref-ERC1967Upgrade-_getAdmin--: xref:proxy.adoc#ERC1967Upgrade-_getAdmin--
+:xref-ERC1967Upgrade-_changeAdmin-address-: xref:proxy.adoc#ERC1967Upgrade-_changeAdmin-address-
+:xref-ERC1967Upgrade-_getBeacon--: xref:proxy.adoc#ERC1967Upgrade-_getBeacon--
+:xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-
+:xref-Proxy-_delegate-address-: xref:proxy.adoc#Proxy-_delegate-address-
+:xref-Proxy-_fallback--: xref:proxy.adoc#Proxy-_fallback--
+:xref-Proxy-fallback--: xref:proxy.adoc#Proxy-fallback--
+:xref-Proxy-receive--: xref:proxy.adoc#Proxy-receive--
+:xref-Proxy-_beforeFallback--: xref:proxy.adoc#Proxy-_beforeFallback--
+:xref-IERC1967-Upgraded-address-: xref:interfaces.adoc#IERC1967-Upgraded-address-
+:xref-IERC1967-AdminChanged-address-address-: xref:interfaces.adoc#IERC1967-AdminChanged-address-address-
+:xref-IERC1967-BeaconUpgraded-address-: xref:interfaces.adoc#IERC1967-BeaconUpgraded-address-
+:IBeacon: pass:normal[xref:proxy.adoc#IBeacon[`IBeacon`]]
+:BeaconProxy: pass:normal[xref:proxy.adoc#BeaconProxy[`BeaconProxy`]]
+:xref-IBeacon-implementation--: xref:proxy.adoc#IBeacon-implementation--
+:BeaconProxy: pass:normal[xref:proxy.adoc#BeaconProxy[`BeaconProxy`]]
+:BeaconProxy: pass:normal[xref:proxy.adoc#BeaconProxy[`BeaconProxy`]]
+:xref-UpgradeableBeacon-constructor-address-: xref:proxy.adoc#UpgradeableBeacon-constructor-address-
+:xref-UpgradeableBeacon-implementation--: xref:proxy.adoc#UpgradeableBeacon-implementation--
+:xref-UpgradeableBeacon-upgradeTo-address-: xref:proxy.adoc#UpgradeableBeacon-upgradeTo-address-
+:xref-Ownable-owner--: xref:access.adoc#Ownable-owner--
+:xref-Ownable-_checkOwner--: xref:access.adoc#Ownable-_checkOwner--
+:xref-Ownable-renounceOwnership--: xref:access.adoc#Ownable-renounceOwnership--
+:xref-Ownable-transferOwnership-address-: xref:access.adoc#Ownable-transferOwnership-address-
+:xref-Ownable-_transferOwnership-address-: xref:access.adoc#Ownable-_transferOwnership-address-
+:xref-UpgradeableBeacon-Upgraded-address-: xref:proxy.adoc#UpgradeableBeacon-Upgraded-address-
+:xref-Ownable-OwnershipTransferred-address-address-: xref:access.adoc#Ownable-OwnershipTransferred-address-address-
+:xref-Clones-clone-address-: xref:proxy.adoc#Clones-clone-address-
+:xref-Clones-cloneDeterministic-address-bytes32-: xref:proxy.adoc#Clones-cloneDeterministic-address-bytes32-
+:xref-Clones-predictDeterministicAddress-address-bytes32-address-: xref:proxy.adoc#Clones-predictDeterministicAddress-address-bytes32-address-
+:xref-Clones-predictDeterministicAddress-address-bytes32-: xref:proxy.adoc#Clones-predictDeterministicAddress-address-bytes32-
+:Clones-cloneDeterministic: pass:normal[xref:proxy.adoc#Clones-cloneDeterministic-address-bytes32-[`Clones.cloneDeterministic`]]
+:Clones-cloneDeterministic: pass:normal[xref:proxy.adoc#Clones-cloneDeterministic-address-bytes32-[`Clones.cloneDeterministic`]]
+:ERC1967Proxy-constructor: pass:normal[xref:proxy.adoc#ERC1967Proxy-constructor-address-bytes-[`ERC1967Proxy.constructor`]]
+:xref-Initializable-initializer--: xref:proxy.adoc#Initializable-initializer--
+:xref-Initializable-reinitializer-uint8-: xref:proxy.adoc#Initializable-reinitializer-uint8-
+:xref-Initializable-onlyInitializing--: xref:proxy.adoc#Initializable-onlyInitializing--
+:xref-Initializable-_disableInitializers--: xref:proxy.adoc#Initializable-_disableInitializers--
+:xref-Initializable-_getInitializedVersion--: xref:proxy.adoc#Initializable-_getInitializedVersion--
+:xref-Initializable-_isInitializing--: xref:proxy.adoc#Initializable-_isInitializing--
+:xref-Initializable-Initialized-uint8-: xref:proxy.adoc#Initializable-Initialized-uint8-
+:ERC1967Proxy: pass:normal[xref:proxy.adoc#ERC1967Proxy[`ERC1967Proxy`]]
+:xref-UUPSUpgradeable-onlyProxy--: xref:proxy.adoc#UUPSUpgradeable-onlyProxy--
+:xref-UUPSUpgradeable-notDelegated--: xref:proxy.adoc#UUPSUpgradeable-notDelegated--
+:xref-UUPSUpgradeable-proxiableUUID--: xref:proxy.adoc#UUPSUpgradeable-proxiableUUID--
+:xref-UUPSUpgradeable-upgradeTo-address-: xref:proxy.adoc#UUPSUpgradeable-upgradeTo-address-
+:xref-UUPSUpgradeable-upgradeToAndCall-address-bytes-: xref:proxy.adoc#UUPSUpgradeable-upgradeToAndCall-address-bytes-
+:xref-UUPSUpgradeable-_authorizeUpgrade-address-: xref:proxy.adoc#UUPSUpgradeable-_authorizeUpgrade-address-
+:xref-ERC1967Upgrade-_getImplementation--: xref:proxy.adoc#ERC1967Upgrade-_getImplementation--
+:xref-ERC1967Upgrade-_upgradeTo-address-: xref:proxy.adoc#ERC1967Upgrade-_upgradeTo-address-
+:xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-
+:xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-
+:xref-ERC1967Upgrade-_getAdmin--: xref:proxy.adoc#ERC1967Upgrade-_getAdmin--
+:xref-ERC1967Upgrade-_changeAdmin-address-: xref:proxy.adoc#ERC1967Upgrade-_changeAdmin-address-
+:xref-ERC1967Upgrade-_getBeacon--: xref:proxy.adoc#ERC1967Upgrade-_getBeacon--
+:xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-: xref:proxy.adoc#ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-
+:xref-IERC1967-Upgraded-address-: xref:interfaces.adoc#IERC1967-Upgraded-address-
+:xref-IERC1967-AdminChanged-address-address-: xref:interfaces.adoc#IERC1967-AdminChanged-address-address-
+:xref-IERC1967-BeaconUpgraded-address-: xref:interfaces.adoc#IERC1967-BeaconUpgraded-address-
+:Ownable-onlyOwner: pass:normal[xref:access.adoc#Ownable-onlyOwner--[`Ownable.onlyOwner`]]
+= Proxies
+
+[.readme-notice]
+NOTE: This document is better viewed at https://docs.openzeppelin.com/contracts/api/proxy
+
+This is a low-level set of contracts implementing different proxy patterns with and without upgradeability. For an in-depth overview of this pattern check out the xref:upgrades-plugins::proxies.adoc[Proxy Upgrade Pattern] page.
+
+Most of the proxies below are built on an abstract base contract.
+
+- {Proxy}: Abstract contract implementing the core delegation functionality.
+
+In order to avoid clashes with the storage variables of the implementation contract behind a proxy, we use https://eips.ethereum.org/EIPS/eip-1967[EIP1967] storage slots.
+
+- {ERC1967Upgrade}: Internal functions to get and set the storage slots defined in EIP1967.
+- {ERC1967Proxy}: A proxy using EIP1967 storage slots. Not upgradeable by default.
+
+There are two alternative ways to add upgradeability to an ERC1967 proxy. Their differences are explained below in <<transparent-vs-uups>>.
+
+- {TransparentUpgradeableProxy}: A proxy with a built in admin and upgrade interface.
+- {UUPSUpgradeable}: An upgradeability mechanism to be included in the implementation contract.
+
+CAUTION: Using upgradeable proxies correctly and securely is a difficult task that requires deep knowledge of the proxy pattern, Solidity, and the EVM. Unless you want a lot of low level control, we recommend using the xref:upgrades-plugins::index.adoc[OpenZeppelin Upgrades Plugins] for Truffle and Hardhat.
+
+A different family of proxies are beacon proxies. This pattern, popularized by Dharma, allows multiple proxies to be upgraded to a different implementation in a single transaction.
+
+- {BeaconProxy}: A proxy that retrieves its implementation from a beacon contract.
+- {UpgradeableBeacon}: A beacon contract with a built in admin that can upgrade the {BeaconProxy} pointing to it.
+
+In this pattern, the proxy contract doesn't hold the implementation address in storage like an ERC1967 proxy. Instead, the address is stored in a separate beacon contract. The `upgrade` operations are sent to the beacon instead of to the proxy contract, and all proxies that follow that beacon are automatically upgraded.
+
+Outside the realm of upgradeability, proxies can also be useful to make cheap contract clones, such as those created by an on-chain factory contract that creates many instances of the same contract. These instances are designed to be both cheap to deploy, and cheap to call.
+
+- {Clones}: A library that can deploy cheap minimal non-upgradeable proxies.
+
+[[transparent-vs-uups]]
+== Transparent vs UUPS Proxies
+
+The original proxies included in OpenZeppelin followed the https://blog.openzeppelin.com/the-transparent-proxy-pattern/[Transparent Proxy Pattern]. While this pattern is still provided, our recommendation is now shifting towards UUPS proxies, which are both lightweight and versatile. The name UUPS comes from https://eips.ethereum.org/EIPS/eip-1822[EIP1822], which first documented the pattern.
+
+While both of these share the same interface for upgrades, in UUPS proxies the upgrade is handled by the implementation, and can eventually be removed. Transparent proxies, on the other hand, include the upgrade and admin logic in the proxy itself. This means {TransparentUpgradeableProxy} is more expensive to deploy than what is possible with UUPS proxies.
+
+UUPS proxies are implemented using an {ERC1967Proxy}. Note that this proxy is not by itself upgradeable. It is the role of the implementation to include, alongside the contract's logic, all the code necessary to update the implementation's address that is stored at a specific slot in the proxy's storage space. This is where the {UUPSUpgradeable} contract comes in. Inheriting from it (and overriding the {xref-UUPSUpgradeable-_authorizeUpgrade-address-}[`_authorizeUpgrade`] function with the relevant access control mechanism) will turn your contract into a UUPS compliant implementation.
+
+Note that since both proxies use the same storage slot for the implementation address, using a UUPS compliant implementation with a {TransparentUpgradeableProxy} might allow non-admins to perform upgrade operations.
+
+By default, the upgrade functionality included in {UUPSUpgradeable} contains a security mechanism that will prevent any upgrades to a non UUPS compliant implementation. This prevents upgrades to an implementation contract that wouldn't contain the necessary upgrade mechanism, as it would lock the upgradeability of the proxy forever. This security mechanism can be bypassed by either of:
+
+- Adding a flag mechanism in the implementation that will disable the upgrade function when triggered.
+- Upgrading to an implementation that features an upgrade mechanism without the additional security check, and then upgrading again to another implementation without the upgrade mechanism.
+
+The current implementation of this security mechanism uses https://eips.ethereum.org/EIPS/eip-1822[EIP1822] to detect the storage slot used by the implementation. A previous implementation, now deprecated, relied on a rollback check. It is possible to upgrade from a contract using the old mechanism to a new one. The inverse is however not possible, as old implementations (before version 4.5) did not include the `ERC1822` interface.
+
+== Core
+
+:_delegate: pass:normal[xref:#Proxy-_delegate-address-[`++_delegate++`]]
+:_implementation: pass:normal[xref:#Proxy-_implementation--[`++_implementation++`]]
+:_fallback: pass:normal[xref:#Proxy-_fallback--[`++_fallback++`]]
+:fallback: pass:normal[xref:#Proxy-fallback--[`++fallback++`]]
+:receive: pass:normal[xref:#Proxy-receive--[`++receive++`]]
+:_beforeFallback: pass:normal[xref:#Proxy-_beforeFallback--[`++_beforeFallback++`]]
+
+[.contract]
+[[Proxy]]
+=== `++Proxy++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/Proxy.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/Proxy.sol";
+```
+
+This abstract contract provides a fallback function that delegates all calls to another contract using the EVM
+instruction `delegatecall`. We refer to the second contract as the _implementation_ behind the proxy, and it has to
+be specified by overriding the virtual {_implementation} function.
+
+Additionally, delegation to the implementation can be triggered manually through the {_fallback} function, or to a
+different contract through the {_delegate} function.
+
+The success and return data of the delegated call will be returned back to the caller of the proxy.
+
+[.contract-index]
+.Functions
+--
+* {xref-Proxy-_delegate-address-}[`++_delegate(implementation)++`]
+* {xref-Proxy-_implementation--}[`++_implementation()++`]
+* {xref-Proxy-_fallback--}[`++_fallback()++`]
+* {xref-Proxy-fallback--}[`++fallback()++`]
+* {xref-Proxy-receive--}[`++receive()++`]
+* {xref-Proxy-_beforeFallback--}[`++_beforeFallback()++`]
+
+--
+
+[.contract-item]
+[[Proxy-_delegate-address-]]
+==== `[.contract-item-name]#++_delegate++#++(address implementation)++` [.item-kind]#internal#
+
+Delegates the current call to `implementation`.
+
+This function does not return to its internal call site, it will return directly to the external caller.
+
+[.contract-item]
+[[Proxy-_implementation--]]
+==== `[.contract-item-name]#++_implementation++#++() → address++` [.item-kind]#internal#
+
+This is a virtual function that should be overridden so it returns the address to which the fallback function
+and {_fallback} should delegate.
+
+[.contract-item]
+[[Proxy-_fallback--]]
+==== `[.contract-item-name]#++_fallback++#++()++` [.item-kind]#internal#
+
+Delegates the current call to the address returned by `_implementation()`.
+
+This function does not return to its internal call site, it will return directly to the external caller.
+
+[.contract-item]
+[[Proxy-fallback--]]
+==== `[.contract-item-name]#++fallback++#++()++` [.item-kind]#external#
+
+Fallback function that delegates calls to the address returned by `_implementation()`. Will run if no other
+function in the contract matches the call data.
+
+[.contract-item]
+[[Proxy-receive--]]
+==== `[.contract-item-name]#++receive++#++()++` [.item-kind]#external#
+
+Fallback function that delegates calls to the address returned by `_implementation()`. Will run if call data
+is empty.
+
+[.contract-item]
+[[Proxy-_beforeFallback--]]
+==== `[.contract-item-name]#++_beforeFallback++#++()++` [.item-kind]#internal#
+
+Hook that is called before falling back to the implementation. Can happen as part of a manual `_fallback`
+call, or as part of the Solidity `fallback` or `receive` functions.
+
+If overridden should call `super._beforeFallback()`.
+
+== ERC1967
+
+:constructor: pass:normal[xref:#ERC1967Proxy-constructor-address-bytes-[`++constructor++`]]
+:_implementation: pass:normal[xref:#ERC1967Proxy-_implementation--[`++_implementation++`]]
+
+[.contract]
+[[ERC1967Proxy]]
+=== `++ERC1967Proxy++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/ERC1967/ERC1967Proxy.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+```
+
+This contract implements an upgradeable proxy. It is upgradeable because calls are delegated to an
+implementation address that can be changed. This address is stored in storage in the location specified by
+https://eips.ethereum.org/EIPS/eip-1967[EIP1967], so that it doesn't conflict with the storage layout of the
+implementation behind the proxy.
+
+[.contract-index]
+.Functions
+--
+* {xref-ERC1967Proxy-constructor-address-bytes-}[`++constructor(_logic, _data)++`]
+* {xref-ERC1967Proxy-_implementation--}[`++_implementation()++`]
+
+[.contract-subindex-inherited]
+.ERC1967Upgrade
+* {xref-ERC1967Upgrade-_getImplementation--}[`++_getImplementation()++`]
+* {xref-ERC1967Upgrade-_upgradeTo-address-}[`++_upgradeTo(newImplementation)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-}[`++_upgradeToAndCall(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-}[`++_upgradeToAndCallUUPS(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_getAdmin--}[`++_getAdmin()++`]
+* {xref-ERC1967Upgrade-_changeAdmin-address-}[`++_changeAdmin(newAdmin)++`]
+* {xref-ERC1967Upgrade-_getBeacon--}[`++_getBeacon()++`]
+* {xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-}[`++_upgradeBeaconToAndCall(newBeacon, data, forceCall)++`]
+
+[.contract-subindex-inherited]
+.IERC1967
+
+[.contract-subindex-inherited]
+.Proxy
+* {xref-Proxy-_delegate-address-}[`++_delegate(implementation)++`]
+* {xref-Proxy-_fallback--}[`++_fallback()++`]
+* {xref-Proxy-fallback--}[`++fallback()++`]
+* {xref-Proxy-receive--}[`++receive()++`]
+* {xref-Proxy-_beforeFallback--}[`++_beforeFallback()++`]
+
+--
+
+[.contract-index]
+.Events
+--
+
+[.contract-subindex-inherited]
+.ERC1967Upgrade
+
+[.contract-subindex-inherited]
+.IERC1967
+* {xref-IERC1967-Upgraded-address-}[`++Upgraded(implementation)++`]
+* {xref-IERC1967-AdminChanged-address-address-}[`++AdminChanged(previousAdmin, newAdmin)++`]
+* {xref-IERC1967-BeaconUpgraded-address-}[`++BeaconUpgraded(beacon)++`]
+
+[.contract-subindex-inherited]
+.Proxy
+
+--
+
+[.contract-item]
+[[ERC1967Proxy-constructor-address-bytes-]]
+==== `[.contract-item-name]#++constructor++#++(address _logic, bytes _data)++` [.item-kind]#public#
+
+Initializes the upgradeable proxy with an initial implementation specified by `_logic`.
+
+If `_data` is nonempty, it's used as data in a delegate call to `_logic`. This will typically be an encoded
+function call, and allows initializing the storage of the proxy like a Solidity constructor.
+
+[.contract-item]
+[[ERC1967Proxy-_implementation--]]
+==== `[.contract-item-name]#++_implementation++#++() → address impl++` [.item-kind]#internal#
+
+Returns the current implementation address.
+
+:_IMPLEMENTATION_SLOT: pass:normal[xref:#ERC1967Upgrade-_IMPLEMENTATION_SLOT-bytes32[`++_IMPLEMENTATION_SLOT++`]]
+:_getImplementation: pass:normal[xref:#ERC1967Upgrade-_getImplementation--[`++_getImplementation++`]]
+:_upgradeTo: pass:normal[xref:#ERC1967Upgrade-_upgradeTo-address-[`++_upgradeTo++`]]
+:_upgradeToAndCall: pass:normal[xref:#ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-[`++_upgradeToAndCall++`]]
+:_upgradeToAndCallUUPS: pass:normal[xref:#ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-[`++_upgradeToAndCallUUPS++`]]
+:_ADMIN_SLOT: pass:normal[xref:#ERC1967Upgrade-_ADMIN_SLOT-bytes32[`++_ADMIN_SLOT++`]]
+:_getAdmin: pass:normal[xref:#ERC1967Upgrade-_getAdmin--[`++_getAdmin++`]]
+:_changeAdmin: pass:normal[xref:#ERC1967Upgrade-_changeAdmin-address-[`++_changeAdmin++`]]
+:_BEACON_SLOT: pass:normal[xref:#ERC1967Upgrade-_BEACON_SLOT-bytes32[`++_BEACON_SLOT++`]]
+:_getBeacon: pass:normal[xref:#ERC1967Upgrade-_getBeacon--[`++_getBeacon++`]]
+:_upgradeBeaconToAndCall: pass:normal[xref:#ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-[`++_upgradeBeaconToAndCall++`]]
+
+[.contract]
+[[ERC1967Upgrade]]
+=== `++ERC1967Upgrade++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/ERC1967/ERC1967Upgrade.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol";
+```
+
+This abstract contract provides getters and event emitting update functions for
+https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots.
+
+_Available since v4.1._
+
+[.contract-index]
+.Functions
+--
+* {xref-ERC1967Upgrade-_getImplementation--}[`++_getImplementation()++`]
+* {xref-ERC1967Upgrade-_upgradeTo-address-}[`++_upgradeTo(newImplementation)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-}[`++_upgradeToAndCall(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-}[`++_upgradeToAndCallUUPS(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_getAdmin--}[`++_getAdmin()++`]
+* {xref-ERC1967Upgrade-_changeAdmin-address-}[`++_changeAdmin(newAdmin)++`]
+* {xref-ERC1967Upgrade-_getBeacon--}[`++_getBeacon()++`]
+* {xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-}[`++_upgradeBeaconToAndCall(newBeacon, data, forceCall)++`]
+
+[.contract-subindex-inherited]
+.IERC1967
+
+--
+
+[.contract-index]
+.Events
+--
+
+[.contract-subindex-inherited]
+.IERC1967
+* {xref-IERC1967-Upgraded-address-}[`++Upgraded(implementation)++`]
+* {xref-IERC1967-AdminChanged-address-address-}[`++AdminChanged(previousAdmin, newAdmin)++`]
+* {xref-IERC1967-BeaconUpgraded-address-}[`++BeaconUpgraded(beacon)++`]
+
+--
+
+[.contract-item]
+[[ERC1967Upgrade-_getImplementation--]]
+==== `[.contract-item-name]#++_getImplementation++#++() → address++` [.item-kind]#internal#
+
+Returns the current implementation address.
+
+[.contract-item]
+[[ERC1967Upgrade-_upgradeTo-address-]]
+==== `[.contract-item-name]#++_upgradeTo++#++(address newImplementation)++` [.item-kind]#internal#
+
+Perform implementation upgrade
+
+Emits an {Upgraded} event.
+
+[.contract-item]
+[[ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-]]
+==== `[.contract-item-name]#++_upgradeToAndCall++#++(address newImplementation, bytes data, bool forceCall)++` [.item-kind]#internal#
+
+Perform implementation upgrade with additional setup call.
+
+Emits an {Upgraded} event.
+
+[.contract-item]
+[[ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-]]
+==== `[.contract-item-name]#++_upgradeToAndCallUUPS++#++(address newImplementation, bytes data, bool forceCall)++` [.item-kind]#internal#
+
+Perform implementation upgrade with security checks for UUPS proxies, and additional setup call.
+
+Emits an {Upgraded} event.
+
+[.contract-item]
+[[ERC1967Upgrade-_getAdmin--]]
+==== `[.contract-item-name]#++_getAdmin++#++() → address++` [.item-kind]#internal#
+
+Returns the current admin.
+
+[.contract-item]
+[[ERC1967Upgrade-_changeAdmin-address-]]
+==== `[.contract-item-name]#++_changeAdmin++#++(address newAdmin)++` [.item-kind]#internal#
+
+Changes the admin of the proxy.
+
+Emits an {AdminChanged} event.
+
+[.contract-item]
+[[ERC1967Upgrade-_getBeacon--]]
+==== `[.contract-item-name]#++_getBeacon++#++() → address++` [.item-kind]#internal#
+
+Returns the current beacon.
+
+[.contract-item]
+[[ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-]]
+==== `[.contract-item-name]#++_upgradeBeaconToAndCall++#++(address newBeacon, bytes data, bool forceCall)++` [.item-kind]#internal#
+
+Perform beacon upgrade with additional setup call. Note: This upgrades the address of the beacon, it does
+not upgrade the implementation contained in the beacon (see {UpgradeableBeacon-_setImplementation} for that).
+
+Emits a {BeaconUpgraded} event.
+
+== Transparent Proxy
+
+:constructor: pass:normal[xref:#TransparentUpgradeableProxy-constructor-address-address-bytes-[`++constructor++`]]
+:ifAdmin: pass:normal[xref:#TransparentUpgradeableProxy-ifAdmin--[`++ifAdmin++`]]
+:_fallback: pass:normal[xref:#TransparentUpgradeableProxy-_fallback--[`++_fallback++`]]
+:_admin: pass:normal[xref:#TransparentUpgradeableProxy-_admin--[`++_admin++`]]
+
+[.contract]
+[[TransparentUpgradeableProxy]]
+=== `++TransparentUpgradeableProxy++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/transparent/TransparentUpgradeableProxy.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+```
+
+This contract implements a proxy that is upgradeable by an admin.
+
+To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector
+clashing], which can potentially be used in an attack, this contract uses the
+https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two
+things that go hand in hand:
+
+1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if
+that call matches one of the admin functions exposed by the proxy itself.
+2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the
+implementation. If the admin tries to call a function on the implementation it will fail with an error that says
+"admin cannot fallback to proxy target".
+
+These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing
+the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due
+to sudden errors when trying to call a function from the proxy implementation.
+
+Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way,
+you should think of the `ProxyAdmin` instance as the real administrative interface of your proxy.
+
+NOTE: The real interface of this proxy is that defined in `ITransparentUpgradeableProxy`. This contract does not
+inherit from that interface, and instead the admin functions are implicitly implemented using a custom dispatch
+mechanism in `_fallback`. Consequently, the compiler will not produce an ABI for this contract. This is necessary to
+fully implement transparency without decoding reverts caused by selector clashes between the proxy and the
+implementation.
+
+WARNING: It is not recommended to extend this contract to add additional external functions. If you do so, the compiler
+will not check that there are no selector conflicts, due to the note above. A selector clash between any new function
+and the functions declared in {ITransparentUpgradeableProxy} will be resolved in favor of the new one. This could
+render the admin operations inaccessible, which could prevent upgradeability. Transparency may also be compromised.
+
+[.contract-index]
+.Modifiers
+--
+* {xref-TransparentUpgradeableProxy-ifAdmin--}[`++ifAdmin()++`]
+--
+
+[.contract-index]
+.Functions
+--
+* {xref-TransparentUpgradeableProxy-constructor-address-address-bytes-}[`++constructor(_logic, admin_, _data)++`]
+* {xref-TransparentUpgradeableProxy-_fallback--}[`++_fallback()++`]
+* {xref-TransparentUpgradeableProxy-_admin--}[`++_admin()++`]
+
+[.contract-subindex-inherited]
+.ERC1967Proxy
+* {xref-ERC1967Proxy-_implementation--}[`++_implementation()++`]
+
+[.contract-subindex-inherited]
+.ERC1967Upgrade
+* {xref-ERC1967Upgrade-_getImplementation--}[`++_getImplementation()++`]
+* {xref-ERC1967Upgrade-_upgradeTo-address-}[`++_upgradeTo(newImplementation)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-}[`++_upgradeToAndCall(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-}[`++_upgradeToAndCallUUPS(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_getAdmin--}[`++_getAdmin()++`]
+* {xref-ERC1967Upgrade-_changeAdmin-address-}[`++_changeAdmin(newAdmin)++`]
+* {xref-ERC1967Upgrade-_getBeacon--}[`++_getBeacon()++`]
+* {xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-}[`++_upgradeBeaconToAndCall(newBeacon, data, forceCall)++`]
+
+[.contract-subindex-inherited]
+.IERC1967
+
+[.contract-subindex-inherited]
+.Proxy
+* {xref-Proxy-_delegate-address-}[`++_delegate(implementation)++`]
+* {xref-Proxy-fallback--}[`++fallback()++`]
+* {xref-Proxy-receive--}[`++receive()++`]
+* {xref-Proxy-_beforeFallback--}[`++_beforeFallback()++`]
+
+--
+
+[.contract-index]
+.Events
+--
+
+[.contract-subindex-inherited]
+.ERC1967Proxy
+
+[.contract-subindex-inherited]
+.ERC1967Upgrade
+
+[.contract-subindex-inherited]
+.IERC1967
+* {xref-IERC1967-Upgraded-address-}[`++Upgraded(implementation)++`]
+* {xref-IERC1967-AdminChanged-address-address-}[`++AdminChanged(previousAdmin, newAdmin)++`]
+* {xref-IERC1967-BeaconUpgraded-address-}[`++BeaconUpgraded(beacon)++`]
+
+[.contract-subindex-inherited]
+.Proxy
+
+--
+
+[.contract-item]
+[[TransparentUpgradeableProxy-ifAdmin--]]
+==== `[.contract-item-name]#++ifAdmin++#++()++` [.item-kind]#modifier#
+
+Modifier used internally that will delegate the call to the implementation unless the sender is the admin.
+
+CAUTION: This modifier is deprecated, as it could cause issues if the modified function has arguments, and the
+implementation provides a function with the same selector.
+
+[.contract-item]
+[[TransparentUpgradeableProxy-constructor-address-address-bytes-]]
+==== `[.contract-item-name]#++constructor++#++(address _logic, address admin_, bytes _data)++` [.item-kind]#public#
+
+Initializes an upgradeable proxy managed by `_admin`, backed by the implementation at `_logic`, and
+optionally initialized with `_data` as explained in {ERC1967Proxy-constructor}.
+
+[.contract-item]
+[[TransparentUpgradeableProxy-_fallback--]]
+==== `[.contract-item-name]#++_fallback++#++()++` [.item-kind]#internal#
+
+If caller is the admin process the call internally, otherwise transparently fallback to the proxy behavior
+
+[.contract-item]
+[[TransparentUpgradeableProxy-_admin--]]
+==== `[.contract-item-name]#++_admin++#++() → address++` [.item-kind]#internal#
+
+Returns the current admin.
+
+CAUTION: This function is deprecated. Use {ERC1967Upgrade-_getAdmin} instead.
+
+:getProxyImplementation: pass:normal[xref:#ProxyAdmin-getProxyImplementation-contract-ITransparentUpgradeableProxy-[`++getProxyImplementation++`]]
+:getProxyAdmin: pass:normal[xref:#ProxyAdmin-getProxyAdmin-contract-ITransparentUpgradeableProxy-[`++getProxyAdmin++`]]
+:changeProxyAdmin: pass:normal[xref:#ProxyAdmin-changeProxyAdmin-contract-ITransparentUpgradeableProxy-address-[`++changeProxyAdmin++`]]
+:upgrade: pass:normal[xref:#ProxyAdmin-upgrade-contract-ITransparentUpgradeableProxy-address-[`++upgrade++`]]
+:upgradeAndCall: pass:normal[xref:#ProxyAdmin-upgradeAndCall-contract-ITransparentUpgradeableProxy-address-bytes-[`++upgradeAndCall++`]]
+
+[.contract]
+[[ProxyAdmin]]
+=== `++ProxyAdmin++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/transparent/ProxyAdmin.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
+```
+
+This is an auxiliary contract meant to be assigned as the admin of a {TransparentUpgradeableProxy}. For an
+explanation of why you would want to use this see the documentation for {TransparentUpgradeableProxy}.
+
+[.contract-index]
+.Functions
+--
+* {xref-ProxyAdmin-getProxyImplementation-contract-ITransparentUpgradeableProxy-}[`++getProxyImplementation(proxy)++`]
+* {xref-ProxyAdmin-getProxyAdmin-contract-ITransparentUpgradeableProxy-}[`++getProxyAdmin(proxy)++`]
+* {xref-ProxyAdmin-changeProxyAdmin-contract-ITransparentUpgradeableProxy-address-}[`++changeProxyAdmin(proxy, newAdmin)++`]
+* {xref-ProxyAdmin-upgrade-contract-ITransparentUpgradeableProxy-address-}[`++upgrade(proxy, implementation)++`]
+* {xref-ProxyAdmin-upgradeAndCall-contract-ITransparentUpgradeableProxy-address-bytes-}[`++upgradeAndCall(proxy, implementation, data)++`]
+
+[.contract-subindex-inherited]
+.Ownable
+* {xref-Ownable-owner--}[`++owner()++`]
+* {xref-Ownable-_checkOwner--}[`++_checkOwner()++`]
+* {xref-Ownable-renounceOwnership--}[`++renounceOwnership()++`]
+* {xref-Ownable-transferOwnership-address-}[`++transferOwnership(newOwner)++`]
+* {xref-Ownable-_transferOwnership-address-}[`++_transferOwnership(newOwner)++`]
+
+--
+
+[.contract-index]
+.Events
+--
+
+[.contract-subindex-inherited]
+.Ownable
+* {xref-Ownable-OwnershipTransferred-address-address-}[`++OwnershipTransferred(previousOwner, newOwner)++`]
+
+--
+
+[.contract-item]
+[[ProxyAdmin-getProxyImplementation-contract-ITransparentUpgradeableProxy-]]
+==== `[.contract-item-name]#++getProxyImplementation++#++(contract ITransparentUpgradeableProxy proxy) → address++` [.item-kind]#public#
+
+Returns the current implementation of `proxy`.
+
+Requirements:
+
+- This contract must be the admin of `proxy`.
+
+[.contract-item]
+[[ProxyAdmin-getProxyAdmin-contract-ITransparentUpgradeableProxy-]]
+==== `[.contract-item-name]#++getProxyAdmin++#++(contract ITransparentUpgradeableProxy proxy) → address++` [.item-kind]#public#
+
+Returns the current admin of `proxy`.
+
+Requirements:
+
+- This contract must be the admin of `proxy`.
+
+[.contract-item]
+[[ProxyAdmin-changeProxyAdmin-contract-ITransparentUpgradeableProxy-address-]]
+==== `[.contract-item-name]#++changeProxyAdmin++#++(contract ITransparentUpgradeableProxy proxy, address newAdmin)++` [.item-kind]#public#
+
+Changes the admin of `proxy` to `newAdmin`.
+
+Requirements:
+
+- This contract must be the current admin of `proxy`.
+
+[.contract-item]
+[[ProxyAdmin-upgrade-contract-ITransparentUpgradeableProxy-address-]]
+==== `[.contract-item-name]#++upgrade++#++(contract ITransparentUpgradeableProxy proxy, address implementation)++` [.item-kind]#public#
+
+Upgrades `proxy` to `implementation`. See {TransparentUpgradeableProxy-upgradeTo}.
+
+Requirements:
+
+- This contract must be the admin of `proxy`.
+
+[.contract-item]
+[[ProxyAdmin-upgradeAndCall-contract-ITransparentUpgradeableProxy-address-bytes-]]
+==== `[.contract-item-name]#++upgradeAndCall++#++(contract ITransparentUpgradeableProxy proxy, address implementation, bytes data)++` [.item-kind]#public#
+
+Upgrades `proxy` to `implementation` and calls a function on the new implementation. See
+{TransparentUpgradeableProxy-upgradeToAndCall}.
+
+Requirements:
+
+- This contract must be the admin of `proxy`.
+
+== Beacon
+
+:constructor: pass:normal[xref:#BeaconProxy-constructor-address-bytes-[`++constructor++`]]
+:_beacon: pass:normal[xref:#BeaconProxy-_beacon--[`++_beacon++`]]
+:_implementation: pass:normal[xref:#BeaconProxy-_implementation--[`++_implementation++`]]
+:_setBeacon: pass:normal[xref:#BeaconProxy-_setBeacon-address-bytes-[`++_setBeacon++`]]
+
+[.contract]
+[[BeaconProxy]]
+=== `++BeaconProxy++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/beacon/BeaconProxy.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
+```
+
+This contract implements a proxy that gets the implementation address for each call from an {UpgradeableBeacon}.
+
+The beacon address is stored in storage slot `uint256(keccak256('eip1967.proxy.beacon')) - 1`, so that it doesn't
+conflict with the storage layout of the implementation behind the proxy.
+
+_Available since v3.4._
+
+[.contract-index]
+.Functions
+--
+* {xref-BeaconProxy-constructor-address-bytes-}[`++constructor(beacon, data)++`]
+* {xref-BeaconProxy-_beacon--}[`++_beacon()++`]
+* {xref-BeaconProxy-_implementation--}[`++_implementation()++`]
+* {xref-BeaconProxy-_setBeacon-address-bytes-}[`++_setBeacon(beacon, data)++`]
+
+[.contract-subindex-inherited]
+.ERC1967Upgrade
+* {xref-ERC1967Upgrade-_getImplementation--}[`++_getImplementation()++`]
+* {xref-ERC1967Upgrade-_upgradeTo-address-}[`++_upgradeTo(newImplementation)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-}[`++_upgradeToAndCall(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-}[`++_upgradeToAndCallUUPS(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_getAdmin--}[`++_getAdmin()++`]
+* {xref-ERC1967Upgrade-_changeAdmin-address-}[`++_changeAdmin(newAdmin)++`]
+* {xref-ERC1967Upgrade-_getBeacon--}[`++_getBeacon()++`]
+* {xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-}[`++_upgradeBeaconToAndCall(newBeacon, data, forceCall)++`]
+
+[.contract-subindex-inherited]
+.IERC1967
+
+[.contract-subindex-inherited]
+.Proxy
+* {xref-Proxy-_delegate-address-}[`++_delegate(implementation)++`]
+* {xref-Proxy-_fallback--}[`++_fallback()++`]
+* {xref-Proxy-fallback--}[`++fallback()++`]
+* {xref-Proxy-receive--}[`++receive()++`]
+* {xref-Proxy-_beforeFallback--}[`++_beforeFallback()++`]
+
+--
+
+[.contract-index]
+.Events
+--
+
+[.contract-subindex-inherited]
+.ERC1967Upgrade
+
+[.contract-subindex-inherited]
+.IERC1967
+* {xref-IERC1967-Upgraded-address-}[`++Upgraded(implementation)++`]
+* {xref-IERC1967-AdminChanged-address-address-}[`++AdminChanged(previousAdmin, newAdmin)++`]
+* {xref-IERC1967-BeaconUpgraded-address-}[`++BeaconUpgraded(beacon)++`]
+
+[.contract-subindex-inherited]
+.Proxy
+
+--
+
+[.contract-item]
+[[BeaconProxy-constructor-address-bytes-]]
+==== `[.contract-item-name]#++constructor++#++(address beacon, bytes data)++` [.item-kind]#public#
+
+Initializes the proxy with `beacon`.
+
+If `data` is nonempty, it's used as data in a delegate call to the implementation returned by the beacon. This
+will typically be an encoded function call, and allows initializing the storage of the proxy like a Solidity
+constructor.
+
+Requirements:
+
+- `beacon` must be a contract with the interface {IBeacon}.
+
+[.contract-item]
+[[BeaconProxy-_beacon--]]
+==== `[.contract-item-name]#++_beacon++#++() → address++` [.item-kind]#internal#
+
+Returns the current beacon address.
+
+[.contract-item]
+[[BeaconProxy-_implementation--]]
+==== `[.contract-item-name]#++_implementation++#++() → address++` [.item-kind]#internal#
+
+Returns the current implementation address of the associated beacon.
+
+[.contract-item]
+[[BeaconProxy-_setBeacon-address-bytes-]]
+==== `[.contract-item-name]#++_setBeacon++#++(address beacon, bytes data)++` [.item-kind]#internal#
+
+Changes the proxy to use a new beacon. Deprecated: see {_upgradeBeaconToAndCall}.
+
+If `data` is nonempty, it's used as data in a delegate call to the implementation returned by the beacon.
+
+Requirements:
+
+- `beacon` must be a contract.
+- The implementation returned by `beacon` must be a contract.
+
+:implementation: pass:normal[xref:#IBeacon-implementation--[`++implementation++`]]
+
+[.contract]
+[[IBeacon]]
+=== `++IBeacon++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/beacon/IBeacon.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/beacon/IBeacon.sol";
+```
+
+This is the interface that {BeaconProxy} expects of its beacon.
+
+[.contract-index]
+.Functions
+--
+* {xref-IBeacon-implementation--}[`++implementation()++`]
+
+--
+
+[.contract-item]
+[[IBeacon-implementation--]]
+==== `[.contract-item-name]#++implementation++#++() → address++` [.item-kind]#external#
+
+Must return an address that can be used as a delegate call target.
+
+{BeaconProxy} will check that this address is a contract.
+
+:Upgraded: pass:normal[xref:#UpgradeableBeacon-Upgraded-address-[`++Upgraded++`]]
+:constructor: pass:normal[xref:#UpgradeableBeacon-constructor-address-[`++constructor++`]]
+:implementation: pass:normal[xref:#UpgradeableBeacon-implementation--[`++implementation++`]]
+:upgradeTo: pass:normal[xref:#UpgradeableBeacon-upgradeTo-address-[`++upgradeTo++`]]
+
+[.contract]
+[[UpgradeableBeacon]]
+=== `++UpgradeableBeacon++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/beacon/UpgradeableBeacon.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol";
+```
+
+This contract is used in conjunction with one or more instances of {BeaconProxy} to determine their
+implementation contract, which is where they will delegate all function calls.
+
+An owner is able to change the implementation the beacon points to, thus upgrading the proxies that use this beacon.
+
+[.contract-index]
+.Functions
+--
+* {xref-UpgradeableBeacon-constructor-address-}[`++constructor(implementation_)++`]
+* {xref-UpgradeableBeacon-implementation--}[`++implementation()++`]
+* {xref-UpgradeableBeacon-upgradeTo-address-}[`++upgradeTo(newImplementation)++`]
+
+[.contract-subindex-inherited]
+.Ownable
+* {xref-Ownable-owner--}[`++owner()++`]
+* {xref-Ownable-_checkOwner--}[`++_checkOwner()++`]
+* {xref-Ownable-renounceOwnership--}[`++renounceOwnership()++`]
+* {xref-Ownable-transferOwnership-address-}[`++transferOwnership(newOwner)++`]
+* {xref-Ownable-_transferOwnership-address-}[`++_transferOwnership(newOwner)++`]
+
+[.contract-subindex-inherited]
+.IBeacon
+
+--
+
+[.contract-index]
+.Events
+--
+* {xref-UpgradeableBeacon-Upgraded-address-}[`++Upgraded(implementation)++`]
+
+[.contract-subindex-inherited]
+.Ownable
+* {xref-Ownable-OwnershipTransferred-address-address-}[`++OwnershipTransferred(previousOwner, newOwner)++`]
+
+[.contract-subindex-inherited]
+.IBeacon
+
+--
+
+[.contract-item]
+[[UpgradeableBeacon-constructor-address-]]
+==== `[.contract-item-name]#++constructor++#++(address implementation_)++` [.item-kind]#public#
+
+Sets the address of the initial implementation, and the deployer account as the owner who can upgrade the
+beacon.
+
+[.contract-item]
+[[UpgradeableBeacon-implementation--]]
+==== `[.contract-item-name]#++implementation++#++() → address++` [.item-kind]#public#
+
+Returns the current implementation address.
+
+[.contract-item]
+[[UpgradeableBeacon-upgradeTo-address-]]
+==== `[.contract-item-name]#++upgradeTo++#++(address newImplementation)++` [.item-kind]#public#
+
+Upgrades the beacon to a new implementation.
+
+Emits an {Upgraded} event.
+
+Requirements:
+
+- msg.sender must be the owner of the contract.
+- `newImplementation` must be a contract.
+
+[.contract-item]
+[[UpgradeableBeacon-Upgraded-address-]]
+==== `[.contract-item-name]#++Upgraded++#++(address indexed implementation)++` [.item-kind]#event#
+
+Emitted when the implementation returned by the beacon is changed.
+
+== Minimal Clones
+
+:clone: pass:normal[xref:#Clones-clone-address-[`++clone++`]]
+:cloneDeterministic: pass:normal[xref:#Clones-cloneDeterministic-address-bytes32-[`++cloneDeterministic++`]]
+:predictDeterministicAddress: pass:normal[xref:#Clones-predictDeterministicAddress-address-bytes32-address-[`++predictDeterministicAddress++`]]
+:predictDeterministicAddress: pass:normal[xref:#Clones-predictDeterministicAddress-address-bytes32-[`++predictDeterministicAddress++`]]
+
+[.contract]
+[[Clones]]
+=== `++Clones++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/Clones.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/Clones.sol";
+```
+
+https://eips.ethereum.org/EIPS/eip-1167[EIP 1167] is a standard for
+deploying minimal proxy contracts, also known as "clones".
+
+> To simply and cheaply clone contract functionality in an immutable way, this standard specifies
+> a minimal bytecode implementation that delegates all calls to a known, fixed address.
+
+The library includes functions to deploy a proxy using either `create` (traditional deployment) or `create2`
+(salted deterministic deployment). It also includes functions to predict the addresses of clones deployed using the
+deterministic method.
+
+_Available since v3.4._
+
+[.contract-index]
+.Functions
+--
+* {xref-Clones-clone-address-}[`++clone(implementation)++`]
+* {xref-Clones-cloneDeterministic-address-bytes32-}[`++cloneDeterministic(implementation, salt)++`]
+* {xref-Clones-predictDeterministicAddress-address-bytes32-address-}[`++predictDeterministicAddress(implementation, salt, deployer)++`]
+* {xref-Clones-predictDeterministicAddress-address-bytes32-}[`++predictDeterministicAddress(implementation, salt)++`]
+
+--
+
+[.contract-item]
+[[Clones-clone-address-]]
+==== `[.contract-item-name]#++clone++#++(address implementation) → address instance++` [.item-kind]#internal#
+
+Deploys and returns the address of a clone that mimics the behaviour of `implementation`.
+
+This function uses the create opcode, which should never revert.
+
+[.contract-item]
+[[Clones-cloneDeterministic-address-bytes32-]]
+==== `[.contract-item-name]#++cloneDeterministic++#++(address implementation, bytes32 salt) → address instance++` [.item-kind]#internal#
+
+Deploys and returns the address of a clone that mimics the behaviour of `implementation`.
+
+This function uses the create2 opcode and a `salt` to deterministically deploy
+the clone. Using the same `implementation` and `salt` multiple time will revert, since
+the clones cannot be deployed twice at the same address.
+
+[.contract-item]
+[[Clones-predictDeterministicAddress-address-bytes32-address-]]
+==== `[.contract-item-name]#++predictDeterministicAddress++#++(address implementation, bytes32 salt, address deployer) → address predicted++` [.item-kind]#internal#
+
+Computes the address of a clone deployed using {Clones-cloneDeterministic}.
+
+[.contract-item]
+[[Clones-predictDeterministicAddress-address-bytes32-]]
+==== `[.contract-item-name]#++predictDeterministicAddress++#++(address implementation, bytes32 salt) → address predicted++` [.item-kind]#internal#
+
+Computes the address of a clone deployed using {Clones-cloneDeterministic}.
+
+== Utils
+
+:Initialized: pass:normal[xref:#Initializable-Initialized-uint8-[`++Initialized++`]]
+:initializer: pass:normal[xref:#Initializable-initializer--[`++initializer++`]]
+:reinitializer: pass:normal[xref:#Initializable-reinitializer-uint8-[`++reinitializer++`]]
+:onlyInitializing: pass:normal[xref:#Initializable-onlyInitializing--[`++onlyInitializing++`]]
+:_disableInitializers: pass:normal[xref:#Initializable-_disableInitializers--[`++_disableInitializers++`]]
+:_getInitializedVersion: pass:normal[xref:#Initializable-_getInitializedVersion--[`++_getInitializedVersion++`]]
+:_isInitializing: pass:normal[xref:#Initializable-_isInitializing--[`++_isInitializing++`]]
+
+[.contract]
+[[Initializable]]
+=== `++Initializable++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/utils/Initializable.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+```
+
+This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed
+behind a proxy. Since proxied contracts do not make use of a constructor, it's common to move constructor logic to an
+external initializer function, usually called `initialize`. It then becomes necessary to protect this initializer
+function so it can only be called once. The {initializer} modifier provided by this contract will have this effect.
+
+The initialization functions use a version number. Once a version number is used, it is consumed and cannot be
+reused. This mechanism prevents re-execution of each "step" but allows the creation of new initialization steps in
+case an upgrade adds a module that needs to be initialized.
+
+For example:
+
+[.hljs-theme-light.nopadding]
+```solidity
+contract MyToken is ERC20Upgradeable {
+    function initialize() initializer public {
+        __ERC20_init("MyToken", "MTK");
+    }
+}
+
+contract MyTokenV2 is MyToken, ERC20PermitUpgradeable {
+    function initializeV2() reinitializer(2) public {
+        __ERC20Permit_init("MyToken");
+    }
+}
+```
+
+TIP: To avoid leaving the proxy in an uninitialized state, the initializer function should be called as early as
+possible by providing the encoded function call as the `_data` argument to {ERC1967Proxy-constructor}.
+
+CAUTION: When used with inheritance, manual care must be taken to not invoke a parent initializer twice, or to ensure
+that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.
+
+[CAUTION]
+====
+Avoid leaving a contract uninitialized.
+
+An uninitialized contract can be taken over by an attacker. This applies to both a proxy and its implementation
+contract, which may impact the proxy. To prevent the implementation contract from being used, you should invoke
+the {_disableInitializers} function in the constructor to automatically lock it when it is deployed:
+
+[.hljs-theme-light.nopadding]
+```
+/// @custom:oz-upgrades-unsafe-allow constructor
+constructor() {
+    _disableInitializers();
+}
+```
+====
+
+[.contract-index]
+.Modifiers
+--
+* {xref-Initializable-initializer--}[`++initializer()++`]
+* {xref-Initializable-reinitializer-uint8-}[`++reinitializer(version)++`]
+* {xref-Initializable-onlyInitializing--}[`++onlyInitializing()++`]
+--
+
+[.contract-index]
+.Functions
+--
+* {xref-Initializable-_disableInitializers--}[`++_disableInitializers()++`]
+* {xref-Initializable-_getInitializedVersion--}[`++_getInitializedVersion()++`]
+* {xref-Initializable-_isInitializing--}[`++_isInitializing()++`]
+
+--
+
+[.contract-index]
+.Events
+--
+* {xref-Initializable-Initialized-uint8-}[`++Initialized(version)++`]
+
+--
+
+[.contract-item]
+[[Initializable-initializer--]]
+==== `[.contract-item-name]#++initializer++#++()++` [.item-kind]#modifier#
+
+A modifier that defines a protected initializer function that can be invoked at most once. In its scope,
+`onlyInitializing` functions can be used to initialize parent contracts.
+
+Similar to `reinitializer(1)`, except that functions marked with `initializer` can be nested in the context of a
+constructor.
+
+Emits an {Initialized} event.
+
+[.contract-item]
+[[Initializable-reinitializer-uint8-]]
+==== `[.contract-item-name]#++reinitializer++#++(uint8 version)++` [.item-kind]#modifier#
+
+A modifier that defines a protected reinitializer function that can be invoked at most once, and only if the
+contract hasn't been initialized to a greater version before. In its scope, `onlyInitializing` functions can be
+used to initialize parent contracts.
+
+A reinitializer may be used after the original initialization step. This is essential to configure modules that
+are added through upgrades and that require initialization.
+
+When `version` is 1, this modifier is similar to `initializer`, except that functions marked with `reinitializer`
+cannot be nested. If one is invoked in the context of another, execution will revert.
+
+Note that versions can jump in increments greater than 1; this implies that if multiple reinitializers coexist in
+a contract, executing them in the right order is up to the developer or operator.
+
+WARNING: setting the version to 255 will prevent any future reinitialization.
+
+Emits an {Initialized} event.
+
+[.contract-item]
+[[Initializable-onlyInitializing--]]
+==== `[.contract-item-name]#++onlyInitializing++#++()++` [.item-kind]#modifier#
+
+Modifier to protect an initialization function so that it can only be invoked by functions with the
+{initializer} and {reinitializer} modifiers, directly or indirectly.
+
+[.contract-item]
+[[Initializable-_disableInitializers--]]
+==== `[.contract-item-name]#++_disableInitializers++#++()++` [.item-kind]#internal#
+
+Locks the contract, preventing any future reinitialization. This cannot be part of an initializer call.
+Calling this in the constructor of a contract will prevent that contract from being initialized or reinitialized
+to any version. It is recommended to use this to lock implementation contracts that are designed to be called
+through proxies.
+
+Emits an {Initialized} event the first time it is successfully executed.
+
+[.contract-item]
+[[Initializable-_getInitializedVersion--]]
+==== `[.contract-item-name]#++_getInitializedVersion++#++() → uint8++` [.item-kind]#internal#
+
+Returns the highest version that has been initialized. See {reinitializer}.
+
+[.contract-item]
+[[Initializable-_isInitializing--]]
+==== `[.contract-item-name]#++_isInitializing++#++() → bool++` [.item-kind]#internal#
+
+Returns `true` if the contract is currently initializing. See {onlyInitializing}.
+
+[.contract-item]
+[[Initializable-Initialized-uint8-]]
+==== `[.contract-item-name]#++Initialized++#++(uint8 version)++` [.item-kind]#event#
+
+Triggered when the contract has been initialized or reinitialized.
+
+:onlyProxy: pass:normal[xref:#UUPSUpgradeable-onlyProxy--[`++onlyProxy++`]]
+:notDelegated: pass:normal[xref:#UUPSUpgradeable-notDelegated--[`++notDelegated++`]]
+:proxiableUUID: pass:normal[xref:#UUPSUpgradeable-proxiableUUID--[`++proxiableUUID++`]]
+:upgradeTo: pass:normal[xref:#UUPSUpgradeable-upgradeTo-address-[`++upgradeTo++`]]
+:upgradeToAndCall: pass:normal[xref:#UUPSUpgradeable-upgradeToAndCall-address-bytes-[`++upgradeToAndCall++`]]
+:_authorizeUpgrade: pass:normal[xref:#UUPSUpgradeable-_authorizeUpgrade-address-[`++_authorizeUpgrade++`]]
+
+[.contract]
+[[UUPSUpgradeable]]
+=== `++UUPSUpgradeable++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/proxy/utils/UUPSUpgradeable.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+```
+
+An upgradeability mechanism designed for UUPS proxies. The functions included here can perform an upgrade of an
+{ERC1967Proxy}, when this contract is set as the implementation behind such a proxy.
+
+A security mechanism ensures that an upgrade does not turn off upgradeability accidentally, although this risk is
+reinstated if the upgrade retains upgradeability but removes the security mechanism, e.g. by replacing
+`UUPSUpgradeable` with a custom implementation of upgrades.
+
+The {_authorizeUpgrade} function must be overridden to include access restriction to the upgrade mechanism.
+
+_Available since v4.1._
+
+[.contract-index]
+.Modifiers
+--
+* {xref-UUPSUpgradeable-onlyProxy--}[`++onlyProxy()++`]
+* {xref-UUPSUpgradeable-notDelegated--}[`++notDelegated()++`]
+--
+
+[.contract-index]
+.Functions
+--
+* {xref-UUPSUpgradeable-proxiableUUID--}[`++proxiableUUID()++`]
+* {xref-UUPSUpgradeable-upgradeTo-address-}[`++upgradeTo(newImplementation)++`]
+* {xref-UUPSUpgradeable-upgradeToAndCall-address-bytes-}[`++upgradeToAndCall(newImplementation, data)++`]
+* {xref-UUPSUpgradeable-_authorizeUpgrade-address-}[`++_authorizeUpgrade(newImplementation)++`]
+
+[.contract-subindex-inherited]
+.ERC1967Upgrade
+* {xref-ERC1967Upgrade-_getImplementation--}[`++_getImplementation()++`]
+* {xref-ERC1967Upgrade-_upgradeTo-address-}[`++_upgradeTo(newImplementation)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCall-address-bytes-bool-}[`++_upgradeToAndCall(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_upgradeToAndCallUUPS-address-bytes-bool-}[`++_upgradeToAndCallUUPS(newImplementation, data, forceCall)++`]
+* {xref-ERC1967Upgrade-_getAdmin--}[`++_getAdmin()++`]
+* {xref-ERC1967Upgrade-_changeAdmin-address-}[`++_changeAdmin(newAdmin)++`]
+* {xref-ERC1967Upgrade-_getBeacon--}[`++_getBeacon()++`]
+* {xref-ERC1967Upgrade-_upgradeBeaconToAndCall-address-bytes-bool-}[`++_upgradeBeaconToAndCall(newBeacon, data, forceCall)++`]
+
+[.contract-subindex-inherited]
+.IERC1967
+
+[.contract-subindex-inherited]
+.IERC1822Proxiable
+
+--
+
+[.contract-index]
+.Events
+--
+
+[.contract-subindex-inherited]
+.ERC1967Upgrade
+
+[.contract-subindex-inherited]
+.IERC1967
+* {xref-IERC1967-Upgraded-address-}[`++Upgraded(implementation)++`]
+* {xref-IERC1967-AdminChanged-address-address-}[`++AdminChanged(previousAdmin, newAdmin)++`]
+* {xref-IERC1967-BeaconUpgraded-address-}[`++BeaconUpgraded(beacon)++`]
+
+[.contract-subindex-inherited]
+.IERC1822Proxiable
+
+--
+
+[.contract-item]
+[[UUPSUpgradeable-onlyProxy--]]
+==== `[.contract-item-name]#++onlyProxy++#++()++` [.item-kind]#modifier#
+
+Check that the execution is being performed through a delegatecall call and that the execution context is
+a proxy contract with an implementation (as defined in ERC1967) pointing to self. This should only be the case
+for UUPS and transparent proxies that are using the current contract as their implementation. Execution of a
+function through ERC1167 minimal proxies (clones) would not normally pass this test, but is not guaranteed to
+fail.
+
+[.contract-item]
+[[UUPSUpgradeable-notDelegated--]]
+==== `[.contract-item-name]#++notDelegated++#++()++` [.item-kind]#modifier#
+
+Check that the execution is not being performed through a delegate call. This allows a function to be
+callable on the implementing contract but not through proxies.
+
+[.contract-item]
+[[UUPSUpgradeable-proxiableUUID--]]
+==== `[.contract-item-name]#++proxiableUUID++#++() → bytes32++` [.item-kind]#external#
+
+Implementation of the ERC1822 {proxiableUUID} function. This returns the storage slot used by the
+implementation. It is used to validate the implementation's compatibility when performing an upgrade.
+
+IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks
+bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this
+function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier.
+
+[.contract-item]
+[[UUPSUpgradeable-upgradeTo-address-]]
+==== `[.contract-item-name]#++upgradeTo++#++(address newImplementation)++` [.item-kind]#public#
+
+Upgrade the implementation of the proxy to `newImplementation`.
+
+Calls {_authorizeUpgrade}.
+
+Emits an {Upgraded} event.
+
+[.contract-item]
+[[UUPSUpgradeable-upgradeToAndCall-address-bytes-]]
+==== `[.contract-item-name]#++upgradeToAndCall++#++(address newImplementation, bytes data)++` [.item-kind]#public#
+
+Upgrade the implementation of the proxy to `newImplementation`, and subsequently execute the function call
+encoded in `data`.
+
+Calls {_authorizeUpgrade}.
+
+Emits an {Upgraded} event.
+
+[.contract-item]
+[[UUPSUpgradeable-_authorizeUpgrade-address-]]
+==== `[.contract-item-name]#++_authorizeUpgrade++#++(address newImplementation)++` [.item-kind]#internal#
+
+Function that should revert when `msg.sender` is not authorized to upgrade the contract. Called by
+{upgradeTo} and {upgradeToAndCall}.
+
+Normally, this function will use an xref:access.adoc[access control] modifier such as {Ownable-onlyOwner}.
+
+```solidity
+function _authorizeUpgrade(address) internal override onlyOwner {}
+```
+

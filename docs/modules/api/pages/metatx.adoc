@@ -1,0 +1,135 @@
+:github-icon: pass:[<svg class="icon"><use href="#github-icon"/></svg>]
+:xref-ERC2771Context-constructor-address-: xref:metatx.adoc#ERC2771Context-constructor-address-
+:xref-ERC2771Context-isTrustedForwarder-address-: xref:metatx.adoc#ERC2771Context-isTrustedForwarder-address-
+:xref-ERC2771Context-_msgSender--: xref:metatx.adoc#ERC2771Context-_msgSender--
+:xref-ERC2771Context-_msgData--: xref:metatx.adoc#ERC2771Context-_msgData--
+:ERC2771Context: pass:normal[xref:metatx.adoc#ERC2771Context[`ERC2771Context`]]
+:xref-MinimalForwarder-constructor--: xref:metatx.adoc#MinimalForwarder-constructor--
+:xref-MinimalForwarder-getNonce-address-: xref:metatx.adoc#MinimalForwarder-getNonce-address-
+:xref-MinimalForwarder-verify-struct-MinimalForwarder-ForwardRequest-bytes-: xref:metatx.adoc#MinimalForwarder-verify-struct-MinimalForwarder-ForwardRequest-bytes-
+:xref-MinimalForwarder-execute-struct-MinimalForwarder-ForwardRequest-bytes-: xref:metatx.adoc#MinimalForwarder-execute-struct-MinimalForwarder-ForwardRequest-bytes-
+:xref-EIP712-_domainSeparatorV4--: xref:utils.adoc#EIP712-_domainSeparatorV4--
+:xref-EIP712-_hashTypedDataV4-bytes32-: xref:utils.adoc#EIP712-_hashTypedDataV4-bytes32-
+:xref-EIP712-eip712Domain--: xref:utils.adoc#EIP712-eip712Domain--
+:xref-IERC5267-EIP712DomainChanged--: xref:interfaces.adoc#IERC5267-EIP712DomainChanged--
+= Meta Transactions
+
+[.readme-notice]
+NOTE: This document is better viewed at https://docs.openzeppelin.com/contracts/api/metatx
+
+== Core
+
+:constructor: pass:normal[xref:#ERC2771Context-constructor-address-[`++constructor++`]]
+:isTrustedForwarder: pass:normal[xref:#ERC2771Context-isTrustedForwarder-address-[`++isTrustedForwarder++`]]
+:_msgSender: pass:normal[xref:#ERC2771Context-_msgSender--[`++_msgSender++`]]
+:_msgData: pass:normal[xref:#ERC2771Context-_msgData--[`++_msgData++`]]
+
+[.contract]
+[[ERC2771Context]]
+=== `++ERC2771Context++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/metatx/ERC2771Context.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+```
+
+Context variant with ERC2771 support.
+
+[.contract-index]
+.Functions
+--
+* {xref-ERC2771Context-constructor-address-}[`++constructor(trustedForwarder)++`]
+* {xref-ERC2771Context-isTrustedForwarder-address-}[`++isTrustedForwarder(forwarder)++`]
+* {xref-ERC2771Context-_msgSender--}[`++_msgSender()++`]
+* {xref-ERC2771Context-_msgData--}[`++_msgData()++`]
+
+--
+
+[.contract-item]
+[[ERC2771Context-constructor-address-]]
+==== `[.contract-item-name]#++constructor++#++(address trustedForwarder)++` [.item-kind]#internal#
+
+[.contract-item]
+[[ERC2771Context-isTrustedForwarder-address-]]
+==== `[.contract-item-name]#++isTrustedForwarder++#++(address forwarder) → bool++` [.item-kind]#public#
+
+[.contract-item]
+[[ERC2771Context-_msgSender--]]
+==== `[.contract-item-name]#++_msgSender++#++() → address sender++` [.item-kind]#internal#
+
+[.contract-item]
+[[ERC2771Context-_msgData--]]
+==== `[.contract-item-name]#++_msgData++#++() → bytes++` [.item-kind]#internal#
+
+== Utils
+
+:ForwardRequest: pass:normal[xref:#MinimalForwarder-ForwardRequest[`++ForwardRequest++`]]
+:constructor: pass:normal[xref:#MinimalForwarder-constructor--[`++constructor++`]]
+:getNonce: pass:normal[xref:#MinimalForwarder-getNonce-address-[`++getNonce++`]]
+:verify: pass:normal[xref:#MinimalForwarder-verify-struct-MinimalForwarder-ForwardRequest-bytes-[`++verify++`]]
+:execute: pass:normal[xref:#MinimalForwarder-execute-struct-MinimalForwarder-ForwardRequest-bytes-[`++execute++`]]
+
+[.contract]
+[[MinimalForwarder]]
+=== `++MinimalForwarder++` link:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.1/contracts/metatx/MinimalForwarder.sol[{github-icon},role=heading-link]
+
+[.hljs-theme-light.nopadding]
+```solidity
+import "@openzeppelin/contracts/metatx/MinimalForwarder.sol";
+```
+
+Simple minimal forwarder to be used together with an ERC2771 compatible contract. See {ERC2771Context}.
+
+MinimalForwarder is mainly meant for testing, as it is missing features to be a good production-ready forwarder. This
+contract does not intend to have all the properties that are needed for a sound forwarding system. A fully
+functioning forwarding system with good properties requires more complexity. We suggest you look at other projects
+such as the GSN which do have the goal of building a system like that.
+
+[.contract-index]
+.Functions
+--
+* {xref-MinimalForwarder-constructor--}[`++constructor()++`]
+* {xref-MinimalForwarder-getNonce-address-}[`++getNonce(from)++`]
+* {xref-MinimalForwarder-verify-struct-MinimalForwarder-ForwardRequest-bytes-}[`++verify(req, signature)++`]
+* {xref-MinimalForwarder-execute-struct-MinimalForwarder-ForwardRequest-bytes-}[`++execute(req, signature)++`]
+
+[.contract-subindex-inherited]
+.EIP712
+* {xref-EIP712-_domainSeparatorV4--}[`++_domainSeparatorV4()++`]
+* {xref-EIP712-_hashTypedDataV4-bytes32-}[`++_hashTypedDataV4(structHash)++`]
+* {xref-EIP712-eip712Domain--}[`++eip712Domain()++`]
+
+[.contract-subindex-inherited]
+.IERC5267
+
+--
+
+[.contract-index]
+.Events
+--
+
+[.contract-subindex-inherited]
+.EIP712
+
+[.contract-subindex-inherited]
+.IERC5267
+* {xref-IERC5267-EIP712DomainChanged--}[`++EIP712DomainChanged()++`]
+
+--
+
+[.contract-item]
+[[MinimalForwarder-constructor--]]
+==== `[.contract-item-name]#++constructor++#++()++` [.item-kind]#public#
+
+[.contract-item]
+[[MinimalForwarder-getNonce-address-]]
+==== `[.contract-item-name]#++getNonce++#++(address from) → uint256++` [.item-kind]#public#
+
+[.contract-item]
+[[MinimalForwarder-verify-struct-MinimalForwarder-ForwardRequest-bytes-]]
+==== `[.contract-item-name]#++verify++#++(struct MinimalForwarder.ForwardRequest req, bytes signature) → bool++` [.item-kind]#public#
+
+[.contract-item]
+[[MinimalForwarder-execute-struct-MinimalForwarder-ForwardRequest-bytes-]]
+==== `[.contract-item-name]#++execute++#++(struct MinimalForwarder.ForwardRequest req, bytes signature) → bool, bytes++` [.item-kind]#public#
+
