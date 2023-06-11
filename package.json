@@ -1,6 +1,7 @@
 {
-  "name": "openzeppelin-solidity",
-  "description": "Secure Smart Contract library for Solidity",
+  "private": false,
+  "name": "@gnus.ai/contracts-upgradeable-diamond",
+  "description": "Secure Smart Contract library for Solidity with Diamond Facets and Storage (EIP-2535)",
   "version": "4.9.1",
   "files": [
     "/contracts/**/*.sol",
