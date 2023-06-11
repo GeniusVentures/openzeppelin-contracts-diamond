@@ -84,7 +84,7 @@ contract StorageSlotMockUpgradeable is Initializable {
     }
 
     // generated getter for bytesMap
-    function bytesMap(uint256 arg0) public view returns(bytes) {
+    function bytesMap(uint256 arg0) public view returns(bytes memory) {
         return StorageSlotMockStorage.layout().bytesMap[arg0];
     }
 
