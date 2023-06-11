@@ -4,7 +4,6 @@
 pragma solidity ^0.8.8;
 
 import "./ECDSAUpgradeable.sol";
-import "../ShortStringsUpgradeable.sol";
 import "../../interfaces/IERC5267Upgradeable.sol";
 import { EIP712Storage } from "./EIP712Storage.sol";
 import "../../proxy/utils/Initializable.sol";
@@ -32,12 +31,10 @@ import "../../proxy/utils/Initializable.sol";
  *
  * _Available since v3.4._
  *
- * @custom:oz-upgrades-unsafe-allow state-variable-immutable state-variable-assignment
+ * @custom:storage-size 52
  */
 abstract contract EIP712Upgradeable is Initializable, IERC5267Upgradeable {
     using EIP712Storage for EIP712Storage.Layout;
-    using ShortStringsUpgradeable for *;
-
     bytes32 private constant _TYPE_HASH =
         keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
 
@@ -58,29 +55,23 @@ abstract contract EIP712Upgradeable is Initializable, IERC5267Upgradeable {
     }
 
     function __EIP712_init_unchained(string memory name, string memory version) internal onlyInitializing {
-        EIP712Storage.layout()._name = name.toShortStringWithFallback(EIP712Storage.layout()._nameFallback);
-        EIP712Storage.layout()._version = version.toShortStringWithFallback(EIP712Storage.layout()._versionFallback);
-        EIP712Storage.layout()._hashedName = keccak256(bytes(name));
-        EIP712Storage.layout()._hashedVersion = keccak256(bytes(version));
+        EIP712Storage.layout()._name = name;
+        EIP712Storage.layout()._version = version;
 
-        EIP712Storage.layout()._cachedChainId = block.chainid;
-        EIP712Storage.layout()._cachedDomainSeparator = _buildDomainSeparator();
-        EIP712Storage.layout()._cachedThis = address(this);
+        // Reset prior values in storage if upgrading
+        EIP712Storage.layout()._hashedName = 0;
+        EIP712Storage.layout()._hashedVersion = 0;
     }
 
     /**
      * @dev Returns the domain separator for the current chain.
      */
     function _domainSeparatorV4() internal view returns (bytes32) {
-        if (address(this) == EIP712Storage.layout()._cachedThis && block.chainid == EIP712Storage.layout()._cachedChainId) {
-            return EIP712Storage.layout()._cachedDomainSeparator;
-        } else {
-            return _buildDomainSeparator();
-        }
+        return _buildDomainSeparator();
     }
 
     function _buildDomainSeparator() private view returns (bytes32) {
-        return keccak256(abi.encode(_TYPE_HASH, EIP712Storage.layout()._hashedName, EIP712Storage.layout()._hashedVersion, block.chainid, address(this)));
+        return keccak256(abi.encode(_TYPE_HASH, _EIP712NameHash(), _EIP712VersionHash(), block.chainid, address(this)));
     }
 
     /**
@@ -122,14 +113,80 @@ abstract contract EIP712Upgradeable is Initializable, IERC5267Upgradeable {
             uint256[] memory extensions
         )
     {
+        // If the hashed name and version in storage are non-zero, the contract hasn't been properly initialized
+        // and the EIP712 domain is not reliable, as it will be missing name and version.
+        require(EIP712Storage.layout()._hashedName == 0 && EIP712Storage.layout()._hashedVersion == 0, "EIP712: Uninitialized");
+
         return (
             hex"0f", // 01111
-            EIP712Storage.layout()._name.toStringWithFallback(EIP712Storage.layout()._nameFallback),
-            EIP712Storage.layout()._version.toStringWithFallback(EIP712Storage.layout()._versionFallback),
+            _EIP712Name(),
+            _EIP712Version(),
             block.chainid,
             address(this),
             bytes32(0),
             new uint256[](0)
         );
+    }
+
+    /**
+     * @dev The name parameter for the EIP712 domain.
+     *
+     * NOTE: This function reads from storage by default, but can be redefined to return a constant value if gas costs
+     * are a concern.
+     */
+    function _EIP712Name() internal virtual view returns (string memory) {
+        return EIP712Storage.layout()._name;
+    }
+
+    /**
+     * @dev The version parameter for the EIP712 domain.
+     *
+     * NOTE: This function reads from storage by default, but can be redefined to return a constant value if gas costs
+     * are a concern.
+     */
+    function _EIP712Version() internal virtual view returns (string memory) {
+        return EIP712Storage.layout()._version;
+    }
+
+    /**
+     * @dev The hash of the name parameter for the EIP712 domain.
+     *
+     * NOTE: In previous versions this function was virtual. In this version you should override `_EIP712Name` instead.
+     */
+    function _EIP712NameHash() internal view returns (bytes32) {
+        string memory name = _EIP712Name();
+        if (bytes(name).length > 0) {
+            return keccak256(bytes(name));
+        } else {
+            // If the name is empty, the contract may have been upgraded without initializing the new storage.
+            // We return the name hash in storage if non-zero, otherwise we assume the name is empty by design.
+            bytes32 hashedName = EIP712Storage.layout()._hashedName;
+            if (hashedName != 0) {
+                return hashedName;
+            } else {
+                return keccak256("");
+            }
+        }
+    }
+
+    /**
+     * @dev The hash of the version parameter for the EIP712 domain.
+     *
+     * NOTE: In previous versions this function was virtual. In this version you should override `_EIP712Version` instead.
+     */
+    function _EIP712VersionHash() internal view returns (bytes32) {
+        string memory version = _EIP712Version();
+        if (bytes(version).length > 0) {
+            return keccak256(bytes(version));
+        } else {
+            // If the version is empty, the contract may have been upgraded without initializing the new storage.
+            // We return the version hash in storage if non-zero, otherwise we assume the version is empty by design.
+            bytes32 hashedVersion = EIP712Storage.layout()._hashedVersion;
+            if (hashedVersion != 0) {
+                return hashedVersion;
+            } else {
+                return keccak256("");
+            }
+        }
     }
 }

@@ -9,19 +9,13 @@ library EIP712Storage {
 
   struct Layout {
 
-    // Cache the domain separator as an immutable value, but also store the chain id that it corresponds to, in order to
-    // invalidate the cached domain separator if the chain id changes.
-    bytes32 _cachedDomainSeparator;
-    uint256 _cachedChainId;
-    address _cachedThis;
-
+    /// @custom:oz-renamed-from _HASHED_NAME
     bytes32 _hashedName;
+    /// @custom:oz-renamed-from _HASHED_VERSION
     bytes32 _hashedVersion;
 
-    ShortString _name;
-    ShortString _version;
-    string _nameFallback;
-    string _versionFallback;
+    string _name;
+    string _version;
   
   }
   

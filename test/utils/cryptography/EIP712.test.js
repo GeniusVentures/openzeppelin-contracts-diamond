@@ -47,26 +47,6 @@ contract('EIP712', function (accounts) {
           const rebuildDomain = await getDomain(this.eip712);
           expect(mapValues(rebuildDomain, String)).to.be.deep.equal(mapValues(this.domain, String));
         });
-
-        if (shortOrLong === 'short') {
-          // Long strings are in storage, and the proxy will not be properly initialized unless
-          // the upgradeable contract variant is used and the initializer is invoked.
-
-          it('adjusts when behind proxy', async function () {
-            const factory = await Clones.new();
-            const cloneReceipt = await factory.$clone(this.eip712.address);
-            const cloneAddress = cloneReceipt.logs.find(({ event }) => event === 'return$clone').args.instance;
-            const clone = new EIP712Verifier(cloneAddress);
-
-            const cloneDomain = { ...this.domain, verifyingContract: clone.address };
-
-            const reportedDomain = await getDomain(clone);
-            expect(mapValues(reportedDomain, String)).to.be.deep.equal(mapValues(cloneDomain, String));
-
-            const expectedSeparator = await domainSeparator(cloneDomain);
-            expect(await clone.$_domainSeparatorV4()).to.equal(expectedSeparator);
-          });
-        }
       });
 
       it('hash digest', async function () {

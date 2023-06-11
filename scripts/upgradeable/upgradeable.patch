@@ -59,38 +59,39 @@ index ff596b0c..00000000
 -<!-- Make sure that you have reviewed the OpenZeppelin Contracts Contributor Guidelines. -->
 -<!-- https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/CONTRIBUTING.md -->
 diff --git a/README.md b/README.md
-index 9fc95518..53130e3c 100644
+index 9fc95518..81f40451 100644
 --- a/README.md
 +++ b/README.md
-@@ -16,17 +16,20 @@
+@@ -16,17 +16,21 @@
  
  :building_construction: **Want to scale your decentralized application?** Check out [OpenZeppelin Defender](https://openzeppelin.com/defender) — a secure platform for automating and monitoring your operations.
  
 +> **Note**
-+> You are looking at the upgradeable variant of OpenZeppelin Contracts. Be sure to review the documentation on [Using OpenZeppelin Contracts with Upgrades](https://docs.openzeppelin.com/contracts/4.x/upgradeable).
-+
++> You are looking at the EIP-2535 Diamond upgradeable variant of OpenZeppelin Contracts. Be sure to review the documentation on [Using OpenZeppelin Contracts with Upgrades](https://docs.openzeppelin.com/contracts/4.x/upgradeable).
++>
++> Also, if you are upgrading existing contracts from v4.5 of these EIP-2535 contracts, you will have to edit the contracts to revert to the misspelled 'openzepplin' for the storage slots.
  ## Overview
  
  ### Installation
  
  ```
 -$ npm install @openzeppelin/contracts
-+$ npm install @openzeppelin/contracts-upgradeable
++$ npm install @gnus-ai/openzeppelin-contracts-diamond
  ```
  
  OpenZeppelin Contracts features a [stable API](https://docs.openzeppelin.com/contracts/releases-stability#api-stability), which means that your contracts won't break unexpectedly when upgrading to a newer minor version.
  
 -An alternative to npm is to use the GitHub repository (`openzeppelin/openzeppelin-contracts`) to retrieve the contracts. When doing this, make sure to specify the tag for a release such as `v4.5.0`, instead of using the `master` branch.
-+An alternative to npm is to use the GitHub repository (`openzeppelin/openzeppelin-contracts-upgradeable`) to retrieve the contracts. When doing this, make sure to specify the tag for a release such as `v4.5.0`, instead of using the `master` branch.
++An alternative to npm is to use the GitHub repository (`geniusventures/openzeppelin-contracts-diamond`) to retrieve the contracts. When doing this, make sure to specify the tag for a release such as `v4.5.0`, instead of using the `master` branch.
  
  ### Usage
  
-@@ -35,10 +38,11 @@ Once installed, you can use the contracts in the library by importing them:
+@@ -35,10 +39,11 @@ Once installed, you can use the contracts in the library by importing them:
  ```solidity
  pragma solidity ^0.8.0;
  
 -import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
++import "@gnus-ai/openzeppelin-contracts-diamond/contracts/token/ERC721/ERC721Upgradeable.sol";
  
 -contract MyCollectible is ERC721 {
 -    constructor() ERC721("MyCollectible", "MCO") {
@@ -101,7 +102,7 @@ index 9fc95518..53130e3c 100644
  }
  ```
 diff --git a/contracts/finance/VestingWallet.sol b/contracts/finance/VestingWallet.sol
-index fe67eb54..d26ea4e1 100644
+index 45cf9ce5..572bb20b 100644
 --- a/contracts/finance/VestingWallet.sol
 +++ b/contracts/finance/VestingWallet.sol
 @@ -15,6 +15,8 @@ import "../utils/Context.sol";
@@ -159,7 +160,7 @@ index 00000000..3315e7bd
 +    }
 +}
 diff --git a/contracts/governance/extensions/GovernorVotes.sol b/contracts/governance/extensions/GovernorVotes.sol
-index 64431711..885f0e42 100644
+index c2e65cba..6dc362df 100644
 --- a/contracts/governance/extensions/GovernorVotes.sol
 +++ b/contracts/governance/extensions/GovernorVotes.sol
 @@ -10,6 +10,8 @@ import "../../interfaces/IERC5805.sol";
@@ -172,7 +173,7 @@ index 64431711..885f0e42 100644
  abstract contract GovernorVotes is Governor {
      IERC5805 public immutable token;
 diff --git a/contracts/governance/extensions/GovernorVotesComp.sol b/contracts/governance/extensions/GovernorVotesComp.sol
-index 17250ad7..1d26b72e 100644
+index e7d7c2c7..4e3c7c03 100644
 --- a/contracts/governance/extensions/GovernorVotesComp.sol
 +++ b/contracts/governance/extensions/GovernorVotesComp.sol
 @@ -10,6 +10,8 @@ import "../../token/ERC20/extensions/ERC20VotesComp.sol";
@@ -185,7 +186,7 @@ index 17250ad7..1d26b72e 100644
  abstract contract GovernorVotesComp is Governor {
      ERC20VotesComp public immutable token;
 diff --git a/contracts/package.json b/contracts/package.json
-index 55e70b17..ceefb984 100644
+index 4711a6b3..65e441cd 100644
 --- a/contracts/package.json
 +++ b/contracts/package.json
 @@ -1,5 +1,5 @@
@@ -193,7 +194,7 @@ index 55e70b17..ceefb984 100644
 -  "name": "@openzeppelin/contracts",
 +  "name": "@openzeppelin/contracts-upgradeable",
    "description": "Secure Smart Contract library for Solidity",
-   "version": "4.8.2",
+   "version": "4.9.1",
    "files": [
 @@ -13,7 +13,7 @@
    },
@@ -231,7 +232,7 @@ index 16f830d1..9ef98148 100644
  abstract contract ERC20Capped is ERC20 {
      uint256 private immutable _cap;
 diff --git a/contracts/token/ERC20/extensions/ERC20Permit.sol b/contracts/token/ERC20/extensions/ERC20Permit.sol
-index a357199b..9dc8e894 100644
+index 7ee7331f..8cb980e2 100644
 --- a/contracts/token/ERC20/extensions/ERC20Permit.sol
 +++ b/contracts/token/ERC20/extensions/ERC20Permit.sol
 @@ -18,6 +18,8 @@ import "../../../utils/Counters.sol";
@@ -244,7 +245,7 @@ index a357199b..9dc8e894 100644
  abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
      using Counters for Counters.Counter;
 diff --git a/contracts/token/ERC20/extensions/ERC20Wrapper.sol b/contracts/token/ERC20/extensions/ERC20Wrapper.sol
-index bfe782e4..7264fe32 100644
+index bc85a0b3..10e3220a 100644
 --- a/contracts/token/ERC20/extensions/ERC20Wrapper.sol
 +++ b/contracts/token/ERC20/extensions/ERC20Wrapper.sol
 @@ -14,6 +14,8 @@ import "../utils/SafeERC20.sol";
@@ -257,7 +258,7 @@ index bfe782e4..7264fe32 100644
  abstract contract ERC20Wrapper is ERC20 {
      IERC20 private immutable _underlying;
 diff --git a/contracts/token/ERC20/utils/TokenTimelock.sol b/contracts/token/ERC20/utils/TokenTimelock.sol
-index ed855b7b..3d30f59d 100644
+index cffdac5d..46537a3a 100644
 --- a/contracts/token/ERC20/utils/TokenTimelock.sol
 +++ b/contracts/token/ERC20/utils/TokenTimelock.sol
 @@ -11,6 +11,8 @@ import "./SafeERC20.sol";
@@ -270,7 +271,7 @@ index ed855b7b..3d30f59d 100644
  contract TokenTimelock {
      using SafeERC20 for IERC20;
 diff --git a/contracts/utils/cryptography/EIP712.sol b/contracts/utils/cryptography/EIP712.sol
-index 6a4e1cad..55d8eced 100644
+index 2a0e7348..d9e5da58 100644
 --- a/contracts/utils/cryptography/EIP712.sol
 +++ b/contracts/utils/cryptography/EIP712.sol
 @@ -4,7 +4,6 @@
@@ -436,7 +437,7 @@ index 6a4e1cad..55d8eced 100644
 +    }
  }
 diff --git a/package.json b/package.json
-index 8458dd61..b4672240 100644
+index 500b0582..505571a1 100644
 --- a/package.json
 +++ b/package.json
 @@ -36,7 +36,7 @@
@@ -444,7 +445,7 @@ index 8458dd61..b4672240 100644
    "repository": {
      "type": "git",
 -    "url": "https://github.com/OpenZeppelin/openzeppelin-contracts.git"
-+    "url": "https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable.git"
++    "url": "https://github.com/GeniusVentures/openzeppelin-contracts-diamond.git"
    },
    "keywords": [
      "solidity",

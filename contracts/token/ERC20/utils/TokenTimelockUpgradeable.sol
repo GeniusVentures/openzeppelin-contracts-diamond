@@ -13,6 +13,8 @@ import "../../../proxy/utils/Initializable.sol";
  *
  * Useful for simple vesting schedules like "advisors get all of their tokens
  * after 1 year".
+ *
+ * @custom:storage-size 53
  */
 contract TokenTimelockUpgradeable is Initializable {
     using TokenTimelockStorage for TokenTimelockStorage.Layout;

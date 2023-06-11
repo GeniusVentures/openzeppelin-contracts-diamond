@@ -16,17 +16,21 @@
 
 :building_construction: **Want to scale your decentralized application?** Check out [OpenZeppelin Defender](https://openzeppelin.com/defender) — a secure platform for automating and monitoring your operations.
 
+> **Note**
+> You are looking at the EIP-2535 Diamond upgradeable variant of OpenZeppelin Contracts. Be sure to review the documentation on [Using OpenZeppelin Contracts with Upgrades](https://docs.openzeppelin.com/contracts/4.x/upgradeable).
+>
+> Also, if you are upgrading existing contracts from v4.5 of these EIP-2535 contracts, you will have to edit the contracts to revert to the misspelled 'openzepplin' for the storage slots.
 ## Overview
 
 ### Installation
 
 ```
-$ npm install @openzeppelin/contracts
+$ npm install @gnus-ai/openzeppelin-contracts-diamond
 ```
 
 OpenZeppelin Contracts features a [stable API](https://docs.openzeppelin.com/contracts/releases-stability#api-stability), which means that your contracts won't break unexpectedly when upgrading to a newer minor version.
 
-An alternative to npm is to use the GitHub repository (`openzeppelin/openzeppelin-contracts`) to retrieve the contracts. When doing this, make sure to specify the tag for a release such as `v4.5.0`, instead of using the `master` branch.
+An alternative to npm is to use the GitHub repository (`geniusventures/openzeppelin-contracts-diamond`) to retrieve the contracts. When doing this, make sure to specify the tag for a release such as `v4.5.0`, instead of using the `master` branch.
 
 ### Usage
 
@@ -35,10 +39,11 @@ Once installed, you can use the contracts in the library by importing them:
 ```solidity
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@gnus-ai/openzeppelin-contracts-diamond/contracts/token/ERC721/ERC721Upgradeable.sol";
 
-contract MyCollectible is ERC721 {
-    constructor() ERC721("MyCollectible", "MCO") {
+contract MyCollectible is ERC721Upgradeable {
+    function initialize() initializer public {
+        __ERC721_init("MyCollectible", "MCO");
     }
 }
 ```

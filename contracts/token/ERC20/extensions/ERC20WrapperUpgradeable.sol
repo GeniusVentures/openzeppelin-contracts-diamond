@@ -16,6 +16,8 @@ import "../../../proxy/utils/Initializable.sol";
  * wrapping of an existing "basic" ERC20 into a governance token.
  *
  * _Available since v4.2._
+ *
+ * @custom:storage-size 51
  */
 abstract contract ERC20WrapperUpgradeable is Initializable, ERC20Upgradeable {
     using ERC20WrapperStorage for ERC20WrapperStorage.Layout;

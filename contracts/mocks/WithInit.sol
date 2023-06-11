@@ -30,6 +30,18 @@ contract TimelockControllerUpgradeableWithInit is TimelockControllerUpgradeable 
         __TimelockController_init(minDelay, proposers, executors, admin);
     }
 }
+import "../governance/TimelockControllerWith46MigrationUpgradeable.sol";
+
+contract TimelockControllerWith46MigrationUpgradeableWithInit is TimelockControllerWith46MigrationUpgradeable {
+    constructor(
+        uint256 minDelay,
+        address[] memory proposers,
+        address[] memory executors,
+        address admin
+    ) payable initializer {
+        __TimelockControllerWith46Migration_init(minDelay, proposers, executors, admin);
+    }
+}
 import "../metatx/MinimalForwarderUpgradeable.sol";
 
 contract MinimalForwarderUpgradeableWithInit is MinimalForwarderUpgradeable {
