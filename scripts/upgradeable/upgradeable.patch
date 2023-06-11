@@ -437,7 +437,7 @@ index 2a0e7348..d9e5da58 100644
 +    }
  }
 diff --git a/package.json b/package.json
-index 500b0582..f25598dd 100644
+index 500b0582..505571a1 100644
 --- a/package.json
 +++ b/package.json
 @@ -36,7 +36,7 @@
@@ -445,7 +445,7 @@ index 500b0582..f25598dd 100644
    "repository": {
      "type": "git",
 -    "url": "https://github.com/OpenZeppelin/openzeppelin-contracts.git"
-+    "url": "https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable.git"
++    "url": "https://github.com/GeniusVentures/openzeppelin-contracts-diamond.git"
    },
    "keywords": [
      "solidity",
