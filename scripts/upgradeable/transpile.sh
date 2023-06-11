@@ -22,6 +22,7 @@ npx @gnus.ai/upgrade-safe-transpiler-diamond@latest -D -E \
   -b "$build_info" \
   -i contracts/proxy/utils/Initializable.sol \
   -x 'contracts/proxy/**/*' \
+  -x 'contracts-exposed/**/*' \
   -x '!contracts/proxy/Clones.sol' \
   -x '!contracts/proxy/ERC1967/ERC1967Storage.sol' \
   -x '!contracts/proxy/ERC1967/ERC1967Upgrade.sol' \
@@ -30,7 +31,3 @@ npx @gnus.ai/upgrade-safe-transpiler-diamond@latest -D -E \
   -p 'contracts/**/presets/**/*' \
   -p 'contracts/utils/escrow/Escrow.sol'
 
-# this is currently no longer used but could be useful again in the future
-# for p in scripts/upgradeable/patch/*.patch; do
-#   git apply "$p"
-# done
